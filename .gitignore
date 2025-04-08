@@ -1,0 +1,101 @@
+# ====================
+# Visual Studio Files
+# ====================
+
+# Configuración específica de usuario (evita conflictos entre colaboradores)
+.vs/
+*.suo
+# *.user
+*.userosscache
+*.sln.docstates
+
+# Archivos de compilación intermedios (generados automáticamente)
+*.obj
+*.pch
+*.pdb
+*.idb
+*.ilk
+*.tlog
+*.log
+*.lastbuildstate
+ipch/
+
+# Archivos de salida de la compilación
+Debug/
+Release/
+*.exe
+*.dll
+*.lib
+*.exp
+*.o
+*.out
+*.a
+*.so
+*.dylib
+*.app
+*.iobj
+*.ipdb
+
+# Archivos generados por CMake o soluciones temporales
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+
+# Archivos de dependencias descargadas
+# *.vcxproj*
+*.ncb
+*.code-workspace
+*.opensdf
+*.sdf
+*.sqlite
+
+# ====================
+# OpenGL (dependencias y archivos generados)
+# ====================
+
+# Librerías externas de OpenGL que no deberían estar en el repositorio
+external/
+*.lib
+*.a
+*.dll
+*.dylib
+*.so
+*.pdb
+*.ilk
+
+# Archivos de caché de shaders compilados (depende del motor gráfico)
+*.spv
+*.cache
+
+# Archivos de texturas, modelos y assets temporales
+*.dds
+*.tga
+*.bmp
+*.fbx
+*.obj.mtl
+*.gltf
+*.glb
+*.blend1
+
+# ====================
+# Otros archivos innecesarios
+# ====================
+
+# Archivos de configuración del IDE
+*.code-workspace
+*.vscode/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# archivos de modelos, texturas, etc
+Models/
+Textures/
+lib/
+glm/
+include/
