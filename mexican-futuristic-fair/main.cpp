@@ -51,6 +51,7 @@ Texture pisoTexture;
 Texture AgaveTexture;
 
 Model Invincible_M;
+Model DannyPhantom_M;
 
 Skybox skybox;
 
@@ -209,7 +210,10 @@ int main()
 	AgaveTexture.LoadTextureA();
 
 	Invincible_M = Model();
-	Invincible_M.LoadModel("Models/model_invincible.obj");
+	Invincible_M.LoadModel("Models/Invincible.obj");
+
+	DannyPhantom_M = Model();
+	DannyPhantom_M.LoadModel("Models/DannyPhantom/DannyPhantom.obj");
 
 	std::vector<std::string> skyboxFaces;
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -324,7 +328,7 @@ int main()
 		glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(30.0f, 1.0f, 30.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
@@ -335,10 +339,14 @@ int main()
 		meshList[2]->RenderMesh();
 
 		model = glm::mat4(1.0);
-		
-		model = glm::translate(model, glm::vec3(0.0f, -2.0f, 3.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 3.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Invincible_M.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(5.0f, 0.0f, 3.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		DannyPhantom_M.RenderModel();
 		
 		glDisable(GL_BLEND);
 
