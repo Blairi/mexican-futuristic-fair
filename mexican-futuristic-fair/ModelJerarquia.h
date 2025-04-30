@@ -50,7 +50,9 @@ class ModelJerarquia: public Model {
 			glm::vec3 sca = glm::vec3(1.0f, 1.0f, 1.0f)
 		);
 
-		void MovFullModel(glm::vec3 mueve);
+		void MovFullModel(glm::vec3 mueve, glm::mat4 extraTransform = glm::mat4(1.0f));
+
+		void OrientToCamera(glm::vec3 camFront);
 
 		~ModelJerarquia();
 
