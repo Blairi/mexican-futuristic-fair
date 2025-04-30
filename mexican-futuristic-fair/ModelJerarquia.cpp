@@ -83,6 +83,7 @@ void ModelJerarquia::TransformLegR(glm::vec3 tras, glm::vec3 rot, GLfloat angulo
 	MatrixModels[5] = glm::scale(MatrixModels[5], sca);
 }
 
+
 void ModelJerarquia::TranformFullModel(glm::vec3 mueve, glm::mat4 extraTransform) {
 	glm::vec3 nuevaPos = actualPos + mueve;
 
@@ -116,7 +117,7 @@ void ModelJerarquia::OrientToCamera(glm::vec3 camFront)
 	// Calcular la matriz de rotacion que hace que el modelo apunte hacia camFront
 	glm::mat4 orient = glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
 
-	// Aplicar la orientacion a cada parte de la jerarquía
+	// Aplicar la orientacion a cada parte de la jerarquï¿½a
 	for (int i = 0; i < 6; i++) {
 		MatrixModels[i] *= orient;
 	}
