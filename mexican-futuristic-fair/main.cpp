@@ -253,6 +253,18 @@ int main()
 	Base.LoadModel("Models/base.obj");
 
 	/*
+	* Puestos de comida
+	*/
+	Model TortasInvencible = Model();
+	TortasInvencible.LoadModel("Models/puesto-tortas-invencible.obj");
+
+	/*
+	* Atracciones
+	*/
+	Model RevientaGlobosInvencible = Model();
+	RevientaGlobosInvencible.LoadModel("Models/invencible-revienta-globos.obj");
+
+	/*
 	* Avatares
 	*/
 	ModelJerarquia DannyPhantom_M = ModelJerarquia("Models/DannyPhantom");
@@ -261,6 +273,14 @@ int main()
 	Invencible_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 	ModelJerarquia Batman_M = ModelJerarquia("Models/BatmanBeyond");
 	Batman_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+
+	/*-------
+	* NPC
+	* Agregar modelos de los NPC aqui
+	* ------
+	*/
+	ModelJerarquia AtomEve_M = ModelJerarquia("Models/AtomEve");
+	AtomEve_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 
 	std::vector<std::string> skyboxFaces;
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -376,17 +396,18 @@ int main()
 		glfwPollEvents();
 
 		// controlar la velocidad con la que rota la camara de seleccion de personaje
-		rotacionCamara += 0.005f * deltaTime;
+		rotacionCamara += 0.005f * deltaTime; // TODO: evitar desbordamiento de int
 
 		if (mainWindow.isPersonajeSeleccionado()) {
 			// si ya se eligio personaje, controlamos camara con teclado
-			camera.keyControl(mainWindow.getsKeys(), deltaTime);
+			// TODO: usar una nueva camara
+			camera.keyControl(mainWindow.getsKeys(), deltaTime*5);
 			camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
 		else {
-			// funcion parametrica para camara de eleccion de personaje
-			float x = 100 * cos(rotacionCamara);
-			float z = 100 * sin(rotacionCamara);
+			// cercania de la camara al elegir personaje
+			float x = 30 * cos(rotacionCamara);
+			float z = 30 * sin(rotacionCamara);
 			camera.setPosition(glm::vec3(x, 7.0f, z));
 			camera.setDirection(glm::vec3(-x, 0.0f, -z));
 		}
@@ -438,10 +459,61 @@ int main()
 		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		Base.RenderModel();
+
+		/*
+		* ------------------
+		* Ambientacion 
+		* Aqui renderizar todos los modelos decorativos
+		* ------------------
+		*/
+
+		// puesto de tortas invencible
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-2.85f, 0.0f, -6.494f));
+		model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		TortasInvencible.RenderModel();
+
+		/*
+		* ------------------
+		* Atracciones
+		* Aqui renderizar todos los modelos de atracciones
+		* ------------------
+		*/
+
+		/*
+		* Revienta Globos - A5
+		*/
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-10.09f, 0.0f, 4.905f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		RevientaGlobosInvencible.RenderModel();
+
+		/*
+		* ------------------
+		* NPC de atracciones
+		* Aqui renderizar todos los NPC de atracciones
+		* ------------------
+		*/
+		// Atom eve - revienta globos
+		AtomEve_M.MovFullModel(glm::vec3(-10.929f, 0.85f, 4.376f), glm::vec3(0.0, 1.0f, 0.0f), 135.753f);
+		AtomEve_M.TransformHead(glm::vec3(0.0f, 0.567f, -0.015f), 
+			glm::vec3(0.0f, 1.0f, 0.0f), sin(rotacionCamara)); // TODO: corregir animacion
+		AtomEve_M.TransformLegR(glm::vec3(-0.065f, 0.03f, -0.008f));
+		AtomEve_M.TransformLegL(glm::vec3(0.015f, 0.01f, -0.003f));
+		AtomEve_M.TransformArmR(glm::vec3(-0.103f, 0.462f, -0.018f));
+		AtomEve_M.TransformArmL(glm::vec3(0.108f, 0.444f, -0.039f));
+		AtomEve_M.RenderModelJ(uniformModel);
+
+		/*
+		* ------------------
+		* NPC de ambiente
+		* Aqui renderizar todos los NPC de ambiente
+		* ------------------
+		*/
 
 		// variables auxiliares para la interfaz de selección de personaje
 		glm::vec3 camPos = camera.getCameraPosition();
@@ -454,7 +526,7 @@ int main()
 		int idPersonaje = mainWindow.getIdPersonaje();
 		if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 0) {
 			glm::vec3 modeloPos = camPos + camFront * 5.0f; // distancia a la camara
-			DannyPhantom_M.MovFullModel(glm::vec3(modeloPos), orientacion);
+			DannyPhantom_M.TranformFullModel(glm::vec3(modeloPos), orientacion);
 			DannyPhantom_M.TransformHead(glm::vec3(0.0f, 0.21f, 0.0f));
 			DannyPhantom_M.TransformLegR(glm::vec3(-0.04f, -0.2f, 0.0f));
 			DannyPhantom_M.TransformLegL(glm::vec3(0.035f, -0.2f, 0.0f));
@@ -464,7 +536,7 @@ int main()
 		}
 		else if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 1) {
 			glm::vec3 modeloPos = camPos + camFront * 3.0f; // distancia a la camara
-			Invencible_M.MovFullModel(glm::vec3(modeloPos), orientacion);
+			Invencible_M.TranformFullModel(glm::vec3(modeloPos), orientacion);
 			Invencible_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
 			Invencible_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
 			Invencible_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
@@ -475,7 +547,7 @@ int main()
 		// TODO: ARREGLAR JERARQUIA DE BATMAN
 		else if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 2) {
 			glm::vec3 modeloPos = camPos + camFront * 3.0f; // distancia a la camara
-			Batman_M.MovFullModel(glm::vec3(modeloPos), orientacion);
+			Batman_M.TranformFullModel(glm::vec3(modeloPos), orientacion);
 			Batman_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
 			Batman_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
 			Batman_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
@@ -485,6 +557,8 @@ int main()
 		}
 		// TODO: BMO
 
+
+		// batman flotando
 		Batman_M.MovFullModel(glm::vec3(0.0f, 10.0f,0.0f));
 		Batman_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
 		Batman_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
