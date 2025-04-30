@@ -362,14 +362,13 @@ int main()
 		Invincible_M.RenderModel();
 
 		// Danny Phantom Model
+		DannyPhantom_M.MovFullModel(glm::vec3(mainWindow.getmuevex(), 0.0f, 0.0f));
 		DannyPhantom_M.TransformHead(glm::vec3(0.0f, 0.21f, 0.0f));
 		DannyPhantom_M.TransformLegR(glm::vec3(-0.04f, -0.2f, 0.0f));
 		DannyPhantom_M.TransformLegL(glm::vec3(0.035f, -0.2f, 0.0f));
 		DannyPhantom_M.TransformArmR(glm::vec3(-0.1445f, 0.123f, 0.0f));
 		DannyPhantom_M.TransformArmL(glm::vec3(0.13f, 0.12f, 0.0f));
 		DannyPhantom_M.RenderModelJ(uniformModel);
-		//DannyPhantom_M.MovFullModel(glm::vec3(mainWindow.getmuevex(), 0.0f, 0.0f));  Tiene el error
-
 
 
 

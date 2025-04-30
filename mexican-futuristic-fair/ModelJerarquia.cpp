@@ -89,7 +89,9 @@ void ModelJerarquia::MovFullModel(glm::vec3 mueve) {
 	nuevaPos.y = actualPos.y + mueve.y;
 	nuevaPos.z = actualPos.z + mueve.z;
 
+	modelroot = glm::mat4(1.0);
 	modelroot = glm::translate(modelroot, nuevaPos);
+
 	for (int i = 0; i < 6; i++) {
 		MatrixModels[i] = modelroot;
 	}

@@ -106,13 +106,11 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 	}
 	if (key == GLFW_KEY_Y)
 	{
-		theWindow-> muevex -= 0.01;
-		printf("Y: muevex =  %f'\n", theWindow->muevex);
+		theWindow-> muevex -= 0.1;
 	}
 	if (key == GLFW_KEY_U)
 	{
-		theWindow-> muevex += 0.01;
-		printf("U: muevex =  %f'\n", theWindow->muevex);
+		theWindow-> muevex += 0.1;
 
 	}
 
