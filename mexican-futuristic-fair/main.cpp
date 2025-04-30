@@ -28,7 +28,8 @@ Autores:
 #include "Camera.h"
 #include "Texture.h"
 #include "Sphere.h"
-#include"Model.h"
+#include "Model.h"
+#include "ModelJerarquia.h"
 #include "Skybox.h"
 
 //para iluminación
@@ -52,13 +53,6 @@ Texture pisoTexture;
 Texture AgaveTexture;
 
 Texture ProjectDefaultFont;
-
-Model AtomEve_torso;
-Model AtomEve_cabeza;
-Model AtomEve_brazo_der;
-Model AtomEve_brazo_izq;
-Model AtomEve_pie_der;
-Model AtomEve_pie_izq;
 
 Model Base;
 
@@ -130,9 +124,23 @@ void createInterface()
 		-0.5f, 0.0f, -0.5f,		0.0f, 0.9707f,		0.0f, -1.0f, 0.0f,
 	};
 
-	Mesh* obj5 = new Mesh();
-	obj5->CreateMesh(letrasVertices, letrasIndices, 32, 6);
-	meshList.push_back(obj5);
+	Mesh* obj1 = new Mesh();
+	obj1->CreateMesh(letrasVertices, letrasIndices, 32, 6);
+	meshList.push_back(obj1);
+
+	unsigned int LogoInvencibleIndices[] = {
+		0, 1, 2,
+		0, 2, 3,
+	};
+	GLfloat LogoIncencibleVertices[] = {
+		-0.5f, 0.0f, 0.5f,		0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
+		0.5f, 0.0f, 0.5f,		1.0f, 0.0f,		0.0f, -1.0f, 0.0f,
+		0.5f, 0.0f, -0.5f,		1.0f, 1.0f,		0.0f, -1.0f, 0.0f,
+		-0.5f, 0.0f, -0.5f,		0.0f, 1.0f,		0.0f, -1.0f, 0.0f,
+	};
+	Mesh* logoInvencible = new Mesh();
+	logoInvencible->CreateMesh(LogoIncencibleVertices, LogoInvencibleIndices, 32, 6);
+	meshList.push_back(logoInvencible);
 }
 
 void CreateObjects()
@@ -222,9 +230,8 @@ int main()
 	createInterface();
 	CreateObjects();
 	CreateShaders();
-
-	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f, 0.3f, 0.5f);
-
+																						//0.3f
+	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f, 0.1f, 0.5f);
 	brickTexture = Texture("Textures/brick.png");
 	brickTexture.LoadTextureA();
 	dirtTexture = Texture("Textures/dirt.png");
@@ -239,21 +246,21 @@ int main()
 	ProjectDefaultFont = Texture("Textures/fuente-proy.png");
 	ProjectDefaultFont.LoadTextureA();
 
+	Texture LogoInvencible = Texture("Textures/Invincible_comic_series_logo.png");
+	LogoInvencible.LoadTextureA();
+
 	Base = Model();
 	Base.LoadModel("Models/base.obj");
 
-	AtomEve_torso = Model();
-	AtomEve_torso.LoadModel("Models/AtomEve/Body.obj");
-	AtomEve_cabeza = Model();
-	AtomEve_cabeza.LoadModel("Models/AtomEve/Head.obj");
-	AtomEve_brazo_der = Model();
-	AtomEve_brazo_der.LoadModel("Models/AtomEve/ArmR.obj");
-	AtomEve_brazo_izq = Model();
-	AtomEve_brazo_izq.LoadModel("Models/AtomEve/ArmL.obj");
-	AtomEve_pie_der = Model();
-	AtomEve_pie_der.LoadModel("Models/AtomEve/LegR.obj");
-	AtomEve_pie_izq = Model();
-	AtomEve_pie_izq.LoadModel("Models/AtomEve/LegL.obj");
+	/*
+	* Avatares
+	*/
+	ModelJerarquia DannyPhantom_M = ModelJerarquia("Models/DannyPhantom");
+	DannyPhantom_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+	ModelJerarquia Invencible_M = ModelJerarquia("Models/Invencible");
+	Invencible_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+	ModelJerarquia Batman_M = ModelJerarquia("Models/BatmanBeyond");
+	Batman_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 
 	std::vector<std::string> skyboxFaces;
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -368,13 +375,16 @@ int main()
 		//Recibir eventos del usuario
 		glfwPollEvents();
 
+		// controlar la velocidad con la que rota la camara de seleccion de personaje
 		rotacionCamara += 0.005f * deltaTime;
 
 		if (mainWindow.isPersonajeSeleccionado()) {
+			// si ya se eligio personaje, controlamos camara con teclado
 			camera.keyControl(mainWindow.getsKeys(), deltaTime);
 			camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
 		else {
+			// funcion parametrica para camara de eleccion de personaje
 			float x = 100 * cos(rotacionCamara);
 			float z = 100 * sin(rotacionCamara);
 			camera.setPosition(glm::vec3(x, 7.0f, z));
@@ -402,10 +412,11 @@ int main()
 		glUniform3f(uniformEyePosition, camera.getCameraPosition().x, 
 			camera.getCameraPosition().y, camera.getCameraPosition().z);
 
-		// luz ligada a la cámara de tipo flash
-		//sirve para que en tiempo de ejecución (dentro del while) se cambien propiedades de la luz
+		/*
+		* TODO: eliminar esta luz de tipo linterna
+		*/
 		glm::vec3 lowerLight = camera.getCameraPosition();
-		lowerLight.y -= 0.3f;
+		lowerLight.y -= 0.3f; 
 		spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
 
 		//información al shader de fuentes de iluminación
@@ -435,57 +446,77 @@ int main()
 		// variables auxiliares para la interfaz de selección de personaje
 		glm::vec3 camPos = camera.getCameraPosition();
 		glm::vec3 camFront = glm::normalize(camera.getCameraDirection());
-		glm::vec3 modeloPos = camPos + camFront * 20.0f;
+		glm::mat4 orientacion = glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
 
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, modeloPos);
-		model *= glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
-		modelaux = model;
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		AtomEve_torso.RenderModel();
+		/*
+		* TODO: abstraer a una clase para no usar tantos IFs
+		*/
+		int idPersonaje = mainWindow.getIdPersonaje();
+		if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 0) {
+			glm::vec3 modeloPos = camPos + camFront * 5.0f; // distancia a la camara
+			DannyPhantom_M.MovFullModel(glm::vec3(modeloPos), orientacion);
+			DannyPhantom_M.TransformHead(glm::vec3(0.0f, 0.21f, 0.0f));
+			DannyPhantom_M.TransformLegR(glm::vec3(-0.04f, -0.2f, 0.0f));
+			DannyPhantom_M.TransformLegL(glm::vec3(0.035f, -0.2f, 0.0f));
+			DannyPhantom_M.TransformArmR(glm::vec3(-0.1445f, 0.123f, 0.0f));
+			DannyPhantom_M.TransformArmL(glm::vec3(0.13f, 0.12f, 0.0f));
+			DannyPhantom_M.RenderModelJ(uniformModel);
+		}
+		else if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 1) {
+			glm::vec3 modeloPos = camPos + camFront * 3.0f; // distancia a la camara
+			Invencible_M.MovFullModel(glm::vec3(modeloPos), orientacion);
+			Invencible_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
+			Invencible_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
+			Invencible_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
+			Invencible_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f));
+			Invencible_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
+			Invencible_M.RenderModelJ(uniformModel);
+		}
+		// TODO: ARREGLAR JERARQUIA DE BATMAN
+		else if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 2) {
+			glm::vec3 modeloPos = camPos + camFront * 3.0f; // distancia a la camara
+			Batman_M.MovFullModel(glm::vec3(modeloPos), orientacion);
+			Batman_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
+			Batman_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
+			Batman_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
+			Batman_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f));
+			Batman_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
+			Batman_M.RenderModelJ(uniformModel);
+		}
+		// TODO: BMO
 
-		model = modelaux;
-		model = glm::translate(model, glm::vec3(0.0f, 4.642f, -0.04f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		AtomEve_cabeza.RenderModel();
-
-		model = modelaux;
-		model = glm::translate(model, glm::vec3(-0.86f, 3.764f, -0.172f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		AtomEve_brazo_der.RenderModel();
-
-		model = modelaux;
-		model = glm::translate(model, glm::vec3(0.899f, 3.647f, -0.304f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		AtomEve_brazo_izq.RenderModel();
-
-		model = modelaux;
-		model = glm::translate(model, glm::vec3(-0.594f, 0.26f, -0.052f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		AtomEve_pie_der.RenderModel();
-
-		model = modelaux;
-		model = glm::translate(model, glm::vec3(0.135f, 0.016f, 0.001f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		AtomEve_pie_izq.RenderModel();
+		Batman_M.MovFullModel(glm::vec3(0.0f, 10.0f,0.0f));
+		Batman_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
+		Batman_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
+		Batman_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
+		Batman_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f));
+		Batman_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
+		Batman_M.RenderModelJ(uniformModel);
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		/*
-		* Interfaz
-		*/
-		
+		// desaparecer interfaz si el usuario ya selecciono un avatar
+		if (mainWindow.isPersonajeSeleccionado()) {
+			glDisable(GL_BLEND);
+			glUseProgram(0);
+			mainWindow.swapBuffers();
+			continue;
+		}
 
-		// Obtener vectores de la cámara
+		/*
+		* Interfaz ligada a la camara
+		*/
+
+		// Obtener vectores de la camara
 		glm::vec3 camRight = glm::normalize(glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
 		glm::vec3 camUp = glm::normalize(glm::cross(camRight, camFront));
 
 		// Posicion frente a la camara (a 10 unidades)
 		glm::vec3 basePos = camPos + camFront * 10.0f;
 
+		// renderizar encabezados
 		std::string texto = "FERIA FUTURISTA";
-
 		for (int i = 0; i < texto.size(); i++) {
 			if (texto[i] == ' ') continue;
 
@@ -508,6 +539,25 @@ int main()
 			ProjectDefaultFont.UseTexture();
 			meshList[0]->RenderMesh();
 		}
+
+		/*
+		* Renderizar logo/letrero de personajes
+		*/
+		if (idPersonaje == 1) {
+			glm::vec3 offsetPos = basePos + camRight * 0.0f + camUp * -2.5f;
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, offsetPos);
+			model *= glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
+			model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::scale(model, glm::vec3(10.0f, 1.0f, 1.0f));
+			glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			color = glm::vec3(1.0f, 1.0f, 1.0f);
+			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+			LogoInvencible.UseTexture();
+			meshList[1]->RenderMesh();
+		}
+		// TODO: renderizar condicionalmente los demas logos
 
 		glDisable(GL_BLEND);
 		glUseProgram(0);
