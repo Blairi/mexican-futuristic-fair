@@ -13,7 +13,10 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 {
 	width = windowWidth;
 	height = windowHeight;
-	muevex = 0.0f;
+	muevex = 2.0f;
+	this->NUMERO_PERSONAJES = 4;
+	this->idPersonaje = 0;
+	this->personajeSeleccionado = false;
 	for (size_t i = 0; i < 1024; i++)
 	{
 		keys[i] = 0;
@@ -93,9 +96,6 @@ GLfloat Window::getYChange()
 	return theChange;
 }
 
-
-
-
 void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, int mode)
 {
 	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
@@ -114,7 +114,21 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 
 	}
 
+	if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE)
+	{
+		theWindow->idPersonaje = 
+			(theWindow->idPersonaje - 1 + theWindow->NUMERO_PERSONAJES) % theWindow->NUMERO_PERSONAJES;
+	}
+	
+	if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE)
+	{
+		theWindow->idPersonaje = (theWindow->idPersonaje + 1) % theWindow->NUMERO_PERSONAJES;
+	}
 
+	if (key == GLFW_KEY_ENTER && action == GLFW_RELEASE)
+	{
+		theWindow->personajeSeleccionado = true;
+	}
 
 	if (key >= 0 && key < 1024)
 	{
@@ -148,7 +162,6 @@ void Window::ManejaMouse(GLFWwindow* window, double xPos, double yPos)
 	theWindow->lastX = xPos;
 	theWindow->lastY = yPos;
 }
-
 
 Window::~Window()
 {
