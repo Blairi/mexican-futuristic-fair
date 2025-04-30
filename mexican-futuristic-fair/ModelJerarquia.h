@@ -50,7 +50,9 @@ class ModelJerarquia: public Model {
 			glm::vec3 sca = glm::vec3(1.0f, 1.0f, 1.0f)
 		);
 
-		void MovFullModel(glm::vec3 mueve, glm::mat4 extraTransform = glm::mat4(1.0f));
+		void MovFullModel(glm::vec3 mueve, glm::vec3 rota = glm::vec3(0.0f, 0.0f, 1.0f), GLfloat angulo = 0.0f);
+
+		void TranformFullModel(glm::vec3 mueve, glm::mat4 extraTransform = glm::mat4(1.0f));
 
 		void OrientToCamera(glm::vec3 camFront);
 
@@ -63,6 +65,6 @@ class ModelJerarquia: public Model {
 		std::string NameItems[6];
 		glm::mat4 modelroot;
 		glm::vec3 actualPos;
-
+		GLfloat initAngulo;
 		
 };

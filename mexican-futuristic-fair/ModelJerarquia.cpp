@@ -11,6 +11,7 @@ ModelJerarquia::ModelJerarquia(const std::string& filePath) {
 
 	modelPath = filePath;
 	modelroot = glm::mat4(1.0);
+	initAngulo = 0.0f;
 }
 
 void ModelJerarquia::InitModel(glm::vec3 initialPos) {
@@ -82,7 +83,7 @@ void ModelJerarquia::TransformLegR(glm::vec3 tras, glm::vec3 rot, GLfloat angulo
 	MatrixModels[5] = glm::scale(MatrixModels[5], sca);
 }
 
-void ModelJerarquia::MovFullModel(glm::vec3 mueve, glm::mat4 extraTransform) {
+void ModelJerarquia::TranformFullModel(glm::vec3 mueve, glm::mat4 extraTransform) {
 	glm::vec3 nuevaPos = actualPos + mueve;
 
 	modelroot = glm::mat4(1.0f);
@@ -94,12 +95,28 @@ void ModelJerarquia::MovFullModel(glm::vec3 mueve, glm::mat4 extraTransform) {
 	}
 }
 
+void ModelJerarquia::MovFullModel(glm::vec3 mueve, glm::vec3 rota, GLfloat angulo) {
+
+	glm::vec3 nuevaPos;
+	nuevaPos.x = actualPos.x + mueve.x;
+	nuevaPos.y = actualPos.y + mueve.y;
+	nuevaPos.z = actualPos.z + mueve.z;
+
+	modelroot = glm::mat4(1.0);
+	modelroot = glm::translate(modelroot, nuevaPos);
+	modelroot = glm::rotate(modelroot, glm::radians(initAngulo + angulo), rota);
+
+	for (int i = 0; i < 6; i++) {
+		MatrixModels[i] = modelroot;
+	}
+}
+
 void ModelJerarquia::OrientToCamera(glm::vec3 camFront)
 {
-	// Calcular la matriz de rotación que hace que el modelo apunte hacia camFront
+	// Calcular la matriz de rotacion que hace que el modelo apunte hacia camFront
 	glm::mat4 orient = glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
 
-	// Aplicar la orientación a cada parte de la jerarquía
+	// Aplicar la orientacion a cada parte de la jerarquía
 	for (int i = 0; i < 6; i++) {
 		MatrixModels[i] *= orient;
 	}
