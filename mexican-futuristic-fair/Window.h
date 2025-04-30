@@ -18,7 +18,8 @@ public:
 		return  glfwWindowShouldClose(mainWindow);}
 	bool* getsKeys() { return keys; }
 	void swapBuffers() { return glfwSwapBuffers(mainWindow); }
-	
+	int getIdPersonaje() { return idPersonaje; }
+	bool isPersonajeSeleccionado(){ return personajeSeleccionado; }
 	~Window();
 private: 
 	GLFWwindow *mainWindow;
@@ -31,6 +32,11 @@ private:
 	GLfloat xChange;
 	GLfloat yChange;
 	GLfloat muevex;
+
+	int idPersonaje;
+	int NUMERO_PERSONAJES;
+	bool personajeSeleccionado;
+
 	bool mouseFirstMoved;
 	static void ManejaTeclado(GLFWwindow* window, int key, int code, int action, int mode);
 	static void ManejaMouse(GLFWwindow* window, double xPos, double yPos);
