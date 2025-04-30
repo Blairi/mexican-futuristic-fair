@@ -27,7 +27,8 @@ Autores:
 #include "Camera.h"
 #include "Texture.h"
 #include "Sphere.h"
-#include"Model.h"
+#include "Model.h"
+#include "ModelJerarquia.h"
 #include "Skybox.h"
 
 //para iluminación
@@ -50,8 +51,18 @@ Texture plainTexture;
 Texture pisoTexture;
 Texture AgaveTexture;
 
+// Modelo Escenario Principal
+
+Model Escenario_M;
+
+// Modelos Personajes
+
 Model Invincible_M;
-Model DannyPhantom_M;
+
+
+// Modelos Atraccinoes 
+
+Model Atrac_Boliche_M;
 
 Skybox skybox;
 
@@ -195,9 +206,8 @@ int main()
 
 	CreateObjects();
 	CreateShaders();
-
-	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f, 0.3f, 0.5f);
-
+																						//0.3f
+	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f, 0.1f, 0.5f);
 	brickTexture = Texture("Textures/brick.png");
 	brickTexture.LoadTextureA();
 	dirtTexture = Texture("Textures/dirt.png");
@@ -209,11 +219,19 @@ int main()
 	AgaveTexture = Texture("Textures/Agave.tga");
 	AgaveTexture.LoadTextureA();
 
+	Escenario_M = Model();
+	Escenario_M.LoadModel("Models/Escenario/base.obj");
+
 	Invincible_M = Model();
 	Invincible_M.LoadModel("Models/Invincible.obj");
 
-	DannyPhantom_M = Model();
-	DannyPhantom_M.LoadModel("Models/DannyPhantom/DannyPhantom.obj");
+	ModelJerarquia DannyPhantom_M = ModelJerarquia("Models/DannyPhantom");
+
+	// Posición inicial del nodo padre de la Jerarquia.
+	DannyPhantom_M.InitModel(glm::vec3(0.0f, 0.96f, 0.0f));
+
+	/*Atrac_Boliche_M = Model();
+	Atrac_Boliche_M.LoadModel("Models/Atracciones/Boliche/atraccionBoliche.obj");*/
 
 	std::vector<std::string> skyboxFaces;
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -336,17 +354,28 @@ int main()
 		pisoTexture.UseTexture();
 		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 
-		meshList[2]->RenderMesh();
+		//meshList[2]->RenderMesh();
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 3.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Invincible_M.RenderModel();
 
+		// Danny Phantom Model
+		DannyPhantom_M.MovFullModel(glm::vec3(mainWindow.getmuevex(), 0.0f, 0.0f));
+		DannyPhantom_M.TransformHead(glm::vec3(0.0f, 0.21f, 0.0f));
+		DannyPhantom_M.TransformLegR(glm::vec3(-0.04f, -0.2f, 0.0f));
+		DannyPhantom_M.TransformLegL(glm::vec3(0.035f, -0.2f, 0.0f));
+		DannyPhantom_M.TransformArmR(glm::vec3(-0.1445f, 0.123f, 0.0f));
+		DannyPhantom_M.TransformArmL(glm::vec3(0.13f, 0.12f, 0.0f));
+		DannyPhantom_M.RenderModelJ(uniformModel);
+
+
+
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(5.0f, 0.0f, 3.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		DannyPhantom_M.RenderModel();
+		Escenario_M.RenderModel();
 		
 		glDisable(GL_BLEND);
 
