@@ -13,7 +13,7 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 {
 	width = windowWidth;
 	height = windowHeight;
-	muevex = 2.0f;
+	muevex = 0.0f;
 	for (size_t i = 0; i < 1024; i++)
 	{
 		keys[i] = 0;
@@ -106,11 +106,14 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 	}
 	if (key == GLFW_KEY_Y)
 	{
-		theWindow-> muevex += 1.0;
+		theWindow-> muevex -= 0.01;
+		printf("Y: muevex =  %f'\n", theWindow->muevex);
 	}
 	if (key == GLFW_KEY_U)
 	{
-		theWindow-> muevex -= 1.0;
+		theWindow-> muevex += 0.01;
+		printf("U: muevex =  %f'\n", theWindow->muevex);
+
 	}
 
 
