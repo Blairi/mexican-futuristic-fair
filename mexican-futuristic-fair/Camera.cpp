@@ -89,6 +89,22 @@ void Camera::update()
 	up = glm::normalize(glm::cross(right, front));
 }
 
+void Camera::setPosition(glm::vec3 position)
+{
+	this->position = position;
+}
+
+
+void Camera::setDirection(glm::vec3 direction)
+{
+	direction = glm::normalize(direction);
+
+	pitch = glm::degrees(asin(direction.y));
+	yaw = glm::degrees(atan2(direction.z, direction.x));
+
+	update();
+}
+
 
 Camera::~Camera()
 {

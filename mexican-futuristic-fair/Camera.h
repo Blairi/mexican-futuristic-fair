@@ -15,6 +15,8 @@ public:
 
 	void keyControl(bool* keys, GLfloat deltaTime);
 	void mouseControl(GLfloat xChange, GLfloat yChange);
+	void setPosition(glm::vec3 position);
+	void setDirection(glm::vec3 direction);
 
 	glm::vec3 getCameraPosition();
 	glm::vec3 getCameraDirection();
