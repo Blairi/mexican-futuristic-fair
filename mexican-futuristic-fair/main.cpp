@@ -256,21 +256,21 @@ int main()
 	* Puestos de comida
 	*/
 	Model TortasInvencible = Model();
-	TortasInvencible.LoadModel("Models/puesto-tortas-invencible.obj");
+	TortasInvencible.LoadModel("Models/PuestoTortasInvencible/puesto-tortas-invencible.obj");
 
 	/*
 	* Atracciones
 	*/
 	Model RevientaGlobosInvencible = Model();
-	RevientaGlobosInvencible.LoadModel("Models/invencible-revienta-globos.obj");
+	RevientaGlobosInvencible.LoadModel("Models/RevientaGlobos/invencible-revienta-globos.obj");
 
 
 	Model RuedaFortunaInvencibleBase = Model();
-	RuedaFortunaInvencibleBase.LoadModel("Models/rueda-fortuna-base.obj");
+	RuedaFortunaInvencibleBase.LoadModel("Models/RuedaFortuna/rueda-fortuna-base.obj");
 	Model RuedaFortunaInvencibleWheel = Model();
-	RuedaFortunaInvencibleWheel.LoadModel("Models/rueda-fortuna-wheel.obj");
+	RuedaFortunaInvencibleWheel.LoadModel("Models/RuedaFortuna/rueda-fortuna-wheel.obj");
 	Model RuedaFortunaInvencibleCabina = Model();
-	RuedaFortunaInvencibleCabina.LoadModel("Models/rueda-fortuna-cabina.obj");
+	RuedaFortunaInvencibleCabina.LoadModel("Models/RuedaFortuna/rueda-fortuna-cabina.obj");
 
 	// Boliche 
 	Model LineasBoliche = Model();
