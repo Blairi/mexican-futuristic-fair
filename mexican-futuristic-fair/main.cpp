@@ -264,6 +264,13 @@ int main()
 	Model RevientaGlobosInvencible = Model();
 	RevientaGlobosInvencible.LoadModel("Models/invencible-revienta-globos.obj");
 
+	Model RuedaFortunaInvencibleBase = Model();
+	RuedaFortunaInvencibleBase.LoadModel("Models/rueda-fortuna-base.obj");
+	Model RuedaFortunaInvencibleWheel = Model();
+	RuedaFortunaInvencibleWheel.LoadModel("Models/rueda-fortuna-wheel.obj");
+	Model RuedaFortunaInvencibleCabina = Model();
+	RuedaFortunaInvencibleCabina.LoadModel("Models/rueda-fortuna-cabina.obj");
+
 	/*
 	* Avatares
 	*/
@@ -281,6 +288,8 @@ int main()
 	*/
 	ModelJerarquia AtomEve_M = ModelJerarquia("Models/AtomEve");
 	AtomEve_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+	ModelJerarquia OmniMan_M = ModelJerarquia("Models/OmniMan");
+	OmniMan_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 
 	std::vector<std::string> skyboxFaces;
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -385,6 +394,11 @@ int main()
 		{ 'Z', std::make_pair(0.2382f, 0.1679f) },
 	};
 
+	/*
+	* variables auxiliares para las animaciones
+	*/
+	float girarRueda = 0.0f;
+	float animaAtomGlobos = 0.0f;
 	while (!mainWindow.getShouldClose())
 	{
 		GLfloat now = glfwGetTime();
@@ -471,11 +485,63 @@ int main()
 		*/
 
 		// puesto de tortas invencible
+		glm::vec3 posPuestoTortas(-7.366f, 0.0f, -16.264f);
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-2.85f, 0.0f, -6.494f));
+		model = glm::translate(model, posPuestoTortas);
+		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
 		model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		TortasInvencible.RenderModel();
+
+		/*
+		* Feria de la fortuna
+		*/
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-0.876f, 0.0f, 18.489f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		RuedaFortunaInvencibleBase.RenderModel();
+
+		girarRueda += 0.5 * deltaTime; // TODO: evitar desbordamiento 
+
+		model = glm::translate(model, glm::vec3(0.0f, 7.187f, 0.0f));
+		model = glm::rotate(model, glm::radians(girarRueda), glm::vec3(0.0f, 0.0f, 1.0f));
+		modelaux = model;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		RuedaFortunaInvencibleWheel.RenderModel();
+
+		std::vector<std::pair<float, float>> posCabinas = {
+			//				x,      y
+			std::make_pair(-5.782f, 0.0f),
+			std::make_pair(-4.8f, 3.478f),
+			std::make_pair(-2.527, 5.258f),
+			std::make_pair(0.0f, 5.656f),
+			std::make_pair(2.546f, 5.258f),
+			std::make_pair(4.63f, 3.478f),
+			std::make_pair(5.815f, 0.0f),
+			std::make_pair(4.7f, -3.317f),
+			std::make_pair(2.553f, -5.169f),
+			std::make_pair(0.0f, -5.792f),
+			std::make_pair(-2.521f, -5.169f),
+			std::make_pair(-4.701f, -3.317f),
+		};
+
+		for (int i = 0; i < posCabinas.size(); i++) {
+			model = modelaux;
+			model = glm::translate(model, glm::vec3(posCabinas[i].first, posCabinas[i].second, 0.0f));
+			model = glm::rotate(model, glm::radians(-girarRueda), glm::vec3(0.0f, 0.0f, 1.0f));
+			if(i % 2 == 0)
+				color = glm::vec3(0.14509f, 0.58823f, 0.74509f); // azul invencible
+			else
+				color = glm::vec3(0.9215f, 0.3647f, 0.4823f); // rosa atom eve
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+			RuedaFortunaInvencibleCabina.RenderModel();
+		}
+		// reiniciar color blanco
+		glUniform3fv(uniformColor, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+
+
 
 		/*
 		* ------------------
@@ -488,7 +554,7 @@ int main()
 		* Revienta Globos - A5
 		*/
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-10.09f, 0.0f, 4.905f));
+		model = glm::translate(model, glm::vec3(-25.0f, 0.0f, 11.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		RevientaGlobosInvencible.RenderModel();
 
@@ -499,13 +565,16 @@ int main()
 		* ------------------
 		*/
 		// Atom eve - revienta globos
-		AtomEve_M.MovFullModel(glm::vec3(-10.929f, 0.85f, 4.376f), glm::vec3(0.0, 1.0f, 0.0f), 135.753f);
+		animaAtomGlobos += 0.1f * deltaTime;
+		AtomEve_M.MovFullModel(glm::vec3(-25.7f, 0.95f, 10.5f), 
+			glm::vec3(0.0, 1.0f, 0.0f), 135.753f);
 		AtomEve_M.TransformHead(glm::vec3(0.0f, 0.567f, -0.015f), 
-			glm::vec3(0.0f, 1.0f, 0.0f), sin(rotacionCamara)); // TODO: corregir animacion
+			glm::vec3(1.0f, 0.0f, 0.0f), 5*sin(animaAtomGlobos));
 		AtomEve_M.TransformLegR(glm::vec3(-0.065f, 0.03f, -0.008f));
 		AtomEve_M.TransformLegL(glm::vec3(0.015f, 0.01f, -0.003f));
 		AtomEve_M.TransformArmR(glm::vec3(-0.103f, 0.462f, -0.018f));
-		AtomEve_M.TransformArmL(glm::vec3(0.108f, 0.444f, -0.039f));
+		AtomEve_M.TransformArmL(glm::vec3(0.108f, 0.444f, -0.039f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 50 * cos(animaAtomGlobos));
 		AtomEve_M.RenderModelJ(uniformModel);
 
 		/*
@@ -514,6 +583,16 @@ int main()
 		* Aqui renderizar todos los NPC de ambiente
 		* ------------------
 		*/
+
+		// omniman - tortas invencible
+		OmniMan_M.MovFullModel(posPuestoTortas + glm::vec3(-0.6f, 0.9f, -0.6f),
+			glm::vec3(0.0f, 1.0f, 0.0f), 32.953f);
+		OmniMan_M.TransformHead(glm::vec3(0.0f, 0.683f, -0.015f));
+		OmniMan_M.TransformLegR(glm::vec3(-0.081f, 0.033f, 0.017f));
+		OmniMan_M.TransformLegL(glm::vec3(0.075f, 0.036f, -0.003f));
+		OmniMan_M.TransformArmR(glm::vec3(-0.163f, 0.549f, -0.037f));
+		OmniMan_M.TransformArmL(glm::vec3(0.177f, 0.551f, -0.034f));
+		OmniMan_M.RenderModelJ(uniformModel);
 
 		// variables auxiliares para la interfaz de selección de personaje
 		glm::vec3 camPos = camera.getCameraPosition();
