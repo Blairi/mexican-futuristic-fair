@@ -256,21 +256,21 @@ int main()
 	* Puestos de comida
 	*/
 	Model TortasInvencible = Model();
-	TortasInvencible.LoadModel("Models/puesto-tortas-invencible.obj");
+	TortasInvencible.LoadModel("Models/PuestoTortasInvencible/puesto-tortas-invencible.obj");
 
 	/*
 	* Atracciones
 	*/
 	Model RevientaGlobosInvencible = Model();
-	RevientaGlobosInvencible.LoadModel("Models/invencible-revienta-globos.obj");
+	RevientaGlobosInvencible.LoadModel("Models/RevientaGlobos/invencible-revienta-globos.obj");
 
 
 	Model RuedaFortunaInvencibleBase = Model();
-	RuedaFortunaInvencibleBase.LoadModel("Models/rueda-fortuna-base.obj");
+	RuedaFortunaInvencibleBase.LoadModel("Models/RuedaFortuna/rueda-fortuna-base.obj");
 	Model RuedaFortunaInvencibleWheel = Model();
-	RuedaFortunaInvencibleWheel.LoadModel("Models/rueda-fortuna-wheel.obj");
+	RuedaFortunaInvencibleWheel.LoadModel("Models/RuedaFortuna/rueda-fortuna-wheel.obj");
 	Model RuedaFortunaInvencibleCabina = Model();
-	RuedaFortunaInvencibleCabina.LoadModel("Models/rueda-fortuna-cabina.obj");
+	RuedaFortunaInvencibleCabina.LoadModel("Models/RuedaFortuna/rueda-fortuna-cabina.obj");
 
 	// Boliche 
 	Model LineasBoliche = Model();
@@ -285,6 +285,21 @@ int main()
 	Model BocinasStageEmber = Model();
 	BocinasStageEmber.LoadModel("Models/StageEmber/BocinasEmber.obj");
 
+	/*
+	* Zona Invencible
+	*/
+	Model ShowSuit = Model();
+	ShowSuit.LoadModel("Models/ZonaInvencible/show-suit.obj");
+	Model KidOmniMan_M = Model();
+	KidOmniMan_M.LoadModel("Models/ZonaInvencible/KidOmniman.obj");
+	Model Duplikate_M = Model();
+	Duplikate_M.LoadModel("Models/ZonaInvencible/Duplikate.obj");
+	Model Powerplex_M = Model();
+	Powerplex_M.LoadModel("Models/ZonaInvencible/Powerplex.obj");
+	Model Cecil_M = Model();
+	Cecil_M.LoadModel("Models/ZonaInvencible/cecil-model.obj");
+	Model Conquest_M = Model();
+	Conquest_M.LoadModel("Models/ZonaInvencible/Conquest.obj");
 
 	/*
 	* Avatares
@@ -417,6 +432,9 @@ int main()
 	*/
 	float girarRueda = 0.0f;
 	float animaAtomGlobos = 0.0f;
+	float animarZonaTrajes = 0.0f;
+
+
 	while (!mainWindow.getShouldClose())
 	{
 		GLfloat now = glfwGetTime();
@@ -559,6 +577,40 @@ int main()
 		// reiniciar color blanco
 		glUniform3fv(uniformColor, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
 
+		/*
+		* Zona Invencible
+		* Se renderizan modelos de personajes con un showcase
+		*/
+		float posShowCases[5][4] = {
+			// x,        y,    z,     rotacion
+			{19.501f, 0.0f, -13.491f, -19.852f},
+			{21.367f, 0.0f, -12.757f, -29.925f},
+			{22.677f, 0.0f, -11.303f, -63.702f},
+			{23.371f, 0.0f, -9.75f, -90.554f},
+			{23.356f, 0.0f, -7.766f, -95.562f},
+		};
+
+		Model personajes[5] = {
+			Cecil_M, Conquest_M, Duplikate_M, KidOmniMan_M, Powerplex_M,
+		};
+
+		animarZonaTrajes += 0.5 * deltaTime; //TODO: evitar desbordamiento de float
+		for (int i = 0; i < 5; i++) {
+			// renderiza showcase
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(posShowCases[i][0], 0.0f, posShowCases[i][2]));
+			model = glm::rotate(model, glm::radians(posShowCases[i][3]), glm::vec3(0.0f, 1.0f, 0.0f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			ShowSuit.RenderModel();
+			// renderiza personajes dentro del showcase
+			model = glm::translate(model, glm::vec3(0.0f, 0.12f, 0.0f));
+			if(i == 1) // escalar Conquest
+				model = glm::scale(model, glm::vec3(0.8f));
+			model = glm::scale(model, glm::vec3(1.0f) * (1.0f + 0.05f * sin(animarZonaTrajes*0.1f)));
+			model = glm::rotate(model, glm::radians(animarZonaTrajes), glm::vec3(0.0f, 1.0f, 0.0f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			personajes[i].RenderModel();
+		}
 
 		/*
 		* Escenario Ember
