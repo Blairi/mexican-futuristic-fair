@@ -264,6 +264,19 @@ int main()
 	Model RevientaGlobosInvencible = Model();
 	RevientaGlobosInvencible.LoadModel("Models/invencible-revienta-globos.obj");
 
+	// Boliche 
+	Model LineasBoliche = Model();
+	LineasBoliche.LoadModel("Models/AtraccionBoliche/lineasBoliche.obj");
+
+	/*
+	* Escenario de Musica
+	*/
+	Model Stage = Model();
+	Stage.LoadModel("Models/StageEmber/concertStage.obj");
+
+	Model BocinasStageEmber = Model();
+	BocinasStageEmber.LoadModel("Models/StageEmber/BocinasEmber.obj");
+
 	/*
 	* Avatares
 	*/
@@ -281,6 +294,9 @@ int main()
 	*/
 	ModelJerarquia AtomEve_M = ModelJerarquia("Models/AtomEve");
 	AtomEve_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+
+	Model Ember_M = Model();
+	Ember_M.LoadModel("Models/Ember/Ember.obj");
 
 	std::vector<std::string> skyboxFaces;
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -478,6 +494,20 @@ int main()
 		TortasInvencible.RenderModel();
 
 		/*
+		* Escenario Ember
+		* Se renderiza Escenario, Bocinas.
+		*/
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f,0.0f,-30.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Stage.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BocinasStageEmber.RenderModel();
+
+		/*
 		* ------------------
 		* Atracciones
 		* Aqui renderizar todos los modelos de atracciones
@@ -491,6 +521,14 @@ int main()
 		model = glm::translate(model, glm::vec3(-10.09f, 0.0f, 4.905f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		RevientaGlobosInvencible.RenderModel();
+
+		/*
+		* Boliche - A2
+		*/
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-3.5f,0.0f, 28.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		LineasBoliche.RenderModel();
 
 		/*
 		* ------------------
@@ -507,6 +545,12 @@ int main()
 		AtomEve_M.TransformArmR(glm::vec3(-0.103f, 0.462f, -0.018f));
 		AtomEve_M.TransformArmL(glm::vec3(0.108f, 0.444f, -0.039f));
 		AtomEve_M.RenderModelJ(uniformModel);
+
+		// Ember del Escenario
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Ember_M.RenderModel();
 
 		/*
 		* ------------------
