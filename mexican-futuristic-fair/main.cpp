@@ -32,7 +32,7 @@ Autores:
 #include "ModelJerarquia.h"
 #include "Skybox.h"
 
-//para iluminaci髇
+//para iluminaci贸n
 #include "CommonValues.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
@@ -80,7 +80,7 @@ static const char* vShader = "shaders/shader_light.vert";
 static const char* fShader = "shaders/shader_light.frag";
 
 
-//funci髇 de calculo de normales por promedio de v閞tices 
+//funci贸n de calculo de normales por promedio de v茅rtices 
 void calcAverageNormals(unsigned int* indices, unsigned int indiceCount, GLfloat* vertices, unsigned int verticeCount,
 	unsigned int vLength, unsigned int normalOffset)
 {
@@ -264,12 +264,27 @@ int main()
 	Model RevientaGlobosInvencible = Model();
 	RevientaGlobosInvencible.LoadModel("Models/invencible-revienta-globos.obj");
 
+
 	Model RuedaFortunaInvencibleBase = Model();
 	RuedaFortunaInvencibleBase.LoadModel("Models/rueda-fortuna-base.obj");
 	Model RuedaFortunaInvencibleWheel = Model();
 	RuedaFortunaInvencibleWheel.LoadModel("Models/rueda-fortuna-wheel.obj");
 	Model RuedaFortunaInvencibleCabina = Model();
 	RuedaFortunaInvencibleCabina.LoadModel("Models/rueda-fortuna-cabina.obj");
+
+	// Boliche 
+	Model LineasBoliche = Model();
+	LineasBoliche.LoadModel("Models/AtraccionBoliche/lineasBoliche.obj");
+
+	/*
+	* Escenario de Musica
+	*/
+	Model Stage = Model();
+	Stage.LoadModel("Models/StageEmber/concertStage.obj");
+
+	Model BocinasStageEmber = Model();
+	BocinasStageEmber.LoadModel("Models/StageEmber/BocinasEmber.obj");
+
 
 	/*
 	* Avatares
@@ -291,6 +306,9 @@ int main()
 	ModelJerarquia OmniMan_M = ModelJerarquia("Models/OmniMan");
 	OmniMan_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 
+	Model Ember_M = Model();
+	Ember_M.LoadModel("Models/Ember/Ember.obj");
+
 	std::vector<std::string> skyboxFaces;
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_lf.tga");
@@ -305,13 +323,13 @@ int main()
 	Material_opaco = Material(0.3f, 4);
 
 
-	//luz direccional, s髄o 1 y siempre debe de existir
+	//luz direccional, s贸lo 1 y siempre debe de existir
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
 		0.3f, 0.3f, // intensidad ambiental (radiacion de la luz), intensidad difusa
 		0.0f, -1.0f, 0.0f);
 	//contador de luces puntuales
 	unsigned int pointLightCount = 0;
-	//Declaraci髇 de primer luz puntual
+	//Declaraci贸n de primer luz puntual
 	pointLights[0] = PointLight(1.0f, 0.0f, 0.0f,
 		0.0f, 1.0f,
 		-6.0f, 1.5f, 1.5f, // pos
@@ -438,7 +456,7 @@ int main()
 		uniformColor = shaderList[0].getColorLocation();
 		uniformTextureOffset = shaderList[0].getOffsetLocation();
 		
-		//informaci髇 en el shader de intensidad especular y brillo
+		//informaci贸n en el shader de intensidad especular y brillo
 		uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
 		uniformShininess = shaderList[0].GetShininessLocation();
 
@@ -454,7 +472,7 @@ int main()
 		lowerLight.y -= 0.3f; 
 		spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
 
-		//informaci髇 al shader de fuentes de iluminaci髇
+		//informaci贸n al shader de fuentes de iluminaci贸n
 		shaderList[0].SetDirectionalLight(&mainLight);
 		shaderList[0].SetPointLights(pointLights, pointLightCount);
 		shaderList[0].SetSpotLights(spotLights, spotLightCount);
@@ -543,6 +561,20 @@ int main()
 
 
 
+		* Escenario Ember
+		* Se renderiza Escenario, Bocinas.
+		*/
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f,0.0f,-30.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Stage.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BocinasStageEmber.RenderModel();
+
+
 		/*
 		* ------------------
 		* Atracciones
@@ -557,6 +589,14 @@ int main()
 		model = glm::translate(model, glm::vec3(-25.0f, 0.0f, 11.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		RevientaGlobosInvencible.RenderModel();
+
+		/*
+		* Boliche - A2
+		*/
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-3.5f,0.0f, 28.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		LineasBoliche.RenderModel();
 
 		/*
 		* ------------------
@@ -577,6 +617,12 @@ int main()
 			glm::vec3(1.0f, 0.0f, 0.0f), 50 * cos(animaAtomGlobos));
 		AtomEve_M.RenderModelJ(uniformModel);
 
+		// Ember del Escenario
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Ember_M.RenderModel();
+
 		/*
 		* ------------------
 		* NPC de ambiente
@@ -594,7 +640,7 @@ int main()
 		OmniMan_M.TransformArmL(glm::vec3(0.177f, 0.551f, -0.034f));
 		OmniMan_M.RenderModelJ(uniformModel);
 
-		// variables auxiliares para la interfaz de selecci髇 de personaje
+		// variables auxiliares para la interfaz de selecci贸n de personaje
 		glm::vec3 camPos = camera.getCameraPosition();
 		glm::vec3 camFront = glm::normalize(camera.getCameraDirection());
 		glm::mat4 orientacion = glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
