@@ -560,7 +560,7 @@ int main()
 		glUniform3fv(uniformColor, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
 
 
-
+		/*
 		* Escenario Ember
 		* Se renderiza Escenario, Bocinas.
 		*/
