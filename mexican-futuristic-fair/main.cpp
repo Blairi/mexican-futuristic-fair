@@ -221,6 +221,29 @@ void CreateShaders()
 	shaderList.push_back(*shader1);
 }
 
+void SetPinesBoliche(GLuint &uniformModel, std::vector <glm::mat4> &pinesTrans, glm::mat4 modelroot, Model &pinBoliche) {
+
+	GLfloat spaceBetwen_z = 0.0f, spaceBetwen_x = 0.0f;
+	glm::mat4 modelaux(1.0);
+	pinesTrans.clear();
+
+	for (int i = 0; i < 4; i++) {
+
+		for (int j = i; j < 4; j++) {
+			
+			modelaux = modelroot;
+			modelaux = glm::translate(modelroot, glm::vec3(spaceBetwen_x, 0.0f, spaceBetwen_z));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
+			pinBoliche.RenderModel();
+
+			pinesTrans.push_back(modelaux);
+			spaceBetwen_z -= 0.25;
+		}
+		spaceBetwen_x += 0.25;
+		spaceBetwen_z = -0.125f * (i + 1);
+	}
+}
+
 
 int main()
 {
@@ -273,8 +296,36 @@ int main()
 	RuedaFortunaInvencibleCabina.LoadModel("Models/RuedaFortuna/rueda-fortuna-cabina.obj");
 
 	// Boliche 
+	Model SueloBoliche = Model();
+	SueloBoliche.LoadModel("Models/AtraccionBoliche/sueloBoliche.obj");
+
+	Model paredBoliche = Model();
+	paredBoliche.LoadModel("Models/AtraccionBoliche/paredBoliche.obj");
+
+	Model recibidorBoliche = Model();
+	recibidorBoliche.LoadModel("Models/AtraccionBoliche/recibidorBoliche.obj");
+
+	Model pinBoliche = Model();
+	pinBoliche.LoadModel("Models/AtraccionBoliche/pinBoliche.obj");
+	std::vector <glm::mat4> pinesTrans;
+
 	Model LineasBoliche = Model();
 	LineasBoliche.LoadModel("Models/AtraccionBoliche/lineasBoliche.obj");
+
+	Model MaquinaBolasBolicheRoja = Model();
+	MaquinaBolasBolicheRoja.LoadModel("Models/AtraccionBoliche/maquinaBolasRoja.obj");
+
+	Model MaquinaBolasBolicheAzul = Model();
+	MaquinaBolasBolicheAzul.LoadModel("Models/AtraccionBoliche/maquinaBolasAzul.obj");
+
+	Model BolaVerde = Model();
+	BolaVerde.LoadModel("Models/AtraccionBoliche/BolaVerde.obj");
+
+	Model BolaRoja = Model();
+	BolaRoja.LoadModel("Models/AtraccionBoliche/BolaRoja.obj");
+
+	Model BolaAzul = Model();
+	BolaAzul.LoadModel("Models/AtraccionBoliche/BolaAzul.obj");
 
 	/*
 	* Escenario de Musica
@@ -504,6 +555,7 @@ int main()
 
 		glm::mat4 model(1.0);
 		glm::mat4 modelaux(1.0);
+		glm::mat4 modelrootBoliche(1.0);
 		glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 		glm::vec2 toffset = glm::vec2(0.0f, 0.0f);
 		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
@@ -646,9 +698,129 @@ int main()
 		* Boliche - A2
 		*/
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-3.5f,0.0f, 28.0f));
+		model = glm::translate(model, glm::vec3(-3.68f,0.0f, 28.854f));
+		modelrootBoliche = model;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		LineasBoliche.RenderModel();
+
+		model = glm::translate(model, glm::vec3(8.5f, 0.0f, -0.25f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		SueloBoliche.RenderModel();
+
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(8.5f, 0.0f, -0.25f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		paredBoliche.RenderModel();
+
+		// Recepcion
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(17.0, 0.0f, 1.8f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		recibidorBoliche.RenderModel();
+
+		// Maquinas de Bolas
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(11.8745f, 0.0f, -2.0));
+		modelaux = model;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		MaquinaBolasBolicheRoja.RenderModel();
+
+		// Bola Verde
+		model = glm::translate(model, glm::vec3(0.65f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaVerde.RenderModel();
+
+		// Bola Roja
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.4f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaRoja.RenderModel();
+
+		// Bola Azul
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaAzul.RenderModel();
+
+		// ------------
+
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(11.8745f, 0.0f, -0.45f));
+		modelaux = model;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		MaquinaBolasBolicheAzul.RenderModel();
+
+		// Bola Azul
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.65f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaAzul.RenderModel();
+
+		// Bola Roja
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.4f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaRoja.RenderModel();
+
+		// Bola Verde
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaVerde.RenderModel();
+
+		// ------------
+
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(11.8745f, 0.0f, 1.2f));
+		modelaux = model;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		MaquinaBolasBolicheRoja.RenderModel();
+
+		// Bola Roja
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.65f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaRoja.RenderModel();
+
+		// Bola Verde
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.4f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaVerde.RenderModel();
+
+		// Bola Azul
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaAzul.RenderModel();
+
+		/*
+		* Pines de Boliche por Linea
+		*/
+
+		// Linea 1
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(-5.5f, 0.0f, -1.0f));
+		SetPinesBoliche(uniformModel, pinesTrans, model, pinBoliche);
+
+		// Linea 3
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(-5.5f, 0.0f, 2.3f));
+		SetPinesBoliche(uniformModel, pinesTrans, model, pinBoliche);
+
+		// Linea 2
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(-5.5f, 0.0f, 0.7f));
+		SetPinesBoliche(uniformModel, pinesTrans, model, pinBoliche);
+
+		// -----------------------
+
+
+		/*
+		* Fin Boliche - A2
+		*/
+
+
 
 		/*
 		* ------------------
