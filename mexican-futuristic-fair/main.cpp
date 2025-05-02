@@ -26,6 +26,11 @@ Autores:
 #include "Mesh.h"
 #include "Shader_light.h"
 #include "Camera.h"
+#include "ThirdPersonCamera.h"
+#include "ObjectFocusCamera.h"
+#include "TopDownCamera.h"
+#include "FreeCamera.h"
+
 #include "Texture.h"
 #include "Sphere.h"
 #include "Model.h"
@@ -44,7 +49,6 @@ Window mainWindow;
 std::vector<Mesh*> meshList;
 std::vector<Shader> shaderList;
 
-Camera camera;
 
 Texture brickTexture;
 Texture dirtTexture;
@@ -272,8 +276,43 @@ int main()
 	createInterface();
 	CreateObjects();
 	CreateShaders();
-																						//0.3f
-	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f, 0.1f, 0.5f);
+
+	glm::vec3 avatarPos(0.0f, 0.0f, 0.0f);
+	// Ejemplo de un par de atracciones clave:
+	glm::vec3 posCabina(-25.0f, 0.0f, 11.0f);
+	glm::vec3 posBoliche(-3.68f, 0.0f, 28.85f);
+
+	std::vector<glm::vec3*> objetos = {
+		// Ejemplo: &posPuestoTortas, &posRevientaGlobos, ...
+		 &posCabina, &posBoliche // (sólo placeholder)
+	};
+
+	// --- INSTANCIAR CÁMARAS ---
+	FreeCamera freeCam(
+		glm::vec3(0, 0, 0), glm::vec3(0, 1, 0),  // posición y up
+		0.0f, 0.0f,                          // yaw, pitch
+		0.1f, 0.5f                          // moveSpeed, turnSpeed
+	);
+	ThirdPersonCamera thirdCam(
+		glm::vec3(0, 3, 8),                  // offset detrás del avatar
+		glm::vec3(0, 1, 0),                  // up vector
+		&avatarPos                         // target del avatar
+	);
+	ObjectFocusCamera objFocusCam(
+		glm::vec3(0, 1, 0),                  // up
+		objetos                            // lista de punteros a posiciones
+	);
+	TopDownCamera topDownCam(
+		glm::vec3(0, 0, 0), 60.0f,            // centro y altura
+		glm::vec3(0, 0, -1)                   // up del top-down
+	);
+
+	// Cámara activa
+	Camera* activeCamera = &freeCam;
+
+
+
+
 	brickTexture = Texture("Textures/brick.png");
 	brickTexture.LoadTextureA();
 	dirtTexture = Texture("Textures/dirt.png");
@@ -523,27 +562,56 @@ int main()
 		//Recibir eventos del usuario
 		glfwPollEvents();
 
+		// — Cambiar cámara con teclas 1–4 —
+		if (mainWindow.getsKeys()[GLFW_KEY_1]) activeCamera = &freeCam;
+		if (mainWindow.getsKeys()[GLFW_KEY_2]) activeCamera = &thirdCam;
+		static bool prevKey3 = false;
+		bool currKey3 = mainWindow.getsKeys()[GLFW_KEY_3];
+
+		// Si acabas de pulsar (borde de subida)
+		if (currKey3 && !prevKey3) {
+			// 1) cambiamos la cámara activa a ObjectFocusCamera
+			activeCamera = &objFocusCam;
+			// 2) avanzamos al siguiente objeto
+			objFocusCam.nextObject();
+		}
+		prevKey3 = currKey3;
+
+		if (mainWindow.getsKeys()[GLFW_KEY_4]) activeCamera = &topDownCam;
+
+		// Actualiza la cámara elegida
+		activeCamera->update(deltaTime);
+
+		// Sólo la freeCam y thirdCam usan WASD+mouse:
+		if (activeCamera == &freeCam || activeCamera == &thirdCam) {
+			activeCamera->keyControl(mainWindow.getsKeys(), deltaTime);
+			activeCamera->mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+		}
+
+		glm::mat4 viewMatrix = activeCamera->getViewMatrix();
+
+
+
 		// controlar la velocidad con la que rota la camara de seleccion de personaje
 		rotacionCamara += 0.005f * deltaTime; // TODO: evitar desbordamiento de int
 
+		float x = 30.0f * cos(rotacionCamara);
+		float z = 30.0f * sin(rotacionCamara);
+
 		if (mainWindow.isPersonajeSeleccionado()) {
-			// si ya se eligio personaje, controlamos camara con teclado
-			// TODO: usar una nueva camara
-			camera.keyControl(mainWindow.getsKeys(), deltaTime*5);
-			camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+			activeCamera->keyControl(mainWindow.getsKeys(), deltaTime * 5);
+			activeCamera->mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
 		else {
-			// cercania de la camara al elegir personaje
-			float x = 40 * cos(rotacionCamara);
-			float z = 40 * sin(rotacionCamara);
-			camera.setPosition(glm::vec3(x, 7.0f, z));
-			camera.setDirection(glm::vec3(-x, 0.0f, -z));
+			// en la fase de selección, forzamos la cámara libre:
+			freeCam.setPosition(glm::vec3(x, 7.0f, z));
+			freeCam.setDirection(glm::vec3(-x, 0, -z));
 		}
 
 		// Clear the window
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		skybox.DrawSkybox(camera.calculateViewMatrix(), projection);
+		skybox.DrawSkybox(viewMatrix, projection);
 		shaderList[0].UseShader();
 		uniformModel = shaderList[0].GetModelLocation();
 		uniformProjection = shaderList[0].GetProjectionLocation();
@@ -557,16 +625,17 @@ int main()
 		uniformShininess = shaderList[0].GetShininessLocation();
 
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
-		glUniform3f(uniformEyePosition, camera.getCameraPosition().x, 
-			camera.getCameraPosition().y, camera.getCameraPosition().z);
 
-		/*
-		* TODO: eliminar esta luz de tipo linterna
-		*/
-		glm::vec3 lowerLight = camera.getCameraPosition();
-		lowerLight.y -= 0.3f; 
-		spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
+		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+
+		// Para la linterna o efectos que necesitan posición:
+		glm::vec3 camPos = activeCamera->getCameraPosition();
+		glm::vec3 camDir = activeCamera->getCameraDirection();
+		glUniform3f(uniformEyePosition, camPos.x, camPos.y, camPos.z);
+		spotLights[0].SetFlash(camPos, camDir);
+
+
 
 		//información al shader de fuentes de iluminación
 		shaderList[0].SetDirectionalLight(&mainLight);
@@ -923,8 +992,7 @@ int main()
 		OmniMan_M.RenderModelJ(uniformModel);
 
 		// variables auxiliares para la interfaz de selección de personaje
-		glm::vec3 camPos = camera.getCameraPosition();
-		glm::vec3 camFront = glm::normalize(camera.getCameraDirection());
+		glm::vec3 camFront = glm::normalize(freeCam.getCameraDirection());
 		glm::mat4 orientacion = glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
 
 		/*
