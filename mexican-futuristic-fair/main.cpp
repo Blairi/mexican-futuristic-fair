@@ -141,6 +141,21 @@ void createInterface()
 	Mesh* logoInvencible = new Mesh();
 	logoInvencible->CreateMesh(LogoIncencibleVertices, LogoInvencibleIndices, 32, 6);
 	meshList.push_back(logoInvencible);
+
+	unsigned int PantallaInvencibleIndices[] = {
+		0, 1, 2,
+		0, 2, 3,
+	};
+	GLfloat PantallaInvencibleVertices[] = {
+		-1.0f, 0.0f, 1.5f,		0.0f, 0.0f,		0.0f, -1.0f, 0.0f, // esquina izq sup
+		1.0f, 0.0f, 1.5f,		0.2f, 0.0f,		0.0f, -1.0f, 0.0f, // esquina der sup
+		1.0f, 0.0f, -1.5f,		0.2f, 1.0f,		0.0f, -1.0f, 0.0f, // esquina der inf
+		-1.0f, 0.0f, -1.5f,		0.0f, 1.0f,		0.0f, -1.0f, 0.0f, // esquina izq inf
+	};
+
+	Mesh* pantalla = new Mesh();
+	pantalla->CreateMesh(PantallaInvencibleVertices, PantallaInvencibleIndices, 32, 6);
+	meshList.push_back(pantalla);
 }
 
 void CreateObjects()
@@ -190,6 +205,8 @@ void CreateObjects()
 		0.0f, 0.5f, 0.5f,		1.0f, 1.0f,		0.0f, 0.0f, 0.0f,
 		0.0f, 0.5f, -0.5f,		0.0f, 1.0f,		0.0f, 0.0f, 0.0f,
 	};
+
+	
 	
 	Mesh *obj1 = new Mesh();
 	obj1->CreateMesh(vertices, indices, 32, 12);
@@ -206,6 +223,8 @@ void CreateObjects()
 	Mesh* obj4 = new Mesh();
 	obj4->CreateMesh(vegetacionVertices, vegetacionIndices, 64, 12);
 	meshList.push_back(obj4);
+	
+	
 
 	calcAverageNormals(indices, 12, vertices, 32, 8, 5);
 
@@ -271,6 +290,8 @@ int main()
 
 	Texture LogoInvencible = Texture("Textures/Invincible_comic_series_logo.png");
 	LogoInvencible.LoadTextureA();
+	Texture FramesInvencible = Texture("Textures/frames-invencible.png");
+	FramesInvencible.LoadTextureA();
 
 	Base = Model();
 	Base.LoadModel("Models/base.obj");
@@ -294,6 +315,9 @@ int main()
 	RuedaFortunaInvencibleWheel.LoadModel("Models/RuedaFortuna/rueda-fortuna-wheel.obj");
 	Model RuedaFortunaInvencibleCabina = Model();
 	RuedaFortunaInvencibleCabina.LoadModel("Models/RuedaFortuna/rueda-fortuna-cabina.obj");
+
+	Model ProyectorInvencible = Model();
+	ProyectorInvencible.LoadModel("Models/Proyector/screen_1.obj");
 
 	// Boliche 
 	Model SueloBoliche = Model();
@@ -446,6 +470,8 @@ int main()
 	//float offsetFuenteProyV = 0.8164f;
 	float offsetFuenteProyV = 0.8164f;
 
+	float offsetFrames = 0.0f;
+
 	std::map<char, std::pair<float, float>> letrasOffset = {
 		{ 'A', std::make_pair(0.0f, 0.8164f) },
 		{ 'B', std::make_pair(0.125f, 0.8164f) },
@@ -484,6 +510,7 @@ int main()
 	float girarRueda = 0.0f;
 	float animaAtomGlobos = 0.0f;
 	float animarZonaTrajes = 0.0f;
+	GLfloat lastTimeProy = 0.0f;
 
 
 	while (!mainWindow.getShouldClose())
@@ -507,8 +534,8 @@ int main()
 		}
 		else {
 			// cercania de la camara al elegir personaje
-			float x = 30 * cos(rotacionCamara);
-			float z = 30 * sin(rotacionCamara);
+			float x = 40 * cos(rotacionCamara);
+			float z = 40 * sin(rotacionCamara);
 			camera.setPosition(glm::vec3(x, 7.0f, z));
 			camera.setDirection(glm::vec3(-x, 0.0f, -z));
 		}
@@ -664,6 +691,37 @@ int main()
 			personajes[i].RenderModel();
 		}
 
+		/*
+		* Pantalla
+		*/
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(27.441f, 0.0f, -13.418f));
+		model = glm::rotate(model, glm::radians(-44.398f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		color = glm::vec3(0.1f, 0.1f, 0.1f); // negro
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		ProyectorInvencible.RenderModel();
+
+		// animacion para cambiar entre frames
+		now = glfwGetTime();
+		if (now - lastTimeProy >= 3.0f) {
+			offsetFrames += 0.2f;
+			if (offsetFrames >= 1.0f)
+				offsetFrames = 0.0f;
+			lastTimeProy = now;
+		}
+		model = glm::translate(model, glm::vec3(0.0f, 5.5f, 1.3f));
+		model = glm::scale(model, glm::vec3(8.0f, 2.0f, 2.0f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(glm::vec2(offsetFrames, 0.0f)));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		color = glm::vec3(1.0f, 1.0f, 1.0f);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		FramesInvencible.UseTexture();
+		meshList[2]->RenderMesh();
+
+		// reiniciar offset de texturas
+		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(glm::vec2(0.0f)));
 		/*
 		* Escenario Ember
 		* Se renderiza Escenario, Bocinas.
