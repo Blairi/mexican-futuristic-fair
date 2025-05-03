@@ -83,37 +83,6 @@ static const char* vShader = "shaders/shader_light.vert";
 // Fragment Shader
 static const char* fShader = "shaders/shader_light.frag";
 
-
-//función de calculo de normales por promedio de vértices 
-void calcAverageNormals(unsigned int* indices, unsigned int indiceCount, GLfloat* vertices, unsigned int verticeCount,
-	unsigned int vLength, unsigned int normalOffset)
-{
-	for (size_t i = 0; i < indiceCount; i += 3)
-	{
-		unsigned int in0 = indices[i] * vLength;
-		unsigned int in1 = indices[i + 1] * vLength;
-		unsigned int in2 = indices[i + 2] * vLength;
-		glm::vec3 v1(vertices[in1] - vertices[in0], vertices[in1 + 1] - vertices[in0 + 1], vertices[in1 + 2] - vertices[in0 + 2]);
-		glm::vec3 v2(vertices[in2] - vertices[in0], vertices[in2 + 1] - vertices[in0 + 1], vertices[in2 + 2] - vertices[in0 + 2]);
-		glm::vec3 normal = glm::cross(v1, v2);
-		normal = glm::normalize(normal);
-
-		in0 += normalOffset; in1 += normalOffset; in2 += normalOffset;
-		vertices[in0] += normal.x; vertices[in0 + 1] += normal.y; vertices[in0 + 2] += normal.z;
-		vertices[in1] += normal.x; vertices[in1 + 1] += normal.y; vertices[in1 + 2] += normal.z;
-		vertices[in2] += normal.x; vertices[in2 + 1] += normal.y; vertices[in2 + 2] += normal.z;
-	}
-
-	for (size_t i = 0; i < verticeCount / vLength; i++)
-	{
-		unsigned int nOffset = i * vLength + normalOffset;
-		glm::vec3 vec(vertices[nOffset], vertices[nOffset + 1], vertices[nOffset + 2]);
-		vec = glm::normalize(vec);
-		vertices[nOffset] = vec.x; vertices[nOffset + 1] = vec.y; vertices[nOffset + 2] = vec.z;
-	}
-}
-
-
 void createInterface()
 {
 	unsigned int letrasIndices[] = {
@@ -162,80 +131,6 @@ void createInterface()
 	meshList.push_back(pantalla);
 }
 
-void CreateObjects()
-{
-	unsigned int indices[] = {
-		0, 3, 1,
-		1, 3, 2,
-		2, 3, 0,
-		0, 1, 2
-	};
-
-	GLfloat vertices[] = {
-		//	x      y      z			u	  v			nx	  ny    nz
-			-1.0f, -1.0f, -0.6f,	0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
-			0.0f, -1.0f, 1.0f,		0.5f, 0.0f,		0.0f, 0.0f, 0.0f,
-			1.0f, -1.0f, -0.6f,		1.0f, 0.0f,		0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f,		0.5f, 1.0f,		0.0f, 0.0f, 0.0f
-	};
-
-	unsigned int floorIndices[] = {
-		0, 2, 1,
-		1, 2, 3
-	};
-
-	GLfloat floorVertices[] = {
-		-10.0f, 0.0f, -10.0f,	0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
-		10.0f, 0.0f, -10.0f,	10.0f, 0.0f,	0.0f, -1.0f, 0.0f,
-		-10.0f, 0.0f, 10.0f,	0.0f, 10.0f,	0.0f, -1.0f, 0.0f,
-		10.0f, 0.0f, 10.0f,		10.0f, 10.0f,	0.0f, -1.0f, 0.0f
-	};
-
-	unsigned int vegetacionIndices[] = {
-	   0, 1, 2,
-	   0, 2, 3,
-	   4,5,6,
-	   4,6,7
-	};
-
-	GLfloat vegetacionVertices[] = {
-		-0.5f, -0.5f, 0.0f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
-		0.5f, -0.5f, 0.0f,		1.0f, 0.0f,		0.0f, 0.0f, 0.0f,
-		0.5f, 0.5f, 0.0f,		1.0f, 1.0f,		0.0f, 0.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f,		0.0f, 1.0f,		0.0f, 0.0f, 0.0f,
-
-		0.0f, -0.5f, -0.5f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
-		0.0f, -0.5f, 0.5f,		1.0f, 0.0f,		0.0f, 0.0f, 0.0f,
-		0.0f, 0.5f, 0.5f,		1.0f, 1.0f,		0.0f, 0.0f, 0.0f,
-		0.0f, 0.5f, -0.5f,		0.0f, 1.0f,		0.0f, 0.0f, 0.0f,
-	};
-
-	
-	
-	Mesh *obj1 = new Mesh();
-	obj1->CreateMesh(vertices, indices, 32, 12);
-	meshList.push_back(obj1);
-
-	Mesh *obj2 = new Mesh();
-	obj2->CreateMesh(vertices, indices, 32, 12);
-	meshList.push_back(obj2);
-
-	Mesh *obj3 = new Mesh();
-	obj3->CreateMesh(floorVertices, floorIndices, 32, 6);
-	meshList.push_back(obj3);
-
-	Mesh* obj4 = new Mesh();
-	obj4->CreateMesh(vegetacionVertices, vegetacionIndices, 64, 12);
-	meshList.push_back(obj4);
-	
-	
-
-	calcAverageNormals(indices, 12, vertices, 32, 8, 5);
-
-	calcAverageNormals(vegetacionIndices, 12, vegetacionVertices, 64, 8, 5);
-
-}
-
 
 void CreateShaders()
 {
@@ -274,7 +169,6 @@ int main()
 	mainWindow.Initialise();
 
 	createInterface();
-	CreateObjects();
 	CreateShaders();
 
 	glm::vec3 avatarPos(0.0f, 0.0f, 0.0f);
@@ -548,9 +442,11 @@ int main()
 	*/
 	float girarRueda = 0.0f;
 	float animaAtomGlobos = 0.0f;
-	float animarZonaTrajes = 0.0f;
 	GLfloat lastTimeProy = 0.0f;
 
+	// variables para animacion de zona invencible
+	float animarZonaTrajes = 0.0f;
+	float animarInvencibleNPCs = 0.0f;
 
 	while (!mainWindow.getShouldClose())
 	{
@@ -980,6 +876,36 @@ int main()
 		* Aqui renderizar todos los NPC de ambiente
 		* ------------------
 		*/
+
+		/*
+		* NPC de zona invencible
+		*/
+		animarInvencibleNPCs += 0.05 * deltaTime;
+
+		OmniMan_M.MovFullModel(glm::vec3(18.543f, 0.9f, -5.768f), 
+			glm::vec3(0.0f, 1.0f, 0.0f), 51.252f);
+		OmniMan_M.TransformHead(glm::vec3(0.0f, 0.683f, -0.015f),
+			glm::vec3(0.0f, 0.0f, 1.0f), 8.0f*sin(animarInvencibleNPCs));
+		OmniMan_M.TransformLegR(glm::vec3(-0.081f, 0.033f, 0.017f));
+		OmniMan_M.TransformLegL(glm::vec3(0.075f, 0.036f, -0.003f));
+		OmniMan_M.TransformArmR(glm::vec3(-0.163f, 0.549f, -0.037f),
+			glm::vec3(0.0f, 0.0f, 1.0f), 10.0f * sin(animarInvencibleNPCs));
+		OmniMan_M.TransformArmL(glm::vec3(0.177f, 0.551f, -0.034f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 20.0f * sin(animarInvencibleNPCs));
+		OmniMan_M.RenderModelJ(uniformModel);
+
+		AtomEve_M.MovFullModel(glm::vec3(19.892f, 0.95f, -4.6f),
+			glm::vec3(0.0, 1.0f, 0.0f), -131.151f);
+		AtomEve_M.TransformHead(glm::vec3(0.0f, 0.567f, -0.015f),
+			glm::vec3(0.0f, 1.0f, 0.0f), 8.0f * sin(animarInvencibleNPCs));
+		AtomEve_M.TransformLegR(glm::vec3(-0.065f, 0.03f, -0.008f));
+		AtomEve_M.TransformLegL(glm::vec3(0.015f, 0.01f, -0.003f));
+		AtomEve_M.TransformArmR(glm::vec3(-0.103f, 0.462f, -0.018f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 40.0f);
+		AtomEve_M.TransformArmR(glm::vec3(-0.103f, 0.462f, -0.018f),
+			glm::vec3(0.0f, 0.0f, 1.0f), 20.739);
+		AtomEve_M.TransformArmL(glm::vec3(0.108f, 0.444f, -0.039f));
+		AtomEve_M.RenderModelJ(uniformModel);
 
 		// omniman - tortas invencible
 		OmniMan_M.MovFullModel(posPuestoTortas + glm::vec3(-0.6f, 0.9f, -0.6f),
