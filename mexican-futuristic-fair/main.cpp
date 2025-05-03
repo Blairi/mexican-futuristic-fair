@@ -1,4 +1,4 @@
-/*
+ /*
 Proyecto Final Computacion Grafica
 Autores:
 	- 
@@ -332,6 +332,13 @@ int main()
 	Texture FramesInvencible = Texture("Textures/frames-invencible.png");
 	FramesInvencible.LoadTextureA();
 
+	Texture LogoBatman = Texture("Textures/BatmanBeyondLogo.png");
+	LogoBatman.LoadTextureA();
+
+	Texture LogoDany = Texture("Textures/DanyPhantomLogo.png");
+	LogoDany.LoadTextureA();
+
+
 	Base = Model();
 	Base.LoadModel("Models/base.obj");
 	
@@ -345,6 +352,10 @@ int main()
 	*/
 	Model TortasInvencible = Model();
 	TortasInvencible.LoadModel("Models/PuestoTortasInvencible/puesto-tortas-invencible.obj");
+
+	/*
+	Model PuestoElotes = Model();
+	PuestoElotes.LoadModel("Models/PuestoElotes.obj");*/
 
 	/*
 	* Atracciones
@@ -395,6 +406,55 @@ int main()
 	Model BolaAzul = Model();
 	BolaAzul.LoadModel("Models/AtraccionBoliche/BolaAzul.obj");
 
+	//------------------ ATRACCION DADOS ------------------------
+
+	//CARPA
+
+	Model carpa = Model();
+	carpa.LoadModel("Models/carpa.obj");
+
+	//Mesa dados
+
+	Model mesa_dados = Model();
+	mesa_dados.LoadModel("Models/mesa_dados.obj");
+
+	//dado
+	Model dado = Model();
+	dado.LoadModel("Models/dado.obj");
+
+	//------------------ ATRACCION Whack A Mole ------------------------
+
+	Model maquinaWhack = Model();
+	maquinaWhack.LoadModel("Models/WhackAMole.obj");
+
+	Model topo = Model();
+	topo.LoadModel("Models/topo.obj");
+
+	Model martillo_topos = Model();
+	martillo_topos.LoadModel("Models/martillo_topos.obj");
+
+	//------------------ ATRACCION ZONA BATEO ------------------------
+
+	Model zonabateo = Model();
+	zonabateo.LoadModel("Models/zonabateo.obj");
+
+	Model maquinaTenis = Model();
+	maquinaTenis.LoadModel("Models/maquinaTenis.obj");
+
+	Model pelotaTenis = Model();
+	pelotaTenis.LoadModel("Models/pelotaTenis.obj");
+
+	Model bat = Model();
+	bat.LoadModel("Models/bat.obj");
+
+	//------------------ ATRACCION LANZAMIENTO DE HACHA ------------------------
+
+	Model LanzamientoDeHacha = Model();
+	LanzamientoDeHacha.LoadModel("Models/LanzamientoDeHacha.obj");
+
+	Model batgarang = Model();
+	batgarang.LoadModel("Models/batgarang.obj");
+
 	/*
 	* Escenario de Musica
 	*/
@@ -420,15 +480,21 @@ int main()
 	Model Conquest_M = Model();
 	Conquest_M.LoadModel("Models/ZonaInvencible/Conquest.obj");
 
+	// BATIMOVIL
+	
+	Model Batimovil = Model();
+	Batimovil.LoadModel("Models/Batimovil.obj");
+	
+
 	/*
 	* Avatares
 	*/
 	ModelJerarquia DannyPhantom_M = ModelJerarquia("Models/DannyPhantom");
-	DannyPhantom_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+	DannyPhantom_M.InitModel(glm::vec3(0.0f, 0.5f, 0.0f));
 	ModelJerarquia Invencible_M = ModelJerarquia("Models/Invencible");
 	Invencible_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 	ModelJerarquia Batman_M = ModelJerarquia("Models/BatmanBeyond");
-	Batman_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+	Batman_M.InitModel(glm::vec3(0.0f, -0.75f, 0.0f));
 
 	ModelJerarquia BMO_M("Models/HoraAventura/BMO");
 	BMO_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -525,7 +591,7 @@ int main()
 		{ 'C', std::make_pair(0.2324f, 0.8164f) },
 		{ 'D', std::make_pair(0.34375f, 0.8164f) },
 		{ 'E', std::make_pair(0.4589f, 0.8164f) },
-		{ 'F', std::make_pair(0.5550f, 0.8164f) },
+		{ 'F', std::make_pair(0.5609f, 0.8164f) },
 		{ 'G', std::make_pair(0.6757f, 0.8164f) },
 		{ 'H', std::make_pair(0.7890f, 0.8164f) },
 
@@ -685,6 +751,18 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		TortasInvencible.RenderModel();
 
+		/*glm::vec3 posPuestoElotes(8.1585f, -0.077008f, -15.761f);
+		model = glm::mat4(1.0);
+		model = glm::translate(model, posPuestoElotes);
+		//model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		PuestoElotes.RenderModel(); */
+		
+
+		
+
+
 		/*
 		* Feria de la fortuna
 		*/
@@ -836,6 +914,9 @@ int main()
 		* ------------------
 		*/
 
+		
+
+
 		/*
 		* Revienta Globos - A5
 		*/
@@ -970,6 +1051,153 @@ int main()
 		* Fin Boliche - A2
 		*/
 
+		//ATRACCION DADOS --------------------------------------------------------------------------------
+
+		//carpa
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-30.3812f, 0.752064f, 1.1414f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		carpa.RenderModel();
+
+		//mesa dados
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-30.304f, 0.782451f, 0.799495f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		mesa_dados.RenderModel();
+
+		//DADO IZQUIERDO
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-30.5297f, 1.51743f, 0.51303f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		dado.RenderModel();
+
+		//DADO DERECHO
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-30.0415f, 1.51743f, 0.51303f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		dado.RenderModel();
+
+		// FIN ATRACCION DADOS 
+
+		//ATRACCION GUACAMOLE ----------------------------------------------------------------------
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-22.0786f, 0.0f, -7.53293f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		maquinaWhack.RenderModel();
+
+		// Topos delanteros de izquierda a derecha
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-22.6886f, 2.20458f, -7.12932f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-22.2885f, 2.20458f, -7.12932f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-21.8901f, 2.20458f, -7.12932f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-21.4841f, 2.20458f, -7.12932f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		//Topos traseros de izquierda a derecha
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-22.7037f, 2.20458f, -7.54801f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-22.2934f, 2.20458f, -7.54801f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-21.8927f, 2.20458f, -7.54801f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-21.4841f, 2.20458f, -7.54801f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		//Martillo
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-21.918f, 3.74297f, -5.35381f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		martillo_topos.RenderModel();
+
+		// FIN ATRACCION GUACAMOLE ----------------------------------------------------------------------
+
+		//ZONA BATEO ----------------------------------------------------------------------
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(22.7181f, 3.04362f, 21.3295f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		zonabateo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(22.0665f, 0.24572f, 20.1201f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		maquinaTenis.RenderModel(); 
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(22.5352f, 2.22829f, 12.6117f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		pelotaTenis.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(22.5607f, 0.948299f, 3.60133f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		bat.RenderModel();
+
+		// FIN ZONA BATEO ----------------------------------------------------------------------
+
+		//LANZAMIENTO DE HACHA -----------------------------------------------------------------
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(13.4928f, 2.92542f, 18.9578f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		LanzamientoDeHacha.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(13.4737f, 2.89959f, 11.6697f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		batgarang.RenderModel();
+
+		/*model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-21.8945f, 0.120827f, 21.5915f));
+		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Batimovil.RenderModel();*/
 
 
 		/*
@@ -1042,15 +1270,15 @@ int main()
 			Invencible_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
 			Invencible_M.RenderModelJ(uniformModel);
 		}
-		// TODO: ARREGLAR JERARQUIA DE BATMAN
+		
 		else if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 2) {
-			glm::vec3 modeloPos = camPos + camFront * 3.0f; // distancia a la camara
+			glm::vec3 modeloPos = camPos + camFront * 4.0f; // distancia a la camara
 			Batman_M.TranformFullModel(glm::vec3(modeloPos), orientacion);
-			Batman_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
+			Batman_M.TransformHead(glm::vec3(0.0f, 0.0f, 0.0f));
 			Batman_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
 			Batman_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
-			Batman_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f));
-			Batman_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
+			Batman_M.TransformArmR(glm::vec3(-0.010f, 0.025f, -0.023f));
+			Batman_M.TransformArmL(glm::vec3(0.010f, 0.025f, -0.028f));
 			Batman_M.RenderModelJ(uniformModel);
 		}
 		else if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 3) {
@@ -1063,13 +1291,14 @@ int main()
 
 
 		// batman flotando
-		Batman_M.MovFullModel(glm::vec3(0.0f, 10.0f,0.0f));
+		/*
+		Batman_M.MovFullModel(glm::vec3(0.0f, 0.0f,0.0f));
 		Batman_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
 		Batman_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
 		Batman_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
 		Batman_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f));
 		Batman_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
-		Batman_M.RenderModelJ(uniformModel);
+		Batman_M.RenderModelJ(uniformModel);*/
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1121,6 +1350,22 @@ int main()
 		/*
 		* Renderizar logo/letrero de personajes
 		*/
+
+		if (idPersonaje == 0) {
+			glm::vec3 offsetPos = basePos + camRight * 0.0f + camUp * -2.5f;
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, offsetPos);
+			model *= glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
+			model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::scale(model, glm::vec3(10.0f, 1.0f, 3.0f));
+			glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			color = glm::vec3(1.0f, 1.0f, 1.0f);
+			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+			LogoDany.UseTexture();
+			meshList[1]->RenderMesh();
+		}
+
 		if (idPersonaje == 1) {
 			glm::vec3 offsetPos = basePos + camRight * 0.0f + camUp * -2.5f;
 			model = glm::mat4(1.0f);
@@ -1133,6 +1378,21 @@ int main()
 			color = glm::vec3(1.0f, 1.0f, 1.0f);
 			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 			LogoInvencible.UseTexture();
+			meshList[1]->RenderMesh();
+		}
+
+		if (idPersonaje == 2) {
+			glm::vec3 offsetPos = basePos + camRight * 0.0f + camUp * -2.5f;
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, offsetPos);
+			model *= glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
+			model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::scale(model, glm::vec3(8.0f, 1.0f, 2.5f));
+			glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			color = glm::vec3(1.0f, 1.0f, 1.0f);
+			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+			LogoBatman.UseTexture();
 			meshList[1]->RenderMesh();
 		}
 		// TODO: renderizar condicionalmente los demas logos
