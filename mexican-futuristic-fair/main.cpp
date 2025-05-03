@@ -334,6 +334,11 @@ int main()
 
 	Base = Model();
 	Base.LoadModel("Models/base.obj");
+	
+	//Model Arbol
+
+	Model arbol = Model();
+	arbol.LoadModel("Models/HoraAventura/casaArbol.obj");
 
 	/*
 	* Puestos de comida
@@ -424,6 +429,9 @@ int main()
 	Invencible_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 	ModelJerarquia Batman_M = ModelJerarquia("Models/BatmanBeyond");
 	Batman_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+
+	ModelJerarquia BMO_M("Models/HoraAventura/BMO");
+	BMO_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 
 	/*-------
 	* NPC
@@ -805,6 +813,21 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		BocinasStageEmber.RenderModel();
 
+		// —––– Árbol de Aventura —–––
+		model = glm::mat4(1.0f);
+		model = glm::translate(model,
+			glm::vec3(0.49539f, -1.48f, -1.227f));
+		model = glm::rotate(model,
+			glm::radians(90.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model,
+			glm::vec3(0.033f, 0.042f, 0.040f));
+
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		arbol.RenderModel();
+
+
+
 
 		/*
 		* ------------------
@@ -1029,6 +1052,12 @@ int main()
 			Batman_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f));
 			Batman_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
 			Batman_M.RenderModelJ(uniformModel);
+		}
+		else if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 3) {
+			glm::vec3 modeloPos = camPos + camFront * 3.0f;
+			BMO_M.TranformFullModel(modeloPos, orientacion);
+			BMO_M.RenderModelJ(uniformModel);
+
 		}
 		// TODO: BMO
 
