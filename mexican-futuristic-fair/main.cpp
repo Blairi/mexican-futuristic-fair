@@ -45,27 +45,15 @@ Autores:
 #include "Material.h"
 const float toRadians = 3.14159265f / 180.0f;
 
+#include "MeshBuilder.h"
+
 Window mainWindow;
-std::vector<Mesh*> meshList;
-std::vector<Shader> shaderList;
-
-
-Texture brickTexture;
-Texture dirtTexture;
-Texture plainTexture;
-Texture pisoTexture;
-Texture AgaveTexture;
-
-Texture ProjectDefaultFont;
-
-Model Base;
 
 Skybox skybox;
 
 //materiales
 Material Material_brillante;
 Material Material_opaco;
-
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
@@ -77,63 +65,13 @@ DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
 
-// Vertex Shader
-static const char* vShader = "shaders/shader_light.vert";
-
-// Fragment Shader
-static const char* fShader = "shaders/shader_light.frag";
-
-void createInterface()
-{
-	unsigned int letrasIndices[] = {
-		0, 1, 2,
-		0, 2, 3,
-	};
-
-	GLfloat letrasVertices[] = {
-		-0.5f, 0.0f, 0.5f,		0.0f, 0.8164f,		0.0f, -1.0f, 0.0f,
-		0.5f, 0.0f, 0.5f,		0.1230f, 0.8164f,		0.0f, -1.0f, 0.0f,
-		0.5f, 0.0f, -0.5f,		0.1230f, 0.9707f,		0.0f, -1.0f, 0.0f,
-		-0.5f, 0.0f, -0.5f,		0.0f, 0.9707f,		0.0f, -1.0f, 0.0f,
-	};
-
-	Mesh* obj1 = new Mesh();
-	obj1->CreateMesh(letrasVertices, letrasIndices, 32, 6);
-	meshList.push_back(obj1);
-
-	unsigned int LogoInvencibleIndices[] = {
-		0, 1, 2,
-		0, 2, 3,
-	};
-	GLfloat LogoIncencibleVertices[] = {
-		-0.5f, 0.0f, 0.5f,		0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
-		0.5f, 0.0f, 0.5f,		1.0f, 0.0f,		0.0f, -1.0f, 0.0f,
-		0.5f, 0.0f, -0.5f,		1.0f, 1.0f,		0.0f, -1.0f, 0.0f,
-		-0.5f, 0.0f, -0.5f,		0.0f, 1.0f,		0.0f, -1.0f, 0.0f,
-	};
-	Mesh* logoInvencible = new Mesh();
-	logoInvencible->CreateMesh(LogoIncencibleVertices, LogoInvencibleIndices, 32, 6);
-	meshList.push_back(logoInvencible);
-
-	unsigned int PantallaInvencibleIndices[] = {
-		0, 1, 2,
-		0, 2, 3,
-	};
-	GLfloat PantallaInvencibleVertices[] = {
-		-1.0f, 0.0f, 1.5f,		0.0f, 0.0f,		0.0f, -1.0f, 0.0f, // esquina izq sup
-		1.0f, 0.0f, 1.5f,		0.2f, 0.0f,		0.0f, -1.0f, 0.0f, // esquina der sup
-		1.0f, 0.0f, -1.5f,		0.2f, 1.0f,		0.0f, -1.0f, 0.0f, // esquina der inf
-		-1.0f, 0.0f, -1.5f,		0.0f, 1.0f,		0.0f, -1.0f, 0.0f, // esquina izq inf
-	};
-
-	Mesh* pantalla = new Mesh();
-	pantalla->CreateMesh(PantallaInvencibleVertices, PantallaInvencibleIndices, 32, 6);
-	meshList.push_back(pantalla);
-}
-
-
+std::vector<Shader> shaderList;
 void CreateShaders()
 {
+	// Vertex Shader
+	static const char* vShader = "shaders/shader_light.vert";
+	// Fragment Shader
+	static const char* fShader = "shaders/shader_light.frag";
 	Shader *shader1 = new Shader();
 	shader1->CreateFromFiles(vShader, fShader);
 	shaderList.push_back(*shader1);
@@ -162,13 +100,19 @@ void SetPinesBoliche(GLuint &uniformModel, std::vector <glm::mat4> &pinesTrans, 
 	}
 }
 
-
 int main()
 {
 	mainWindow = Window(1920, 1070); // 1280, 1024 or 1024, 768
 	mainWindow.Initialise();
 
-	createInterface();
+	/*
+	* mesh[i]->renderMesh()
+	* 0 -> letras
+	* 1 -> logo invencible
+	* 2 -> pantalla proyector
+	*/
+	MeshBuilder meshBuilder = MeshBuilder();
+
 	CreateShaders();
 
 	glm::vec3 avatarPos(0.0f, 0.0f, 0.0f);
@@ -204,33 +148,20 @@ int main()
 	// Cámara activa
 	Camera* activeCamera = &freeCam;
 
-
-
-
-	brickTexture = Texture("Textures/brick.png");
-	brickTexture.LoadTextureA();
-	dirtTexture = Texture("Textures/dirt.png");
-	dirtTexture.LoadTextureA();
-	plainTexture = Texture("Textures/plain.png");
-	plainTexture.LoadTextureA();
-	pisoTexture = Texture("Textures/piso.tga");
-	pisoTexture.LoadTextureA();
-	AgaveTexture = Texture("Textures/Agave.tga");
-	AgaveTexture.LoadTextureA();
-
-	ProjectDefaultFont = Texture("Textures/fuente-proy.png");
+	Texture ProjectDefaultFont = Texture("Textures/fuente-proy.png");
 	ProjectDefaultFont.LoadTextureA();
 
 	Texture LogoInvencible = Texture("Textures/Invincible_comic_series_logo.png");
 	LogoInvencible.LoadTextureA();
+
 	Texture FramesInvencible = Texture("Textures/frames-invencible.png");
 	FramesInvencible.LoadTextureA();
 
-	Base = Model();
+	// Base 
+	Model Base = Model();
 	Base.LoadModel("Models/base.obj");
 	
 	//Model Arbol
-
 	Model arbol = Model();
 	arbol.LoadModel("Models/HoraAventura/casaArbol.obj");
 
@@ -353,7 +284,6 @@ int main()
 	Material_brillante = Material(4.0f, 256);
 	Material_opaco = Material(0.3f, 4);
 
-
 	//luz direccional, sólo 1 y siempre debe de existir
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
 		0.3f, 0.3f, // intensidad ambiental (radiacion de la luz), intensidad difusa
@@ -399,7 +329,6 @@ int main()
 	spotLightCount++;
 	
 	//se crean mas luces puntuales y spotlight 
-
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
 		uniformSpecularIntensity = 0, uniformShininess = 0, uniformTextureOffset = 0;;
 	GLuint uniformColor = 0;
@@ -691,7 +620,7 @@ int main()
 		color = glm::vec3(1.0f, 1.0f, 1.0f);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		FramesInvencible.UseTexture();
-		meshList[2]->RenderMesh();
+		meshBuilder.meshList[2]->RenderMesh();
 
 		// reiniciar offset de texturas
 		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(glm::vec2(0.0f)));
@@ -1041,7 +970,7 @@ int main()
 			color = glm::vec3(1.0f, 1.0f, 1.0f);
 			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 			ProjectDefaultFont.UseTexture();
-			meshList[0]->RenderMesh();
+			meshBuilder.meshList[0]->RenderMesh();
 		}
 
 		/*
@@ -1059,7 +988,7 @@ int main()
 			color = glm::vec3(1.0f, 1.0f, 1.0f);
 			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 			LogoInvencible.UseTexture();
-			meshList[1]->RenderMesh();
+			meshBuilder.meshList[1]->RenderMesh();
 		}
 		// TODO: renderizar condicionalmente los demas logos
 
