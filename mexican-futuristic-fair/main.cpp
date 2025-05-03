@@ -1,4 +1,4 @@
-/*
+ /*
 Proyecto Final Computacion Grafica
 Autores:
 	- 
@@ -249,6 +249,13 @@ int main()
 	Texture LogoInvencible = Texture("Textures/Invincible_comic_series_logo.png");
 	LogoInvencible.LoadTextureA();
 
+	Texture LogoBatman = Texture("Textures/BatmanBeyondLogo.png");
+	LogoBatman.LoadTextureA();
+
+	Texture LogoDany = Texture("Textures/DanyPhantomLogo.png");
+	LogoDany.LoadTextureA();
+
+
 	Base = Model();
 	Base.LoadModel("Models/base.obj");
 
@@ -264,15 +271,25 @@ int main()
 	Model RevientaGlobosInvencible = Model();
 	RevientaGlobosInvencible.LoadModel("Models/invencible-revienta-globos.obj");
 
+	Model Batimovil = Model();
+	Batimovil.LoadModel("Models/Batimovil.obj");
+
+	//------------------ ATRACCION DADOS ------------------------
+
+	//CARPA
+
+	Model carpa = Model();
+	carpa.LoadModel("Models/carpa.obj");
+
 	/*
 	* Avatares
 	*/
 	ModelJerarquia DannyPhantom_M = ModelJerarquia("Models/DannyPhantom");
-	DannyPhantom_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+	DannyPhantom_M.InitModel(glm::vec3(0.0f, 0.5f, 0.0f));
 	ModelJerarquia Invencible_M = ModelJerarquia("Models/Invencible");
 	Invencible_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 	ModelJerarquia Batman_M = ModelJerarquia("Models/BatmanBeyond");
-	Batman_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+	Batman_M.InitModel(glm::vec3(0.0f, -0.75f, 0.0f));
 
 	/*-------
 	* NPC
@@ -359,7 +376,7 @@ int main()
 		{ 'C', std::make_pair(0.2324f, 0.8164f) },
 		{ 'D', std::make_pair(0.34375f, 0.8164f) },
 		{ 'E', std::make_pair(0.4589f, 0.8164f) },
-		{ 'F', std::make_pair(0.5550f, 0.8164f) },
+		{ 'F', std::make_pair(0.5609f, 0.8164f) },
 		{ 'G', std::make_pair(0.6757f, 0.8164f) },
 		{ 'H', std::make_pair(0.7890f, 0.8164f) },
 
@@ -477,12 +494,23 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		TortasInvencible.RenderModel();
 
+
+		//Batimovil
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-15.0f, 0.0f, -6.494f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Batimovil.RenderModel();
+
 		/*
 		* ------------------
 		* Atracciones
 		* Aqui renderizar todos los modelos de atracciones
 		* ------------------
 		*/
+
+		
+
 
 		/*
 		* Revienta Globos - A5
@@ -544,28 +572,29 @@ int main()
 			Invencible_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
 			Invencible_M.RenderModelJ(uniformModel);
 		}
-		// TODO: ARREGLAR JERARQUIA DE BATMAN
+		
 		else if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 2) {
-			glm::vec3 modeloPos = camPos + camFront * 3.0f; // distancia a la camara
+			glm::vec3 modeloPos = camPos + camFront * 4.0f; // distancia a la camara
 			Batman_M.TranformFullModel(glm::vec3(modeloPos), orientacion);
-			Batman_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
+			Batman_M.TransformHead(glm::vec3(0.0f, 0.0f, 0.0f));
 			Batman_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
 			Batman_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
-			Batman_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f));
-			Batman_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
+			Batman_M.TransformArmR(glm::vec3(-0.010f, 0.025f, -0.023f));
+			Batman_M.TransformArmL(glm::vec3(0.010f, 0.025f, -0.028f));
 			Batman_M.RenderModelJ(uniformModel);
 		}
 		// TODO: BMO
 
 
 		// batman flotando
-		Batman_M.MovFullModel(glm::vec3(0.0f, 10.0f,0.0f));
+		/*
+		Batman_M.MovFullModel(glm::vec3(0.0f, 0.0f,0.0f));
 		Batman_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
 		Batman_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
 		Batman_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
 		Batman_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f));
 		Batman_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
-		Batman_M.RenderModelJ(uniformModel);
+		Batman_M.RenderModelJ(uniformModel);*/
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -617,6 +646,22 @@ int main()
 		/*
 		* Renderizar logo/letrero de personajes
 		*/
+
+		if (idPersonaje == 0) {
+			glm::vec3 offsetPos = basePos + camRight * 0.0f + camUp * -2.5f;
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, offsetPos);
+			model *= glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
+			model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::scale(model, glm::vec3(10.0f, 1.0f, 3.0f));
+			glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			color = glm::vec3(1.0f, 1.0f, 1.0f);
+			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+			LogoDany.UseTexture();
+			meshList[1]->RenderMesh();
+		}
+
 		if (idPersonaje == 1) {
 			glm::vec3 offsetPos = basePos + camRight * 0.0f + camUp * -2.5f;
 			model = glm::mat4(1.0f);
@@ -629,6 +674,21 @@ int main()
 			color = glm::vec3(1.0f, 1.0f, 1.0f);
 			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 			LogoInvencible.UseTexture();
+			meshList[1]->RenderMesh();
+		}
+
+		if (idPersonaje == 2) {
+			glm::vec3 offsetPos = basePos + camRight * 0.0f + camUp * -2.5f;
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, offsetPos);
+			model *= glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
+			model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::scale(model, glm::vec3(8.0f, 1.0f, 2.5f));
+			glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			color = glm::vec3(1.0f, 1.0f, 1.0f);
+			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+			LogoBatman.UseTexture();
 			meshList[1]->RenderMesh();
 		}
 		// TODO: renderizar condicionalmente los demas logos
