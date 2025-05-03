@@ -349,6 +349,10 @@ int main()
 	TortasInvencible.LoadModel("Models/PuestoTortasInvencible/puesto-tortas-invencible.obj");
 
 	/*
+	Model PuestoElotes = Model();
+	PuestoElotes.LoadModel("Models/PuestoElotes.obj");*/
+
+	/*
 	* Atracciones
 	*/
 	Model RevientaGlobosInvencible = Model();
@@ -397,6 +401,55 @@ int main()
 	Model BolaAzul = Model();
 	BolaAzul.LoadModel("Models/AtraccionBoliche/BolaAzul.obj");
 
+	//------------------ ATRACCION DADOS ------------------------
+
+	//CARPA
+
+	Model carpa = Model();
+	carpa.LoadModel("Models/carpa.obj");
+
+	//Mesa dados
+
+	Model mesa_dados = Model();
+	mesa_dados.LoadModel("Models/mesa_dados.obj");
+
+	//dado
+	Model dado = Model();
+	dado.LoadModel("Models/dado.obj");
+
+	//------------------ ATRACCION Whack A Mole ------------------------
+
+	Model maquinaWhack = Model();
+	maquinaWhack.LoadModel("Models/WhackAMole.obj");
+
+	Model topo = Model();
+	topo.LoadModel("Models/topo.obj");
+
+	Model martillo_topos = Model();
+	martillo_topos.LoadModel("Models/martillo_topos.obj");
+
+	//------------------ ATRACCION ZONA BATEO ------------------------
+
+	Model zonabateo = Model();
+	zonabateo.LoadModel("Models/zonabateo.obj");
+
+	Model maquinaTenis = Model();
+	maquinaTenis.LoadModel("Models/maquinaTenis.obj");
+
+	Model pelotaTenis = Model();
+	pelotaTenis.LoadModel("Models/pelotaTenis.obj");
+
+	Model bat = Model();
+	bat.LoadModel("Models/bat.obj");
+
+	//------------------ ATRACCION LANZAMIENTO DE HACHA ------------------------
+
+	Model LanzamientoDeHacha = Model();
+	LanzamientoDeHacha.LoadModel("Models/LanzamientoDeHacha.obj");
+
+	Model batgarang = Model();
+	batgarang.LoadModel("Models/batgarang.obj");
+
 	/*
 	* Escenario de Musica
 	*/
@@ -422,15 +475,11 @@ int main()
 	Model Conquest_M = Model();
 	Conquest_M.LoadModel("Models/ZonaInvencible/Conquest.obj");
 
+	// BATIMOVIL
+	
 	Model Batimovil = Model();
 	Batimovil.LoadModel("Models/Batimovil.obj");
-
-	//------------------ ATRACCION DADOS ------------------------
-
-	//CARPA
-
-	Model carpa = Model();
-	carpa.LoadModel("Models/carpa.obj");
+	
 
 	/*
 	* Avatares
@@ -694,13 +743,17 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		TortasInvencible.RenderModel();
 
-
-		//Batimovil
+		/*glm::vec3 posPuestoElotes(8.1585f, -0.077008f, -15.761f);
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-15.0f, 0.0f, -6.494f));
+		model = glm::translate(model, posPuestoElotes);
+		//model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
 		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Batimovil.RenderModel();
+		PuestoElotes.RenderModel(); */
+		
+
+		
+
 
 		/*
 		* Feria de la fortuna
@@ -975,6 +1028,153 @@ int main()
 		* Fin Boliche - A2
 		*/
 
+		//ATRACCION DADOS --------------------------------------------------------------------------------
+
+		//carpa
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-30.3812f, 0.752064f, 1.1414f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		carpa.RenderModel();
+
+		//mesa dados
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-30.304f, 0.782451f, 0.799495f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		mesa_dados.RenderModel();
+
+		//DADO IZQUIERDO
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-30.5297f, 1.51743f, 0.51303f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		dado.RenderModel();
+
+		//DADO DERECHO
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-30.0415f, 1.51743f, 0.51303f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		dado.RenderModel();
+
+		// FIN ATRACCION DADOS 
+
+		//ATRACCION GUACAMOLE ----------------------------------------------------------------------
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-22.0786f, 0.0f, -7.53293f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		maquinaWhack.RenderModel();
+
+		// Topos delanteros de izquierda a derecha
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-22.6886f, 2.20458f, -7.12932f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-22.2885f, 2.20458f, -7.12932f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-21.8901f, 2.20458f, -7.12932f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-21.4841f, 2.20458f, -7.12932f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		//Topos traseros de izquierda a derecha
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-22.7037f, 2.20458f, -7.54801f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-22.2934f, 2.20458f, -7.54801f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-21.8927f, 2.20458f, -7.54801f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-21.4841f, 2.20458f, -7.54801f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		topo.RenderModel();
+
+		//Martillo
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-21.918f, 3.74297f, -5.35381f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		martillo_topos.RenderModel();
+
+		// FIN ATRACCION GUACAMOLE ----------------------------------------------------------------------
+
+		//ZONA BATEO ----------------------------------------------------------------------
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(22.7181f, 3.04362f, 21.3295f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		zonabateo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(22.0665f, 0.24572f, 20.1201f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		maquinaTenis.RenderModel(); 
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(22.5352f, 2.22829f, 12.6117f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		pelotaTenis.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(22.5607f, 0.948299f, 3.60133f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		bat.RenderModel();
+
+		// FIN ZONA BATEO ----------------------------------------------------------------------
+
+		//LANZAMIENTO DE HACHA -----------------------------------------------------------------
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(13.4928f, 2.92542f, 18.9578f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		LanzamientoDeHacha.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(13.4737f, 2.89959f, 11.6697f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		batgarang.RenderModel();
+
+		/*model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-21.8945f, 0.120827f, 21.5915f));
+		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Batimovil.RenderModel();*/
 
 
 		/*
