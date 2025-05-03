@@ -32,7 +32,6 @@ Autores:
 #include "FreeCamera.h"
 
 #include "Texture.h"
-#include "Sphere.h"
 #include "Model.h"
 #include "ModelJerarquia.h"
 #include "Skybox.h"
