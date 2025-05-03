@@ -26,13 +26,18 @@ Autores:
 #include "Mesh.h"
 #include "Shader_light.h"
 #include "Camera.h"
+#include "ThirdPersonCamera.h"
+#include "ObjectFocusCamera.h"
+#include "TopDownCamera.h"
+#include "FreeCamera.h"
+
 #include "Texture.h"
 #include "Sphere.h"
 #include "Model.h"
 #include "ModelJerarquia.h"
 #include "Skybox.h"
 
-//para iluminaci�n
+//para iluminación
 #include "CommonValues.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
@@ -44,7 +49,6 @@ Window mainWindow;
 std::vector<Mesh*> meshList;
 std::vector<Shader> shaderList;
 
-Camera camera;
 
 Texture brickTexture;
 Texture dirtTexture;
@@ -80,7 +84,7 @@ static const char* vShader = "shaders/shader_light.vert";
 static const char* fShader = "shaders/shader_light.frag";
 
 
-//funci�n de calculo de normales por promedio de v�rtices 
+//función de calculo de normales por promedio de vértices 
 void calcAverageNormals(unsigned int* indices, unsigned int indiceCount, GLfloat* vertices, unsigned int verticeCount,
 	unsigned int vLength, unsigned int normalOffset)
 {
@@ -141,6 +145,21 @@ void createInterface()
 	Mesh* logoInvencible = new Mesh();
 	logoInvencible->CreateMesh(LogoIncencibleVertices, LogoInvencibleIndices, 32, 6);
 	meshList.push_back(logoInvencible);
+
+	unsigned int PantallaInvencibleIndices[] = {
+		0, 1, 2,
+		0, 2, 3,
+	};
+	GLfloat PantallaInvencibleVertices[] = {
+		-1.0f, 0.0f, 1.5f,		0.0f, 0.0f,		0.0f, -1.0f, 0.0f, // esquina izq sup
+		1.0f, 0.0f, 1.5f,		0.2f, 0.0f,		0.0f, -1.0f, 0.0f, // esquina der sup
+		1.0f, 0.0f, -1.5f,		0.2f, 1.0f,		0.0f, -1.0f, 0.0f, // esquina der inf
+		-1.0f, 0.0f, -1.5f,		0.0f, 1.0f,		0.0f, -1.0f, 0.0f, // esquina izq inf
+	};
+
+	Mesh* pantalla = new Mesh();
+	pantalla->CreateMesh(PantallaInvencibleVertices, PantallaInvencibleIndices, 32, 6);
+	meshList.push_back(pantalla);
 }
 
 void CreateObjects()
@@ -190,6 +209,8 @@ void CreateObjects()
 		0.0f, 0.5f, 0.5f,		1.0f, 1.0f,		0.0f, 0.0f, 0.0f,
 		0.0f, 0.5f, -0.5f,		0.0f, 1.0f,		0.0f, 0.0f, 0.0f,
 	};
+
+	
 	
 	Mesh *obj1 = new Mesh();
 	obj1->CreateMesh(vertices, indices, 32, 12);
@@ -206,6 +227,8 @@ void CreateObjects()
 	Mesh* obj4 = new Mesh();
 	obj4->CreateMesh(vegetacionVertices, vegetacionIndices, 64, 12);
 	meshList.push_back(obj4);
+	
+	
 
 	calcAverageNormals(indices, 12, vertices, 32, 8, 5);
 
@@ -221,6 +244,29 @@ void CreateShaders()
 	shaderList.push_back(*shader1);
 }
 
+void SetPinesBoliche(GLuint &uniformModel, std::vector <glm::mat4> &pinesTrans, glm::mat4 modelroot, Model &pinBoliche) {
+
+	GLfloat spaceBetwen_z = 0.0f, spaceBetwen_x = 0.0f;
+	glm::mat4 modelaux(1.0);
+	pinesTrans.clear();
+
+	for (int i = 0; i < 4; i++) {
+
+		for (int j = i; j < 4; j++) {
+			
+			modelaux = modelroot;
+			modelaux = glm::translate(modelroot, glm::vec3(spaceBetwen_x, 0.0f, spaceBetwen_z));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
+			pinBoliche.RenderModel();
+
+			pinesTrans.push_back(modelaux);
+			spaceBetwen_z -= 0.25;
+		}
+		spaceBetwen_x += 0.25;
+		spaceBetwen_z = -0.125f * (i + 1);
+	}
+}
+
 
 int main()
 {
@@ -230,8 +276,43 @@ int main()
 	createInterface();
 	CreateObjects();
 	CreateShaders();
-																						//0.3f
-	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f, 0.1f, 0.5f);
+
+	glm::vec3 avatarPos(0.0f, 0.0f, 0.0f);
+	// Ejemplo de un par de atracciones clave:
+	glm::vec3 posCabina(-25.0f, 0.0f, 11.0f);
+	glm::vec3 posBoliche(-3.68f, 0.0f, 28.85f);
+
+	std::vector<glm::vec3*> objetos = {
+		// Ejemplo: &posPuestoTortas, &posRevientaGlobos, ...
+		 &posCabina, &posBoliche // (sólo placeholder)
+	};
+
+	// --- INSTANCIAR CÁMARAS ---
+	FreeCamera freeCam(
+		glm::vec3(0, 0, 0), glm::vec3(0, 1, 0),  // posición y up
+		0.0f, 0.0f,                          // yaw, pitch
+		0.1f, 0.5f                          // moveSpeed, turnSpeed
+	);
+	ThirdPersonCamera thirdCam(
+		glm::vec3(0, 3, 8),                  // offset detrás del avatar
+		glm::vec3(0, 1, 0),                  // up vector
+		&avatarPos                         // target del avatar
+	);
+	ObjectFocusCamera objFocusCam(
+		glm::vec3(0, 1, 0),                  // up
+		objetos                            // lista de punteros a posiciones
+	);
+	TopDownCamera topDownCam(
+		glm::vec3(0, 0, 0), 60.0f,            // centro y altura
+		glm::vec3(0, 0, -1)                   // up del top-down
+	);
+
+	// Cámara activa
+	Camera* activeCamera = &freeCam;
+
+
+
+
 	brickTexture = Texture("Textures/brick.png");
 	brickTexture.LoadTextureA();
 	dirtTexture = Texture("Textures/dirt.png");
@@ -248,6 +329,8 @@ int main()
 
 	Texture LogoInvencible = Texture("Textures/Invincible_comic_series_logo.png");
 	LogoInvencible.LoadTextureA();
+	Texture FramesInvencible = Texture("Textures/frames-invencible.png");
+	FramesInvencible.LoadTextureA();
 
 	Texture LogoBatman = Texture("Textures/BatmanBeyondLogo.png");
 	LogoBatman.LoadTextureA();
@@ -263,13 +346,81 @@ int main()
 	* Puestos de comida
 	*/
 	Model TortasInvencible = Model();
-	TortasInvencible.LoadModel("Models/puesto-tortas-invencible.obj");
+	TortasInvencible.LoadModel("Models/PuestoTortasInvencible/puesto-tortas-invencible.obj");
 
 	/*
 	* Atracciones
 	*/
 	Model RevientaGlobosInvencible = Model();
-	RevientaGlobosInvencible.LoadModel("Models/invencible-revienta-globos.obj");
+	RevientaGlobosInvencible.LoadModel("Models/RevientaGlobos/invencible-revienta-globos.obj");
+
+
+	Model RuedaFortunaInvencibleBase = Model();
+	RuedaFortunaInvencibleBase.LoadModel("Models/RuedaFortuna/rueda-fortuna-base.obj");
+	Model RuedaFortunaInvencibleWheel = Model();
+	RuedaFortunaInvencibleWheel.LoadModel("Models/RuedaFortuna/rueda-fortuna-wheel.obj");
+	Model RuedaFortunaInvencibleCabina = Model();
+	RuedaFortunaInvencibleCabina.LoadModel("Models/RuedaFortuna/rueda-fortuna-cabina.obj");
+
+	Model ProyectorInvencible = Model();
+	ProyectorInvencible.LoadModel("Models/Proyector/screen_1.obj");
+
+	// Boliche 
+	Model SueloBoliche = Model();
+	SueloBoliche.LoadModel("Models/AtraccionBoliche/sueloBoliche.obj");
+
+	Model paredBoliche = Model();
+	paredBoliche.LoadModel("Models/AtraccionBoliche/paredBoliche.obj");
+
+	Model recibidorBoliche = Model();
+	recibidorBoliche.LoadModel("Models/AtraccionBoliche/recibidorBoliche.obj");
+
+	Model pinBoliche = Model();
+	pinBoliche.LoadModel("Models/AtraccionBoliche/pinBoliche.obj");
+	std::vector <glm::mat4> pinesTrans;
+
+	Model LineasBoliche = Model();
+	LineasBoliche.LoadModel("Models/AtraccionBoliche/lineasBoliche.obj");
+
+	Model MaquinaBolasBolicheRoja = Model();
+	MaquinaBolasBolicheRoja.LoadModel("Models/AtraccionBoliche/maquinaBolasRoja.obj");
+
+	Model MaquinaBolasBolicheAzul = Model();
+	MaquinaBolasBolicheAzul.LoadModel("Models/AtraccionBoliche/maquinaBolasAzul.obj");
+
+	Model BolaVerde = Model();
+	BolaVerde.LoadModel("Models/AtraccionBoliche/BolaVerde.obj");
+
+	Model BolaRoja = Model();
+	BolaRoja.LoadModel("Models/AtraccionBoliche/BolaRoja.obj");
+
+	Model BolaAzul = Model();
+	BolaAzul.LoadModel("Models/AtraccionBoliche/BolaAzul.obj");
+
+	/*
+	* Escenario de Musica
+	*/
+	Model Stage = Model();
+	Stage.LoadModel("Models/StageEmber/concertStage.obj");
+
+	Model BocinasStageEmber = Model();
+	BocinasStageEmber.LoadModel("Models/StageEmber/BocinasEmber.obj");
+
+	/*
+	* Zona Invencible
+	*/
+	Model ShowSuit = Model();
+	ShowSuit.LoadModel("Models/ZonaInvencible/show-suit.obj");
+	Model KidOmniMan_M = Model();
+	KidOmniMan_M.LoadModel("Models/ZonaInvencible/KidOmniman.obj");
+	Model Duplikate_M = Model();
+	Duplikate_M.LoadModel("Models/ZonaInvencible/Duplikate.obj");
+	Model Powerplex_M = Model();
+	Powerplex_M.LoadModel("Models/ZonaInvencible/Powerplex.obj");
+	Model Cecil_M = Model();
+	Cecil_M.LoadModel("Models/ZonaInvencible/cecil-model.obj");
+	Model Conquest_M = Model();
+	Conquest_M.LoadModel("Models/ZonaInvencible/Conquest.obj");
 
 	Model Batimovil = Model();
 	Batimovil.LoadModel("Models/Batimovil.obj");
@@ -298,6 +449,11 @@ int main()
 	*/
 	ModelJerarquia AtomEve_M = ModelJerarquia("Models/AtomEve");
 	AtomEve_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+	ModelJerarquia OmniMan_M = ModelJerarquia("Models/OmniMan");
+	OmniMan_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+
+	Model Ember_M = Model();
+	Ember_M.LoadModel("Models/Ember/Ember.obj");
 
 	std::vector<std::string> skyboxFaces;
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -313,13 +469,13 @@ int main()
 	Material_opaco = Material(0.3f, 4);
 
 
-	//luz direccional, s�lo 1 y siempre debe de existir
+	//luz direccional, sólo 1 y siempre debe de existir
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
 		0.3f, 0.3f, // intensidad ambiental (radiacion de la luz), intensidad difusa
 		0.0f, -1.0f, 0.0f);
 	//contador de luces puntuales
 	unsigned int pointLightCount = 0;
-	//Declaraci�n de primer luz puntual
+	//Declaración de primer luz puntual
 	pointLights[0] = PointLight(1.0f, 0.0f, 0.0f,
 		0.0f, 1.0f,
 		-6.0f, 1.5f, 1.5f, // pos
@@ -370,6 +526,8 @@ int main()
 	//float offsetFuenteProyV = 0.8164f;
 	float offsetFuenteProyV = 0.8164f;
 
+	float offsetFrames = 0.0f;
+
 	std::map<char, std::pair<float, float>> letrasOffset = {
 		{ 'A', std::make_pair(0.0f, 0.8164f) },
 		{ 'B', std::make_pair(0.125f, 0.8164f) },
@@ -402,6 +560,15 @@ int main()
 		{ 'Z', std::make_pair(0.2382f, 0.1679f) },
 	};
 
+	/*
+	* variables auxiliares para las animaciones
+	*/
+	float girarRueda = 0.0f;
+	float animaAtomGlobos = 0.0f;
+	float animarZonaTrajes = 0.0f;
+	GLfloat lastTimeProy = 0.0f;
+
+
 	while (!mainWindow.getShouldClose())
 	{
 		GLfloat now = glfwGetTime();
@@ -412,27 +579,56 @@ int main()
 		//Recibir eventos del usuario
 		glfwPollEvents();
 
+		// — Cambiar cámara con teclas 1–4 —
+		if (mainWindow.getsKeys()[GLFW_KEY_1]) activeCamera = &freeCam;
+		if (mainWindow.getsKeys()[GLFW_KEY_2]) activeCamera = &thirdCam;
+		static bool prevKey3 = false;
+		bool currKey3 = mainWindow.getsKeys()[GLFW_KEY_3];
+
+		// Si acabas de pulsar (borde de subida)
+		if (currKey3 && !prevKey3) {
+			// 1) cambiamos la cámara activa a ObjectFocusCamera
+			activeCamera = &objFocusCam;
+			// 2) avanzamos al siguiente objeto
+			objFocusCam.nextObject();
+		}
+		prevKey3 = currKey3;
+
+		if (mainWindow.getsKeys()[GLFW_KEY_4]) activeCamera = &topDownCam;
+
+		// Actualiza la cámara elegida
+		activeCamera->update(deltaTime);
+
+		// Sólo la freeCam y thirdCam usan WASD+mouse:
+		if (activeCamera == &freeCam || activeCamera == &thirdCam) {
+			activeCamera->keyControl(mainWindow.getsKeys(), deltaTime);
+			activeCamera->mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+		}
+
+		glm::mat4 viewMatrix = activeCamera->getViewMatrix();
+
+
+
 		// controlar la velocidad con la que rota la camara de seleccion de personaje
 		rotacionCamara += 0.005f * deltaTime; // TODO: evitar desbordamiento de int
 
+		float x = 30.0f * cos(rotacionCamara);
+		float z = 30.0f * sin(rotacionCamara);
+
 		if (mainWindow.isPersonajeSeleccionado()) {
-			// si ya se eligio personaje, controlamos camara con teclado
-			// TODO: usar una nueva camara
-			camera.keyControl(mainWindow.getsKeys(), deltaTime*5);
-			camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+			activeCamera->keyControl(mainWindow.getsKeys(), deltaTime * 5);
+			activeCamera->mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
 		else {
-			// cercania de la camara al elegir personaje
-			float x = 30 * cos(rotacionCamara);
-			float z = 30 * sin(rotacionCamara);
-			camera.setPosition(glm::vec3(x, 7.0f, z));
-			camera.setDirection(glm::vec3(-x, 0.0f, -z));
+			// en la fase de selección, forzamos la cámara libre:
+			freeCam.setPosition(glm::vec3(x, 7.0f, z));
+			freeCam.setDirection(glm::vec3(-x, 0, -z));
 		}
 
 		// Clear the window
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		skybox.DrawSkybox(camera.calculateViewMatrix(), projection);
+		skybox.DrawSkybox(viewMatrix, projection);
 		shaderList[0].UseShader();
 		uniformModel = shaderList[0].GetModelLocation();
 		uniformProjection = shaderList[0].GetProjectionLocation();
@@ -441,23 +637,24 @@ int main()
 		uniformColor = shaderList[0].getColorLocation();
 		uniformTextureOffset = shaderList[0].getOffsetLocation();
 		
-		//informaci�n en el shader de intensidad especular y brillo
+		//información en el shader de intensidad especular y brillo
 		uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
 		uniformShininess = shaderList[0].GetShininessLocation();
 
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
-		glUniform3f(uniformEyePosition, camera.getCameraPosition().x, 
-			camera.getCameraPosition().y, camera.getCameraPosition().z);
 
-		/*
-		* TODO: eliminar esta luz de tipo linterna
-		*/
-		glm::vec3 lowerLight = camera.getCameraPosition();
-		lowerLight.y -= 0.3f; 
-		spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
+		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 
-		//informaci�n al shader de fuentes de iluminaci�n
+		// Para la linterna o efectos que necesitan posición:
+		glm::vec3 camPos = activeCamera->getCameraPosition();
+		glm::vec3 camDir = activeCamera->getCameraDirection();
+		glUniform3f(uniformEyePosition, camPos.x, camPos.y, camPos.z);
+		spotLights[0].SetFlash(camPos, camDir);
+
+
+
+		//información al shader de fuentes de iluminación
 		shaderList[0].SetDirectionalLight(&mainLight);
 		shaderList[0].SetPointLights(pointLights, pointLightCount);
 		shaderList[0].SetSpotLights(spotLights, spotLightCount);
@@ -471,6 +668,7 @@ int main()
 
 		glm::mat4 model(1.0);
 		glm::mat4 modelaux(1.0);
+		glm::mat4 modelrootBoliche(1.0);
 		glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 		glm::vec2 toffset = glm::vec2(0.0f, 0.0f);
 		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
@@ -488,8 +686,10 @@ int main()
 		*/
 
 		// puesto de tortas invencible
+		glm::vec3 posPuestoTortas(-7.366f, 0.0f, -16.264f);
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-2.85f, 0.0f, -6.494f));
+		model = glm::translate(model, posPuestoTortas);
+		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
 		model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		TortasInvencible.RenderModel();
@@ -501,6 +701,135 @@ int main()
 		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Batimovil.RenderModel();
+
+		/*
+		* Feria de la fortuna
+		*/
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-0.876f, 0.0f, 18.489f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		RuedaFortunaInvencibleBase.RenderModel();
+
+		girarRueda += 0.5 * deltaTime; // TODO: evitar desbordamiento 
+
+		model = glm::translate(model, glm::vec3(0.0f, 7.187f, 0.0f));
+		model = glm::rotate(model, glm::radians(girarRueda), glm::vec3(0.0f, 0.0f, 1.0f));
+		modelaux = model;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		RuedaFortunaInvencibleWheel.RenderModel();
+
+		std::vector<std::pair<float, float>> posCabinas = {
+			//				x,      y
+			std::make_pair(-5.782f, 0.0f),
+			std::make_pair(-4.8f, 3.478f),
+			std::make_pair(-2.527, 5.258f),
+			std::make_pair(0.0f, 5.656f),
+			std::make_pair(2.546f, 5.258f),
+			std::make_pair(4.63f, 3.478f),
+			std::make_pair(5.815f, 0.0f),
+			std::make_pair(4.7f, -3.317f),
+			std::make_pair(2.553f, -5.169f),
+			std::make_pair(0.0f, -5.792f),
+			std::make_pair(-2.521f, -5.169f),
+			std::make_pair(-4.701f, -3.317f),
+		};
+
+		for (int i = 0; i < posCabinas.size(); i++) {
+			model = modelaux;
+			model = glm::translate(model, glm::vec3(posCabinas[i].first, posCabinas[i].second, 0.0f));
+			model = glm::rotate(model, glm::radians(-girarRueda), glm::vec3(0.0f, 0.0f, 1.0f));
+			if(i % 2 == 0)
+				color = glm::vec3(0.14509f, 0.58823f, 0.74509f); // azul invencible
+			else
+				color = glm::vec3(0.9215f, 0.3647f, 0.4823f); // rosa atom eve
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+			RuedaFortunaInvencibleCabina.RenderModel();
+		}
+		// reiniciar color blanco
+		glUniform3fv(uniformColor, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+
+		/*
+		* Zona Invencible
+		* Se renderizan modelos de personajes con un showcase
+		*/
+		float posShowCases[5][4] = {
+			// x,        y,    z,     rotacion
+			{19.501f, 0.0f, -13.491f, -19.852f},
+			{21.367f, 0.0f, -12.757f, -29.925f},
+			{22.677f, 0.0f, -11.303f, -63.702f},
+			{23.371f, 0.0f, -9.75f, -90.554f},
+			{23.356f, 0.0f, -7.766f, -95.562f},
+		};
+
+		Model personajes[5] = {
+			Cecil_M, Conquest_M, Duplikate_M, KidOmniMan_M, Powerplex_M,
+		};
+
+		animarZonaTrajes += 0.5 * deltaTime; //TODO: evitar desbordamiento de float
+		for (int i = 0; i < 5; i++) {
+			// renderiza showcase
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(posShowCases[i][0], 0.0f, posShowCases[i][2]));
+			model = glm::rotate(model, glm::radians(posShowCases[i][3]), glm::vec3(0.0f, 1.0f, 0.0f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			ShowSuit.RenderModel();
+			// renderiza personajes dentro del showcase
+			model = glm::translate(model, glm::vec3(0.0f, 0.12f, 0.0f));
+			if(i == 1) // escalar Conquest
+				model = glm::scale(model, glm::vec3(0.8f));
+			model = glm::scale(model, glm::vec3(1.0f) * (1.0f + 0.05f * sin(animarZonaTrajes*0.1f)));
+			model = glm::rotate(model, glm::radians(animarZonaTrajes), glm::vec3(0.0f, 1.0f, 0.0f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			personajes[i].RenderModel();
+		}
+
+		/*
+		* Pantalla
+		*/
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(27.441f, 0.0f, -13.418f));
+		model = glm::rotate(model, glm::radians(-44.398f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		color = glm::vec3(0.1f, 0.1f, 0.1f); // negro
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		ProyectorInvencible.RenderModel();
+
+		// animacion para cambiar entre frames
+		now = glfwGetTime();
+		if (now - lastTimeProy >= 3.0f) {
+			offsetFrames += 0.2f;
+			if (offsetFrames >= 1.0f)
+				offsetFrames = 0.0f;
+			lastTimeProy = now;
+		}
+		model = glm::translate(model, glm::vec3(0.0f, 5.5f, 1.3f));
+		model = glm::scale(model, glm::vec3(8.0f, 2.0f, 2.0f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(glm::vec2(offsetFrames, 0.0f)));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		color = glm::vec3(1.0f, 1.0f, 1.0f);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		FramesInvencible.UseTexture();
+		meshList[2]->RenderMesh();
+
+		// reiniciar offset de texturas
+		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(glm::vec2(0.0f)));
+		/*
+		* Escenario Ember
+		* Se renderiza Escenario, Bocinas.
+		*/
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f,0.0f,-30.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Stage.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BocinasStageEmber.RenderModel();
+
 
 		/*
 		* ------------------
@@ -516,9 +845,137 @@ int main()
 		* Revienta Globos - A5
 		*/
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-10.09f, 0.0f, 4.905f));
+		model = glm::translate(model, glm::vec3(-25.0f, 0.0f, 11.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		RevientaGlobosInvencible.RenderModel();
+
+		/*
+		* Boliche - A2
+		*/
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-3.68f,0.0f, 28.854f));
+		modelrootBoliche = model;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		LineasBoliche.RenderModel();
+
+		model = glm::translate(model, glm::vec3(8.5f, 0.0f, -0.25f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		SueloBoliche.RenderModel();
+
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(8.5f, 0.0f, -0.25f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		paredBoliche.RenderModel();
+
+		// Recepcion
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(17.0, 0.0f, 1.8f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		recibidorBoliche.RenderModel();
+
+		// Maquinas de Bolas
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(11.8745f, 0.0f, -2.0));
+		modelaux = model;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		MaquinaBolasBolicheRoja.RenderModel();
+
+		// Bola Verde
+		model = glm::translate(model, glm::vec3(0.65f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaVerde.RenderModel();
+
+		// Bola Roja
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.4f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaRoja.RenderModel();
+
+		// Bola Azul
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaAzul.RenderModel();
+
+		// ------------
+
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(11.8745f, 0.0f, -0.45f));
+		modelaux = model;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		MaquinaBolasBolicheAzul.RenderModel();
+
+		// Bola Azul
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.65f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaAzul.RenderModel();
+
+		// Bola Roja
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.4f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaRoja.RenderModel();
+
+		// Bola Verde
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaVerde.RenderModel();
+
+		// ------------
+
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(11.8745f, 0.0f, 1.2f));
+		modelaux = model;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		MaquinaBolasBolicheRoja.RenderModel();
+
+		// Bola Roja
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.65f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaRoja.RenderModel();
+
+		// Bola Verde
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.4f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaVerde.RenderModel();
+
+		// Bola Azul
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f, 0.494f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BolaAzul.RenderModel();
+
+		/*
+		* Pines de Boliche por Linea
+		*/
+
+		// Linea 1
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(-5.5f, 0.0f, -1.0f));
+		SetPinesBoliche(uniformModel, pinesTrans, model, pinBoliche);
+
+		// Linea 3
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(-5.5f, 0.0f, 2.3f));
+		SetPinesBoliche(uniformModel, pinesTrans, model, pinBoliche);
+
+		// Linea 2
+		model = modelrootBoliche;
+		model = glm::translate(model, glm::vec3(-5.5f, 0.0f, 0.7f));
+		SetPinesBoliche(uniformModel, pinesTrans, model, pinBoliche);
+
+		// -----------------------
+
+
+		/*
+		* Fin Boliche - A2
+		*/
+
+
 
 		/*
 		* ------------------
@@ -527,14 +984,23 @@ int main()
 		* ------------------
 		*/
 		// Atom eve - revienta globos
-		AtomEve_M.MovFullModel(glm::vec3(-10.929f, 0.85f, 4.376f), glm::vec3(0.0, 1.0f, 0.0f), 135.753f);
+		animaAtomGlobos += 0.1f * deltaTime;
+		AtomEve_M.MovFullModel(glm::vec3(-25.7f, 0.95f, 10.5f), 
+			glm::vec3(0.0, 1.0f, 0.0f), 135.753f);
 		AtomEve_M.TransformHead(glm::vec3(0.0f, 0.567f, -0.015f), 
-			glm::vec3(0.0f, 1.0f, 0.0f), sin(rotacionCamara)); // TODO: corregir animacion
+			glm::vec3(1.0f, 0.0f, 0.0f), 5*sin(animaAtomGlobos));
 		AtomEve_M.TransformLegR(glm::vec3(-0.065f, 0.03f, -0.008f));
 		AtomEve_M.TransformLegL(glm::vec3(0.015f, 0.01f, -0.003f));
 		AtomEve_M.TransformArmR(glm::vec3(-0.103f, 0.462f, -0.018f));
-		AtomEve_M.TransformArmL(glm::vec3(0.108f, 0.444f, -0.039f));
+		AtomEve_M.TransformArmL(glm::vec3(0.108f, 0.444f, -0.039f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 50 * cos(animaAtomGlobos));
 		AtomEve_M.RenderModelJ(uniformModel);
+
+		// Ember del Escenario
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Ember_M.RenderModel();
 
 		/*
 		* ------------------
@@ -543,9 +1009,18 @@ int main()
 		* ------------------
 		*/
 
-		// variables auxiliares para la interfaz de selecci�n de personaje
-		glm::vec3 camPos = camera.getCameraPosition();
-		glm::vec3 camFront = glm::normalize(camera.getCameraDirection());
+		// omniman - tortas invencible
+		OmniMan_M.MovFullModel(posPuestoTortas + glm::vec3(-0.6f, 0.9f, -0.6f),
+			glm::vec3(0.0f, 1.0f, 0.0f), 32.953f);
+		OmniMan_M.TransformHead(glm::vec3(0.0f, 0.683f, -0.015f));
+		OmniMan_M.TransformLegR(glm::vec3(-0.081f, 0.033f, 0.017f));
+		OmniMan_M.TransformLegL(glm::vec3(0.075f, 0.036f, -0.003f));
+		OmniMan_M.TransformArmR(glm::vec3(-0.163f, 0.549f, -0.037f));
+		OmniMan_M.TransformArmL(glm::vec3(0.177f, 0.551f, -0.034f));
+		OmniMan_M.RenderModelJ(uniformModel);
+
+		// variables auxiliares para la interfaz de selección de personaje
+		glm::vec3 camFront = glm::normalize(freeCam.getCameraDirection());
 		glm::mat4 orientacion = glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
 
 		/*
