@@ -287,6 +287,14 @@ int main()
 	CreateObjects();
 	CreateShaders();
 
+	// Posición Postes de Luz:
+	bool isPosteLuzOn = true;
+	std::vector <glm::vec3> posPostesLuz;
+	posPostesLuz.push_back(glm::vec3(8.072f, 5.03f, 15.362f));
+	posPostesLuz.push_back(glm::vec3(12.429f, 5.03f, -8.4947f));
+	posPostesLuz.push_back(glm::vec3(-16.142f, 5.03f, -1.0662f));
+	posPostesLuz.push_back(glm::vec3(-19.785f, 5.03f, -25.709f));
+
 	glm::vec3 avatarPos(0.0f, 0.0f, 0.0f);
 	// Ejemplo de un par de atracciones clave:
 	glm::vec3 posCabina(-25.0f, 0.0f, 11.0f);
@@ -381,6 +389,24 @@ int main()
 	/*
 	Model PuestoElotes = Model();
 	PuestoElotes.LoadModel("Models/PuestoElotes.obj");*/
+
+	/*
+	* Ambientación 
+	*/
+
+	// Bancas
+	Model Banca = Model();
+	Banca.LoadModel("Models/Ambientacion/banca.obj");
+
+	Model BancaTecho = Model();
+	BancaTecho.LoadModel("Models/Ambientacion/bancaTecho.obj");
+
+	// Postes de Luz
+	Model PosteLampara = Model();
+	PosteLampara.LoadModel("Models/Ambientacion/posteLampara.obj");
+	Model Lampara = Model();
+	Lampara.LoadModel("Models/Ambientacion/lampara.obj");
+
 
 	/*
 	* Atracciones
@@ -507,8 +533,8 @@ int main()
 
 	// BATIMOVIL
 	
-	Model Batimovil = Model();
-	Batimovil.LoadModel("Models/Batimovil.obj");
+	/*Model Batimovil = Model();
+	Batimovil.LoadModel("Models/Batimovil.obj");*/
 	
 
 	/*
@@ -555,13 +581,33 @@ int main()
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
 		0.3f, 0.3f, // intensidad ambiental (radiacion de la luz), intensidad difusa
 		0.0f, -1.0f, 0.0f);
+
 	//contador de luces puntuales
 	unsigned int pointLightCount = 0;
-	//Declaración de primer luz puntual
-	pointLights[0] = PointLight(1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f,
-		-6.0f, 1.5f, 1.5f, // pos
-		0.3f, 0.2f, 0.1f);
+
+	// Luces Puntuales
+	pointLights[0] = PointLight(1.0f, 1.0f, 1.0f,
+								7.0f, 5.5f,				// Ambiental | Difuso 
+								posPostesLuz[0].x, posPostesLuz[0].y, posPostesLuz[0].z, // pos
+								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+	pointLightCount++;
+
+	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f,
+								7.0f, 5.5f,				// Ambiental | Difuso 
+								posPostesLuz[1].x, posPostesLuz[1].y, posPostesLuz[1].z, // pos
+								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+	pointLightCount++;
+
+	pointLights[2] = PointLight(1.0f, 1.0f, 1.0f,
+								7.0f, 5.5f,				// Ambiental | Difuso 
+								posPostesLuz[2].x, posPostesLuz[2].y, posPostesLuz[2].z, // pos
+								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+	pointLightCount++;
+
+	pointLights[3] = PointLight(1.0f, 1.0f, 1.0f,
+								7.0f, 5.5f,				// Ambiental | Difuso 
+								posPostesLuz[3].x, posPostesLuz[3].y, posPostesLuz[3].z, // pos
+								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
 	pointLightCount++;
 
 	unsigned int spotLightCount = 0;
@@ -572,30 +618,7 @@ int main()
 		0.0f, -1.0f, 0.0f,
 		1.0f, 0.0f, 0.0f,
 		5.0f);
-	//spotLightCount++;
-
-	/*
-	* Faros
-	*/
-
-	//luz fija
-	spotLights[1] = SpotLight(0.0f, 0.0f, 0.0f,
-		1.0f, 2.0f,
-		-5.0f, 1.0f, -3.0f,
-		-1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		15.0f);
 	spotLightCount++;
-
-	spotLights[2] = SpotLight(0.0f, 0.0f, 1.0f,
-		1.0f, 2.0f,
-		-5.0f, 1.0f, 3.0f,
-		-1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		15.0f);
-	spotLightCount++;
-	
-	//se crean mas luces puntuales y spotlight 
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
 		uniformSpecularIntensity = 0, uniformShininess = 0, uniformTextureOffset = 0;;
@@ -648,6 +671,7 @@ int main()
 	float girarRueda = 0.0f;
 	float animaAtomGlobos = 0.0f;
 	float animarZonaTrajes = 0.0f;
+	float animaLampara = 0.0;
 	GLfloat lastTimeProy = 0.0f;
 
 	// Posición del Avatar
@@ -779,8 +803,8 @@ int main()
 
 
 		//información al shader de fuentes de iluminación
-		shaderList[0].SetDirectionalLight(&mainLight);
-		shaderList[0].SetPointLights(pointLights, pointLightCount);
+		//shaderList[0].SetDirectionalLight(&mainLight);
+		if (isPosteLuzOn) shaderList[0].SetPointLights(pointLights, pointLightCount);
 		shaderList[0].SetSpotLights(spotLights, spotLightCount);
 
 		/*
@@ -804,10 +828,127 @@ int main()
 
 		/*
 		* ------------------
-		* Ambientacion 
+		* Ambientacion
 		* Aqui renderizar todos los modelos decorativos
 		* ------------------
 		*/
+
+		// Bancas Frontales 
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-3.156f, 0.0f, 11.62f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Banca.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(3.156f, 0.0f, 11.62f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Banca.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-3.156f, 0.0f, -11.65f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Banca.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(3.156f, 0.0f, -11.65f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Banca.RenderModel();
+
+		// Bancas Laterales 
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-10.543f, 0.0f, 2.305f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Banca.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-10.543f, 0.0f, -2.805f));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BancaTecho.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(13.3f, 0.0f, 2.305f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BancaTecho.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(13.3f, 0.0f, -2.805f));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Banca.RenderModel();
+
+		// BancasTecho
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 11.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BancaTecho.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -11.65f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BancaTecho.RenderModel();
+
+
+		// Bancas Dsipersas
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-14.39f, 0.0f, 20.322f));
+		model = glm::rotate(model, glm::radians(135.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BancaTecho.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-16.012f, 0.0f, 7.7102f));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BancaTecho.RenderModel();
+
+
+		/*
+		* Postes de Luz
+		*/
+		animaLampara += 0.06 * deltaTime;
+
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(8.072f, 0.0f, 15.362f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		PosteLampara.RenderModel();
+
+		model = glm::translate(model, glm::vec3(0.0f, 5.02f + sin(animaLampara) / 15.0, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Lampara.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(12.429f, 0.0f, -8.4947f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		PosteLampara.RenderModel();
+
+		model = glm::translate(model, glm::vec3(0.0f, 5.02f + sin(animaLampara) / 15.0, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Lampara.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-16.142f, 0.0f, -1.0662f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		PosteLampara.RenderModel();
+
+		model = glm::translate(model, glm::vec3(0.0f, 5.02f + sin(animaLampara) / 15.0, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Lampara.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-19.785f, 0.0f, -25.709f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		PosteLampara.RenderModel();
+
+		model = glm::translate(model, glm::vec3(0.0f, 5.02f + sin(animaLampara) / 15.0, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Lampara.RenderModel();
 
 		// puesto de tortas invencible
 		glm::vec3 posPuestoTortas(-7.366f, 0.0f, -16.264f);
