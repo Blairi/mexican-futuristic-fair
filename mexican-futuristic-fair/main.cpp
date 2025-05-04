@@ -618,32 +618,7 @@ int main()
 		0.0f, -1.0f, 0.0f,
 		1.0f, 0.0f, 0.0f,
 		5.0f);
-<<<<<<< HEAD
-=======
-	//spotLightCount++;
-
-	/*
-	* Faros
-	*/
-
-	//luz fija
-	spotLights[1] = SpotLight(0.0f, 0.0f, 0.0f,
-		1.0f, 2.0f,
-		-5.0f, 1.0f, -3.0f,
-		-1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		15.0f);
 	spotLightCount++;
-
-	spotLights[2] = SpotLight(0.0f, 0.0f, 1.0f,
-		1.0f, 2.0f,
-		-5.0f, 1.0f, 3.0f,
-		-1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		15.0f);
->>>>>>> develop
-	spotLightCount++;
-	
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
 		uniformSpecularIntensity = 0, uniformShininess = 0, uniformTextureOffset = 0;;
