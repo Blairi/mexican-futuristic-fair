@@ -43,6 +43,13 @@ Autores:
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "Material.h"
+
+// main.cpp (era después de los includes)
+struct AppPointers {
+	Window* win;
+	ThirdPersonCamera* cam3p;
+};
+
 const float toRadians = 3.14159265f / 180.0f;
 
 Window mainWindow;
@@ -273,6 +280,9 @@ int main()
 	mainWindow = Window(1920, 1070); // 1280, 1024 or 1024, 768
 	mainWindow.Initialise();
 
+
+	
+
 	createInterface();
 	CreateObjects();
 	CreateShaders();
@@ -302,8 +312,8 @@ int main()
 		0.1f, 0.5f                          // moveSpeed, turnSpeed
 	);
 	ThirdPersonCamera thirdCam(
-		glm::vec3(0, 3, 8),                  // offset detrás del avatar
-		glm::vec3(0, 1, 0),                  // up vector
+		glm::vec3(0, 5, 16),    // offset detrás del avatar
+		glm::vec3(0, 1, 0),               // up vector
 		&avatarPos                         // target del avatar
 	);
 	ObjectFocusCamera objFocusCam(
@@ -317,6 +327,21 @@ int main()
 
 	// Cámara activa
 	Camera* activeCamera = &freeCam;
+
+	auto* ptrs = new AppPointers{ &mainWindow, &thirdCam };
+	GLFWwindow* glfwWin = mainWindow.getGLFWwindow();
+	glfwSetWindowUserPointer(glfwWin, ptrs);           // <— ¡una sola vez!
+
+	// --------------------------------------------------------------
+	//                 CALLBACK DEL SCROLL (zoom)
+	// --------------------------------------------------------------
+	glfwSetScrollCallback(glfwWin,
+		[](GLFWwindow* w, double /*x*/, double y)
+		{
+			auto* p = static_cast<AppPointers*>(glfwGetWindowUserPointer(w));
+	if (p && p->cam3p)
+		p->cam3p->addDistance(-static_cast<float>(y)); // ↑ acerca, ↓ aleja
+		});
 
 
 
@@ -593,6 +618,30 @@ int main()
 		0.0f, -1.0f, 0.0f,
 		1.0f, 0.0f, 0.0f,
 		5.0f);
+<<<<<<< HEAD
+=======
+	//spotLightCount++;
+
+	/*
+	* Faros
+	*/
+
+	//luz fija
+	spotLights[1] = SpotLight(0.0f, 0.0f, 0.0f,
+		1.0f, 2.0f,
+		-5.0f, 1.0f, -3.0f,
+		-1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		15.0f);
+	spotLightCount++;
+
+	spotLights[2] = SpotLight(0.0f, 0.0f, 1.0f,
+		1.0f, 2.0f,
+		-5.0f, 1.0f, 3.0f,
+		-1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		15.0f);
+>>>>>>> develop
 	spotLightCount++;
 	
 
@@ -650,6 +699,10 @@ int main()
 	float animaLampara = 0.0;
 	GLfloat lastTimeProy = 0.0f;
 
+	// Posición del Avatar
+	bool hadSelected = false;
+
+
 
 	while (!mainWindow.getShouldClose())
 	{
@@ -681,10 +734,47 @@ int main()
 		// Actualiza la cámara elegida
 		activeCamera->update(deltaTime);
 
+		bool nowSelected = mainWindow.isPersonajeSeleccionado();
+		if (nowSelected && !hadSelected) {
+			// justo al pulsar “Select”: inicializamos posición y saltamos a 3ª p.
+			avatarPos = glm::vec3(0.0f, 0.0f, 0.0f);
+			activeCamera = &thirdCam;         // ← aquí
+			hadSelected = true;
+		}
+		hadSelected = nowSelected;
+
+
 		// Sólo la freeCam y thirdCam usan WASD+mouse:
-		if (activeCamera == &freeCam || activeCamera == &thirdCam) {
-			activeCamera->keyControl(mainWindow.getsKeys(), deltaTime);
-			activeCamera->mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+		if (nowSelected && activeCamera == &thirdCam) {
+			float speed = 2.0f;                         // ajusta a tu gusto
+			float vel = speed * deltaTime;
+
+			glm::vec3 forward = thirdCam.getCameraDirection();
+			forward.y = 0.0f;
+			forward = glm::normalize(forward);
+
+			glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0, 1, 0)));
+
+			
+			 
+			// WASD
+			if (mainWindow.getsKeys()[GLFW_KEY_W] || mainWindow.getsKeys()[GLFW_KEY_UP])    avatarPos += forward * vel;
+			if (mainWindow.getsKeys()[GLFW_KEY_S] || mainWindow.getsKeys()[GLFW_KEY_DOWN])  avatarPos -= forward * vel;
+			if (mainWindow.getsKeys()[GLFW_KEY_A] || mainWindow.getsKeys()[GLFW_KEY_LEFT])  avatarPos -= right * vel;
+			if (mainWindow.getsKeys()[GLFW_KEY_D] || mainWindow.getsKeys()[GLFW_KEY_RIGHT]) avatarPos += right * vel;
+
+			// Forzamos Y=0 para “simular” suelo
+			avatarPos.y = 0.0f;
+
+			// Actualizamos el target de la cámara
+			// (ya lo tienes apuntando a &avatarPos)
+			thirdCam.update(deltaTime);
+			thirdCam.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+		}
+		else if (activeCamera == &freeCam) {
+			// aquí dejas libreCam como antes
+			freeCam.keyControl(mainWindow.getsKeys(), deltaTime);
+			freeCam.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
 
 		glm::mat4 viewMatrix = activeCamera->getViewMatrix();
@@ -697,8 +787,9 @@ int main()
 		float x = 30.0f * cos(rotacionCamara);
 		float z = 30.0f * sin(rotacionCamara);
 
+		
+
 		if (mainWindow.isPersonajeSeleccionado()) {
-			activeCamera->keyControl(mainWindow.getsKeys(), deltaTime * 5);
 			activeCamera->mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
 		else {
@@ -1447,6 +1538,36 @@ int main()
 
 		// desaparecer interfaz si el usuario ya selecciono un avatar
 		if (mainWindow.isPersonajeSeleccionado()) {
+			switch (idPersonaje) {
+			case 0:
+				DannyPhantom_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z), glm::vec3(0, 1, 0), thirdCam.getYaw());
+				DannyPhantom_M.TransformHead(glm::vec3(0.0f, 0.21f, 0.0f));
+				DannyPhantom_M.TransformLegR(glm::vec3(-0.04f, -0.2f, 0.0f));
+				DannyPhantom_M.TransformLegL(glm::vec3(0.035f, -0.2f, 0.0f));
+				DannyPhantom_M.TransformArmR(glm::vec3(-0.1445f, 0.123f, 0.0f));
+				DannyPhantom_M.TransformArmL(glm::vec3(0.13f, 0.12f, 0.0f));
+				DannyPhantom_M.RenderModelJ(uniformModel);
+				break;
+			case 1:
+				Invencible_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z), glm::vec3(0, 1, 0), thirdCam.getYaw());
+				Invencible_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
+				Invencible_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
+				Invencible_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
+				Invencible_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f));
+				Invencible_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
+				Invencible_M.RenderModelJ(uniformModel);
+				break;
+			case 2:
+				Batman_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z), glm::vec3(0, 1, 0), thirdCam.getYaw());
+				Batman_M.TransformHead(glm::vec3(0.0f, 0.0f, 0.0f));
+				Batman_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
+				Batman_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
+				Batman_M.TransformArmR(glm::vec3(-0.010f, 0.025f, -0.023f));
+				Batman_M.TransformArmL(glm::vec3(0.010f, 0.025f, -0.028f));
+				Batman_M.RenderModelJ(uniformModel);
+				break;
+				// más cases según los avatares...
+			}
 			glDisable(GL_BLEND);
 			glUseProgram(0);
 			mainWindow.swapBuffers();
