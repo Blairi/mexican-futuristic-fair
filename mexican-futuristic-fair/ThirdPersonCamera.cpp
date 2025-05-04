@@ -1,57 +1,48 @@
-#include "ThirdPersonCamera.h"
+﻿#include "ThirdPersonCamera.h"
 #include <gtc/matrix_transform.hpp>
 #include <gtc/constants.hpp>
+ThirdPersonCamera::ThirdPersonCamera(glm::vec3 offset,
+    glm::vec3 up,
+    glm::vec3* targetObj)
+    : Camera(*targetObj + offset, up),
+    target(targetObj),
+    distance(glm::length(offset)),
+    yaw(-90.0f), pitch(0.0f),
+    turnSpeed(0.8f)
+{
+    offsetDir = glm::normalize(offset);
+}
 
-ThirdPersonCamera::ThirdPersonCamera(glm::vec3 offset, glm::vec3 up, glm::vec3* targetObject)
-    : Camera(*targetObject + offset, up), offset(offset), target(targetObject),
-    yaw(-90.0f), pitch(0.0f), moveSpeed(0.6f), turnSpeed(0.9f) {}
+void ThirdPersonCamera::recalcOffsetDir() {
+    offsetDir.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    offsetDir.y = sin(glm::radians(pitch));
+    offsetDir.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    offsetDir = glm::normalize(offsetDir);
+}
+
+void ThirdPersonCamera::update(float) {
+    // posición = personaje + dirección*distancia
+    position = *target + offsetDir * distance;
+}
 
 glm::mat4 ThirdPersonCamera::getViewMatrix() {
-    position = *target + offset;
     return glm::lookAt(position, *target, up);
 }
 
-void ThirdPersonCamera::update(float deltaTime) {
-    calculateOffset();
+void ThirdPersonCamera::mouseControl(float xDelta, float yDelta) {
+    yaw -= xDelta * turnSpeed;
+    pitch -= yDelta * turnSpeed;
+    pitch = glm::clamp(pitch, -89.0f, 89.0f);
+    recalcOffsetDir();
 }
 
-void ThirdPersonCamera::calculateOffset() {
-    offset.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    offset.y = sin(glm::radians(pitch));
-    offset.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    offset = glm::normalize(offset) * glm::length(offset);
+void ThirdPersonCamera::addDistance(float d) {
+    distance = glm::clamp(distance + d, 3.0f, 20.0f);   // 3 ≤ r ≤ 20
 }
 
-void ThirdPersonCamera::keyControl(bool* keys, float deltaTime) {
-    float velocity = moveSpeed * deltaTime;
 
-    if (keys[GLFW_KEY_UP])
-        target->z -= velocity;
-    if (keys[GLFW_KEY_DOWN])
-        target->z += velocity;
-    if (keys[GLFW_KEY_LEFT])
-        target->x -= velocity;
-    if (keys[GLFW_KEY_RIGHT])
-        target->x += velocity;
-    if (keys[GLFW_KEY_Q])
-        target->y += velocity;
-    if (keys[GLFW_KEY_E])
-        target->y -= velocity;
-}
-
-void ThirdPersonCamera::mouseControl(float xChange, float yChange) {
-    yaw += xChange * turnSpeed;
-    pitch += yChange * turnSpeed;
-
-    if (pitch > 89.0f) pitch = 89.0f;
-    if (pitch < -89.0f) pitch = -89.0f;
-
-    calculateOffset();
-}
-
-glm::vec3 ThirdPersonCamera::getCameraPosition() const {
-    return position;
-}
+glm::vec3 ThirdPersonCamera::getCameraPosition()  const { return position; }
 glm::vec3 ThirdPersonCamera::getCameraDirection() const {
-    return glm::normalize((*target) - position);
+    return glm::normalize((*target) - position);            // hacia el avatar
 }
+float ThirdPersonCamera::getYaw() const { return yaw; }
