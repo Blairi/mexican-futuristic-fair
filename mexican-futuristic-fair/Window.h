@@ -12,6 +12,8 @@ public:
 	GLfloat getBufferWidth() { return bufferWidth; }
 	GLfloat getBufferHeight() { return bufferHeight; }
 	GLfloat getXChange();
+	GLFWwindow* getGLFWwindow() const { return mainWindow; }   // o como se llame
+
 	GLfloat getYChange();
 	GLfloat getmuevex() { return muevex; }
 	bool getShouldClose() {
