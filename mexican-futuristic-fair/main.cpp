@@ -277,6 +277,14 @@ int main()
 	CreateObjects();
 	CreateShaders();
 
+	// Posición Postes de Luz:
+	bool isPosteLuzOn = true;
+	std::vector <glm::vec3> posPostesLuz;
+	posPostesLuz.push_back(glm::vec3(8.072f, 5.03f, 15.362f));
+	posPostesLuz.push_back(glm::vec3(12.429f, 5.03f, -8.4947f));
+	posPostesLuz.push_back(glm::vec3(-16.142f, 5.03f, -1.0662f));
+	posPostesLuz.push_back(glm::vec3(-19.785f, 5.03f, -25.709f));
+
 	glm::vec3 avatarPos(0.0f, 0.0f, 0.0f);
 	// Ejemplo de un par de atracciones clave:
 	glm::vec3 posCabina(-25.0f, 0.0f, 11.0f);
@@ -548,13 +556,33 @@ int main()
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
 		0.3f, 0.3f, // intensidad ambiental (radiacion de la luz), intensidad difusa
 		0.0f, -1.0f, 0.0f);
+
 	//contador de luces puntuales
 	unsigned int pointLightCount = 0;
-	//Declaración de primer luz puntual
-	pointLights[0] = PointLight(1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f,
-		-6.0f, 1.5f, 1.5f, // pos
-		0.3f, 0.2f, 0.1f);
+
+	// Luces Puntuales
+	pointLights[0] = PointLight(1.0f, 1.0f, 1.0f,
+								7.0f, 5.5f,				// Ambiental | Difuso 
+								posPostesLuz[0].x, posPostesLuz[0].y, posPostesLuz[0].z, // pos
+								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+	pointLightCount++;
+
+	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f,
+								7.0f, 5.5f,				// Ambiental | Difuso 
+								posPostesLuz[1].x, posPostesLuz[1].y, posPostesLuz[1].z, // pos
+								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+	pointLightCount++;
+
+	pointLights[2] = PointLight(1.0f, 1.0f, 1.0f,
+								7.0f, 5.5f,				// Ambiental | Difuso 
+								posPostesLuz[2].x, posPostesLuz[2].y, posPostesLuz[2].z, // pos
+								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+	pointLightCount++;
+
+	pointLights[3] = PointLight(1.0f, 1.0f, 1.0f,
+								7.0f, 5.5f,				// Ambiental | Difuso 
+								posPostesLuz[3].x, posPostesLuz[3].y, posPostesLuz[3].z, // pos
+								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
 	pointLightCount++;
 
 	unsigned int spotLightCount = 0;
@@ -566,29 +594,7 @@ int main()
 		1.0f, 0.0f, 0.0f,
 		5.0f);
 	spotLightCount++;
-
-	/*
-	* Faros
-	*/
-
-	//luz fija
-	spotLights[1] = SpotLight(0.0f, 0.0f, 0.0f,
-		1.0f, 2.0f,
-		-5.0f, 1.0f, -3.0f,
-		-1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		15.0f);
-	spotLightCount++;
-
-	spotLights[2] = SpotLight(0.0f, 0.0f, 1.0f,
-		1.0f, 2.0f,
-		-5.0f, 1.0f, 3.0f,
-		-1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		15.0f);
-	spotLightCount++;
 	
-	//se crean mas luces puntuales y spotlight 
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
 		uniformSpecularIntensity = 0, uniformShininess = 0, uniformTextureOffset = 0;;
@@ -726,13 +732,13 @@ int main()
 		glm::vec3 camPos = activeCamera->getCameraPosition();
 		glm::vec3 camDir = activeCamera->getCameraDirection();
 		glUniform3f(uniformEyePosition, camPos.x, camPos.y, camPos.z);
-		spotLights[0].SetFlash(camPos, camDir);
+		//spotLights[0].SetFlash(camPos, camDir);
 
 
 
 		//información al shader de fuentes de iluminación
-		shaderList[0].SetDirectionalLight(&mainLight);
-		shaderList[0].SetPointLights(pointLights, pointLightCount);
+		//shaderList[0].SetDirectionalLight(&mainLight);
+		if (isPosteLuzOn) shaderList[0].SetPointLights(pointLights, pointLightCount);
 		shaderList[0].SetSpotLights(spotLights, spotLightCount);
 
 		/*
@@ -862,6 +868,15 @@ int main()
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-16.142f, 0.0f, -1.0662f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		PosteLampara.RenderModel();
+
+		model = glm::translate(model, glm::vec3(0.0f, 5.02f + sin(animaLampara) / 15.0, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Lampara.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-19.785f, 0.0f, -25.709f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		PosteLampara.RenderModel();
 
