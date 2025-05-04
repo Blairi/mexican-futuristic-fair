@@ -1374,21 +1374,30 @@ int main()
 		if (mainWindow.isPersonajeSeleccionado()) {
 			switch (idPersonaje) {
 			case 0:
-				DannyPhantom_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z),
-					glm::vec3(0, 1, 0),
-					thirdCam.getYaw());
+				DannyPhantom_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z), glm::vec3(0, 1, 0), thirdCam.getYaw());
+				DannyPhantom_M.TransformHead(glm::vec3(0.0f, 0.21f, 0.0f));
+				DannyPhantom_M.TransformLegR(glm::vec3(-0.04f, -0.2f, 0.0f));
+				DannyPhantom_M.TransformLegL(glm::vec3(0.035f, -0.2f, 0.0f));
+				DannyPhantom_M.TransformArmR(glm::vec3(-0.1445f, 0.123f, 0.0f));
+				DannyPhantom_M.TransformArmL(glm::vec3(0.13f, 0.12f, 0.0f));
 				DannyPhantom_M.RenderModelJ(uniformModel);
 				break;
 			case 1:
-				Invencible_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z),
-					glm::vec3(0, 1, 0),
-					thirdCam.getYaw());
+				Invencible_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z), glm::vec3(0, 1, 0), thirdCam.getYaw());
+				Invencible_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
+				Invencible_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
+				Invencible_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
+				Invencible_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f));
+				Invencible_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
 				Invencible_M.RenderModelJ(uniformModel);
 				break;
 			case 2:
-				Batman_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z),
-					glm::vec3(0, 1, 0),
-					thirdCam.getYaw());
+				Batman_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z), glm::vec3(0, 1, 0), thirdCam.getYaw());
+				Batman_M.TransformHead(glm::vec3(0.0f, 0.0f, 0.0f));
+				Batman_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
+				Batman_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
+				Batman_M.TransformArmR(glm::vec3(-0.010f, 0.025f, -0.023f));
+				Batman_M.TransformArmL(glm::vec3(0.010f, 0.025f, -0.028f));
 				Batman_M.RenderModelJ(uniformModel);
 				break;
 				// más cases según los avatares...
