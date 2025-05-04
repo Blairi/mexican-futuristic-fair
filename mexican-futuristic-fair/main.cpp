@@ -253,6 +253,9 @@ int main()
 	createInterface();
 	CreateObjects();
 	CreateShaders();
+
+	// Contador de Luces Puntuales
+	unsigned int pointLightCount = 0;
 																						//0.3f
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f, 0.1f, 0.5f);
 	brickTexture = Texture("Textures/brick.png");
@@ -285,6 +288,13 @@ int main()
 
 	Model BancaTecho = Model();
 	BancaTecho.LoadModel("Models/Ambientacion/bancaTecho.obj");
+
+	// Postes de Luz
+	Model PosteLampara = Model();
+	PosteLampara.LoadModel("Models/Ambientacion/posteLampara.obj");
+	Model Lampara = Model();
+	Lampara.LoadModel("Models/Ambientacion/lampara.obj");
+
 
 	/*
 	* Puestos de comida
@@ -404,13 +414,12 @@ int main()
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
 		0.3f, 0.3f, // intensidad ambiental (radiacion de la luz), intensidad difusa
 		0.0f, -1.0f, 0.0f);
-	//contador de luces puntuales
-	unsigned int pointLightCount = 0;
-	//Declaración de primer luz puntual
-	pointLights[0] = PointLight(1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f,
-		-6.0f, 1.5f, 1.5f, // pos
-		0.3f, 0.2f, 0.1f);
+
+	// Luces Puntuales
+	pointLights[0] = PointLight(1.0f, 1.0f, 1.0f,
+								5.5f, 5.0f,         // Ambiental | Difuso 
+								8.072f, 5.05f, 15.362f, // pos
+								0.3f, 0.2f, 0.1f); // Atenuación cons, lin, exp
 	pointLightCount++;
 
 	unsigned int spotLightCount = 0;
@@ -423,27 +432,7 @@ int main()
 		5.0f);
 	spotLightCount++;
 
-	/*
-	* Faros
-	*/
 
-	//luz fija
-	spotLights[1] = SpotLight(0.0f, 0.0f, 0.0f,
-		1.0f, 2.0f,
-		-5.0f, 1.0f, -3.0f,
-		-1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		15.0f);
-	spotLightCount++;
-
-	spotLights[2] = SpotLight(0.0f, 0.0f, 1.0f,
-		1.0f, 2.0f,
-		-5.0f, 1.0f, 3.0f,
-		-1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		15.0f);
-	spotLightCount++;
-	
 	//se crean mas luces puntuales y spotlight 
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
@@ -495,6 +484,7 @@ int main()
 	float girarRueda = 0.0f;
 	float animaAtomGlobos = 0.0f;
 	float animarZonaTrajes = 0.0f;
+	float animaLampara = 0.0f;
 
 
 	while (!mainWindow.getShouldClose())
@@ -542,20 +532,19 @@ int main()
 
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
-		glUniform3f(uniformEyePosition, camera.getCameraPosition().x, 
-			camera.getCameraPosition().y, camera.getCameraPosition().z);
+		glUniform3f(uniformEyePosition, camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
 
 		/*
 		* TODO: eliminar esta luz de tipo linterna
 		*/
 		glm::vec3 lowerLight = camera.getCameraPosition();
 		lowerLight.y -= 0.3f; 
-		spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
+		//spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
 
 		//información al shader de fuentes de iluminación
 		shaderList[0].SetDirectionalLight(&mainLight);
-		shaderList[0].SetPointLights(pointLights, pointLightCount);
-		shaderList[0].SetSpotLights(spotLights, spotLightCount);
+		//shaderList[0].SetPointLights(pointLights, pointLightCount);
+		//shaderList[0].SetSpotLights(spotLights, spotLightCount);
 
 		/*
 		* eleccion de personaje
@@ -656,6 +645,22 @@ int main()
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		BancaTecho.RenderModel();
+
+
+		/*
+		* Postes de Luz
+		*/
+
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(8.072f, 0.0f, 15.362f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		PosteLampara.RenderModel();
+
+		animaLampara += 0.06 * deltaTime;
+		model = glm::translate(model, glm::vec3(0.0f, 5.02f + sin(animaLampara)/15.0, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Lampara.RenderModel();
 
 		// puesto de tortas invencible
 		glm::vec3 posPuestoTortas(-7.366f, 0.0f, -16.264f);
