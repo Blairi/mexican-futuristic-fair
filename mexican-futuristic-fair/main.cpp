@@ -217,9 +217,9 @@ int main()
 	Model TortasInvencible = Model();
 	TortasInvencible.LoadModel("Models/PuestoTortasInvencible/puesto-tortas-invencible.obj");
 
-	/*
+	
 	Model PuestoElotes = Model();
-	PuestoElotes.LoadModel("Models/PuestoElotes.obj");*/
+	PuestoElotes.LoadModel("Models/PuestoBatielotes/PuestoElotes.obj");
 
 	/*
 	* Ambientación 
@@ -227,7 +227,7 @@ int main()
 
 	// Bancas
 	Model Banca = Model();
-	Banca.LoadModel("Models/Ambientacion/banca.obj");
+	Banca.LoadModel("Models/Ambientacion/Banca.obj");
 
 	Model BancaTecho = Model();
 	BancaTecho.LoadModel("Models/Ambientacion/bancaTecho.obj");
@@ -238,6 +238,9 @@ int main()
 	Model Lampara = Model();
 	Lampara.LoadModel("Models/Ambientacion/lampara.obj");
 
+	//Batimovil
+	Model batimovil = Model();
+	batimovil.LoadModel("Models/Ambientacion/batimovil.obj");
 
 	/*
 	* Atracciones
@@ -293,49 +296,49 @@ int main()
 	//CARPA
 
 	Model carpa = Model();
-	carpa.LoadModel("Models/carpa.obj");
+	carpa.LoadModel("Models/AtraccionDados/carpa.obj");
 
 	//Mesa dados
 
 	Model mesa_dados = Model();
-	mesa_dados.LoadModel("Models/mesa_dados.obj");
+	mesa_dados.LoadModel("Models/AtraccionDados/mesa_dados.obj");
 
 	//dado
 	Model dado = Model();
-	dado.LoadModel("Models/dado.obj");
+	dado.LoadModel("Models/AtraccionDados/dado.obj");
 
 	//------------------ ATRACCION Whack A Mole ------------------------
 
 	Model maquinaWhack = Model();
-	maquinaWhack.LoadModel("Models/WhackAMole.obj");
+	maquinaWhack.LoadModel("Models/AtraccionWhackAMole/WhackAMole.obj");
 
 	Model topo = Model();
-	topo.LoadModel("Models/topo.obj");
+	topo.LoadModel("Models/AtraccionWhackAMole/topo.obj");
 
 	Model martillo_topos = Model();
-	martillo_topos.LoadModel("Models/martillo_topos.obj");
+	martillo_topos.LoadModel("Models/AtraccionWhackAMole/martillo_topos.obj");
 
 	//------------------ ATRACCION ZONA BATEO ------------------------
 
 	Model zonabateo = Model();
-	zonabateo.LoadModel("Models/zonabateo.obj");
+	zonabateo.LoadModel("Models/AtraccionBateo/zonabateo.obj");
 
 	Model maquinaTenis = Model();
-	maquinaTenis.LoadModel("Models/maquinaTenis.obj");
+	maquinaTenis.LoadModel("Models/AtraccionBateo/maquinaTenis.obj");
 
 	Model pelotaTenis = Model();
-	pelotaTenis.LoadModel("Models/pelotaTenis.obj");
+	pelotaTenis.LoadModel("Models/AtraccionBateo/pelotaTenis.obj");
 
 	Model bat = Model();
-	bat.LoadModel("Models/bat.obj");
+	bat.LoadModel("Models/AtraccionBateo/bat.obj");
 
 	//------------------ ATRACCION LANZAMIENTO DE HACHA ------------------------
 
 	Model LanzamientoDeHacha = Model();
-	LanzamientoDeHacha.LoadModel("Models/LanzamientoDeHacha.obj");
+	LanzamientoDeHacha.LoadModel("Models/AtraccionHacha/LanzamientoDeHacha.obj");
 
 	Model batgarang = Model();
-	batgarang.LoadModel("Models/batgarang.obj");
+	batgarang.LoadModel("Models/AtraccionHacha/batgarang.obj");
 
 	/*
 	* Escenario de Musica
@@ -362,10 +365,8 @@ int main()
 	Model Conquest_M = Model();
 	Conquest_M.LoadModel("Models/ZonaInvencible/Conquest.obj");
 
-	// BATIMOVIL
 	
-	/*Model Batimovil = Model();
-	Batimovil.LoadModel("Models/Batimovil.obj");*/
+	
 	
 
 	/*
@@ -388,8 +389,15 @@ int main()
 	*/
 	ModelJerarquia AtomEve_M = ModelJerarquia("Models/AtomEve");
 	AtomEve_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+
 	ModelJerarquia OmniMan_M = ModelJerarquia("Models/OmniMan");
 	OmniMan_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+
+	ModelJerarquia HarleyQuinn = ModelJerarquia("Models/HarleyQuinn");
+	HarleyQuinn.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+
+	ModelJerarquia Joker = ModelJerarquia("Models/Joker");
+	Joker.InitModel(glm::vec3(0.0f, 1.1065f, 0.0f));
 
 	Model Ember_M = Model();
 	Ember_M.LoadModel("Models/Ember/Ember.obj");
@@ -666,6 +674,14 @@ int main()
 		* ------------------
 		*/
 
+		// Batimovil
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-21.8945f, 0.120827f, 21.5915f));
+		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		batimovil.RenderModel();
+
+
 		// Bancas Frontales 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-3.156f, 0.0f, 11.62f));
@@ -792,13 +808,13 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		TortasInvencible.RenderModel();
 
-		/*glm::vec3 posPuestoElotes(8.1585f, -0.077008f, -15.761f);
+		glm::vec3 posPuestoElotes(8.28819f, 0.008754f, -15.0227f);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posPuestoElotes);
 		//model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
 		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		PuestoElotes.RenderModel(); */
+		PuestoElotes.RenderModel(); 
 		
 
 		
@@ -1295,6 +1311,23 @@ int main()
 		* Aqui renderizar todos los NPC de ambiente
 		* ------------------
 		*/
+		//Harley Quinn -  Zona Bateo
+		HarleyQuinn.MovFullModel(glm::vec3(25.2693f, 0.967349f, 5.02014f));
+		HarleyQuinn.TransformHead(glm::vec3(0.0f, 0.683806f, 0.021197f));//
+		HarleyQuinn.TransformLegR(glm::vec3(0.053826f, 0.139596f, 0.0f));//
+		HarleyQuinn.TransformLegL(glm::vec3(-0.053826f, 0.139596f, 0.0f));//
+		HarleyQuinn.TransformArmR(glm::vec3(0.189628f, 0.573444f, 0.023411f));//
+		HarleyQuinn.TransformArmL(glm::vec3(-0.189628f, 0.573444f, 0.023411f));//
+		HarleyQuinn.RenderModelJ(uniformModel);
+
+		//Joker -  Bati elotes
+		Joker.MovFullModel(glm::vec3(10.49f, 0.0f, -12.8796f));
+		Joker.TransformHead(glm::vec3(0.0f, 0.931009f, -0.113821f));//
+		Joker.TransformLegR(glm::vec3(-0.165213f, 0.009248f, 0.0f));//
+		Joker.TransformLegL(glm::vec3(0.230091f, 0.033922f, 0.0f));//
+		Joker.TransformArmR(glm::vec3(-0.251991f, 0.831474f, -0.053465f));//
+		Joker.TransformArmL(glm::vec3(0.251991f, 0.831474f, -0.053465f));//
+		Joker.RenderModelJ(uniformModel);
 
 		/*
 		* NPC de zona invencible
