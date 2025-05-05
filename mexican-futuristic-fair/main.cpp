@@ -71,6 +71,8 @@ DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
 
+const float DISTANCIA_PARA_ACTIVAR = 5.0F;
+
 std::vector<Shader> shaderList;
 void CreateShaders()
 {
@@ -130,9 +132,20 @@ int main()
 	posPostesLuz.push_back(glm::vec3(-19.785f, 5.03f, -25.709f));
 
 	glm::vec3 avatarPos(0.0f, 0.0f, 0.0f);
-	// Ejemplo de un par de atracciones clave:
+
+	// banderas para interactuar con las atracciones, cada indice es la atraccion correspondiente
+	glm::vec3 posLanzaHacha(13.4928f, 2.92542f, 18.9578f); // 0 - A1
+	glm::vec3 posBoliche(-3.68f, 0.0f, 28.85f); // 1 - A2
+	glm::vec3 posLanzaDados(-30.304f, 0.782451f, 0.799495f); // 2 - A3
+	glm::vec3 posJaulaBateo(22.7181f, 3.04362f, 21.3295f); // 3 - A4
+	glm::vec3 posRevientaGlobos(-25.0f, 0.0f, 11.0f); // 4 - A5
+	glm::vec3 posmaquinaWhack(-22.0786f, 0.0f, -7.53293f); // 5 - A6
+	bool activarAtraccionAnimacion[6] = { false, false, false, false, false, false };
+	glm::vec3 posicionAtracciones[6] = { posLanzaHacha, posBoliche, posLanzaDados, 
+		posJaulaBateo, posRevientaGlobos, posmaquinaWhack, };
+
+	// posicion de atracciones con interaccion
 	glm::vec3 posCabina(-25.0f, 0.0f, 11.0f);
-	glm::vec3 posBoliche(-3.68f, 0.0f, 28.85f);
 
 	std::vector<glm::vec3*> objetos = {
 		// Ejemplo: &posPuestoTortas, &posRevientaGlobos, ...
@@ -491,6 +504,9 @@ int main()
 	float animarInvencibleNPCs = 0.0f;
 	float animaLampara = 0.0;
 	GLfloat lastTimeProy = 0.0f;
+	float animarTopos = 0.0f;
+
+	float animarHachas = 0.0f;
 
 	// Posición del Avatar
 	bool hadSelected = false;
@@ -539,7 +555,7 @@ int main()
 
 		// Sólo la freeCam y thirdCam usan WASD+mouse:
 		if (nowSelected && activeCamera == &thirdCam) {
-			float speed = 2.0f;                         // ajusta a tu gusto
+			float speed = 0.5f;                         // ajusta a tu gusto
 			float vel = speed * deltaTime;
 
 			glm::vec3 forward = thirdCam.getCameraDirection();
@@ -560,7 +576,6 @@ int main()
 			avatarPos.y = 0.0f;
 
 			// Actualizamos el target de la cámara
-			// (ya lo tienes apuntando a &avatarPos)
 			thirdCam.update(deltaTime);
 			thirdCam.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
@@ -947,7 +962,7 @@ int main()
 		* Revienta Globos - A5
 		*/
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-25.0f, 0.0f, 11.0f));
+		model = glm::translate(model, posRevientaGlobos);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		RevientaGlobosInvencible.RenderModel();
 
@@ -1082,28 +1097,24 @@ int main()
 		//carpa
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-30.3812f, 0.752064f, 1.1414f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		carpa.RenderModel();
 
 		//mesa dados
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-30.304f, 0.782451f, 0.799495f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, posLanzaDados);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		mesa_dados.RenderModel();
 
 		//DADO IZQUIERDO
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-30.5297f, 1.51743f, 0.51303f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		dado.RenderModel();
 
 		//DADO DERECHO
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-30.0415f, 1.51743f, 0.51303f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		dado.RenderModel();
 
@@ -1112,33 +1123,43 @@ int main()
 		//ATRACCION GUACAMOLE ----------------------------------------------------------------------
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-22.0786f, 0.0f, -7.53293f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, posmaquinaWhack);
+		modelaux = model;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		maquinaWhack.RenderModel();
 
 		// Topos delanteros de izquierda a derecha
+		if (activarAtraccionAnimacion[5])
+			animarTopos += 0.05 * deltaTime;
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-22.6886f, 2.20458f, -7.12932f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		if (activarAtraccionAnimacion[5]) {
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-22.2885f, 2.20458f, -7.12932f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		if (activarAtraccionAnimacion[5]) {
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-21.8901f, 2.20458f, -7.12932f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		if (activarAtraccionAnimacion[5]) {
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-21.4841f, 2.20458f, -7.12932f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		if (activarAtraccionAnimacion[5]) {
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
@@ -1146,32 +1167,42 @@ int main()
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-22.7037f, 2.20458f, -7.54801f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		if (activarAtraccionAnimacion[5]) {
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-22.2934f, 2.20458f, -7.54801f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		if (activarAtraccionAnimacion[5]) {
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-21.8927f, 2.20458f, -7.54801f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		if (activarAtraccionAnimacion[5]) {
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-21.4841f, 2.20458f, -7.54801f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		if (activarAtraccionAnimacion[5]) {
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
 		//Martillo
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-21.918f, 3.74297f, -5.35381f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		if (activarAtraccionAnimacion[5]) {
+			model = glm::rotate(model, sin(animarTopos),glm::vec3(1.0f, 0.0f, 0.0f));
+		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		martillo_topos.RenderModel();
 
@@ -1180,26 +1211,22 @@ int main()
 		//ZONA BATEO ----------------------------------------------------------------------
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(22.7181f, 3.04362f, 21.3295f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, posJaulaBateo);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		zonabateo.RenderModel();
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(22.0665f, 0.24572f, 20.1201f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		maquinaTenis.RenderModel(); 
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(22.5352f, 2.22829f, 12.6117f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		pelotaTenis.RenderModel();
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(22.5607f, 0.948299f, 3.60133f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		bat.RenderModel();
 
@@ -1208,14 +1235,25 @@ int main()
 		//LANZAMIENTO DE HACHA -----------------------------------------------------------------
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(13.4928f, 2.92542f, 18.9578f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, posLanzaHacha);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		LanzamientoDeHacha.RenderModel();
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(13.4737f, 2.89959f, 11.6697f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		if (activarAtraccionAnimacion[0]) {
+			animarHachas += 0.05 * deltaTime;
+
+			model = glm::translate(model, glm::vec3(0.0f, 0.0f, animarHachas));
+			model = glm::rotate(model, glm::radians(animarHachas * 1000.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+			if (animarHachas >= 8.0f) { // terminar animacion
+				animarHachas = 0;
+				activarAtraccionAnimacion[0] = false;
+			}
+		}
+
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		batgarang.RenderModel();
 
@@ -1343,21 +1381,57 @@ int main()
 			BMO_M.RenderModelJ(uniformModel);
 
 		}
-		// TODO: BMO
-
-
-		// batman flotando
-		/*
-		Batman_M.MovFullModel(glm::vec3(0.0f, 0.0f,0.0f));
-		Batman_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
-		Batman_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
-		Batman_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
-		Batman_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f));
-		Batman_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
-		Batman_M.RenderModelJ(uniformModel);*/
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		/*
+		* variales utiles para interfaces
+		*/
+		// Obtener vectores de la camara
+		glm::vec3 camRight = glm::normalize(glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
+		glm::vec3 camUp = glm::normalize(glm::cross(camRight, camFront));
+		// Posicion frente a la camara (a 10 unidades)
+		glm::vec3 basePos = camPos + camFront * 10.0f;
+		std::string texto = "";
+		/*
+		* Interaccion con las atracciones
+		*/
+		for (int i = 0; i < 6; i++) {
+			if (glm::distance(avatarPos, posicionAtracciones[i]) <= DISTANCIA_PARA_ACTIVAR) {
+				if (mainWindow.getsKeys()[GLFW_KEY_E])
+					activarAtraccionAnimacion[i] = true;
+
+				printf("activar atraccion %d\n", i);
+				//renderizar texto
+				texto = "PARA JUGAR PRESIONA E";
+				for (int i = 0; i < texto.size(); i++) {
+					if (texto[i] == ' ') continue;
+
+					float espaciado = 1.0f;
+					glm::vec3 offsetPos = basePos + camRight * (-7.0f + espaciado * i) + camUp * -4.5f;
+					// Configurar textura de letras
+					toffset = glm::vec2(offsetFuenteProyU + letrasOffset[texto[i]].first,
+					(1 - offsetFuenteProyV) + letrasOffset[texto[i]].second);
+					model = glm::mat4(1.0f);
+					model = glm::translate(model, offsetPos);
+					model *= glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
+					model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+					glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					color = glm::vec3(1.0f, 1.0f, 1.0f);
+					glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+					ProjectDefaultFont.UseTexture();
+					meshBuilder.meshList[0]->RenderMesh();
+				}
+			}
+			else
+				activarAtraccionAnimacion[i] = false;
+		}
+
+		// reiniciar offset
+		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(glm::vec2(0.0f)));
 
 		// desaparecer interfaz si el usuario ya selecciono un avatar
 		if (mainWindow.isPersonajeSeleccionado()) {
@@ -1401,15 +1475,10 @@ int main()
 		* Interfaz ligada a la camara
 		*/
 
-		// Obtener vectores de la camara
-		glm::vec3 camRight = glm::normalize(glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
-		glm::vec3 camUp = glm::normalize(glm::cross(camRight, camFront));
-
-		// Posicion frente a la camara (a 10 unidades)
-		glm::vec3 basePos = camPos + camFront * 10.0f;
+		
 
 		// renderizar encabezados
-		std::string texto = "FERIA FUTURISTA";
+		texto = "FERIA FUTURISTA";
 		for (int i = 0; i < texto.size(); i++) {
 			if (texto[i] == ' ') continue;
 
