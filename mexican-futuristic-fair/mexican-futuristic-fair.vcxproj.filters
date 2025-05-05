@@ -129,9 +129,6 @@
     <ClInclude Include="Window.h">
       <Filter>Header Files\Window</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleModel.h">
-      <Filter>Header Files\Model</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -190,9 +187,6 @@
     </ClCompile>
     <ClCompile Include="MeshBuilder.h">
       <Filter>Header Files\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleModel.cpp">
-      <Filter>Source Files\Model</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

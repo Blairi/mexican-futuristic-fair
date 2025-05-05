@@ -42,6 +42,13 @@ Autores:
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "Material.h"
+
+// main.cpp (era después de los includes)
+struct AppPointers {
+	Window* win;
+	ThirdPersonCamera* cam3p;
+};
+
 const float toRadians = 3.14159265f / 180.0f;
 
 #include "MeshBuilder.h"
@@ -114,6 +121,14 @@ int main()
 
 	CreateShaders();
 
+	// Posición Postes de Luz:
+	bool isPosteLuzOn = true;
+	std::vector <glm::vec3> posPostesLuz;
+	posPostesLuz.push_back(glm::vec3(8.072f, 5.03f, 15.362f));
+	posPostesLuz.push_back(glm::vec3(12.429f, 5.03f, -8.4947f));
+	posPostesLuz.push_back(glm::vec3(-16.142f, 5.03f, -1.0662f));
+	posPostesLuz.push_back(glm::vec3(-19.785f, 5.03f, -25.709f));
+
 	glm::vec3 avatarPos(0.0f, 0.0f, 0.0f);
 	// Ejemplo de un par de atracciones clave:
 	glm::vec3 posCabina(-25.0f, 0.0f, 11.0f);
@@ -131,8 +146,8 @@ int main()
 		0.1f, 0.5f                          // moveSpeed, turnSpeed
 	);
 	ThirdPersonCamera thirdCam(
-		glm::vec3(0, 3, 8),                  // offset detrás del avatar
-		glm::vec3(0, 1, 0),                  // up vector
+		glm::vec3(0, 5, 16),    // offset detrás del avatar
+		glm::vec3(0, 1, 0),               // up vector
 		&avatarPos                         // target del avatar
 	);
 	ObjectFocusCamera objFocusCam(
@@ -146,6 +161,21 @@ int main()
 
 	// Cámara activa
 	Camera* activeCamera = &freeCam;
+
+	auto* ptrs = new AppPointers{ &mainWindow, &thirdCam };
+	GLFWwindow* glfwWin = mainWindow.getGLFWwindow();
+	glfwSetWindowUserPointer(glfwWin, ptrs);           // <— ¡una sola vez!
+
+	// --------------------------------------------------------------
+	//                 CALLBACK DEL SCROLL (zoom)
+	// --------------------------------------------------------------
+	glfwSetScrollCallback(glfwWin,
+		[](GLFWwindow* w, double /*x*/, double y)
+		{
+			auto* p = static_cast<AppPointers*>(glfwGetWindowUserPointer(w));
+	if (p && p->cam3p)
+		p->cam3p->addDistance(-static_cast<float>(y)); // ↑ acerca, ↓ aleja
+		});
 
 	Texture ProjectDefaultFont = Texture("Textures/fuente-proy.png");
 	ProjectDefaultFont.LoadTextureA();
@@ -177,6 +207,24 @@ int main()
 	/*
 	Model PuestoElotes = Model();
 	PuestoElotes.LoadModel("Models/PuestoElotes.obj");*/
+
+	/*
+	* Ambientación 
+	*/
+
+	// Bancas
+	Model Banca = Model();
+	Banca.LoadModel("Models/Ambientacion/banca.obj");
+
+	Model BancaTecho = Model();
+	BancaTecho.LoadModel("Models/Ambientacion/bancaTecho.obj");
+
+	// Postes de Luz
+	Model PosteLampara = Model();
+	PosteLampara.LoadModel("Models/Ambientacion/posteLampara.obj");
+	Model Lampara = Model();
+	Lampara.LoadModel("Models/Ambientacion/lampara.obj");
+
 
 	/*
 	* Atracciones
@@ -303,8 +351,8 @@ int main()
 
 	// BATIMOVIL
 	
-	Model Batimovil = Model();
-	Batimovil.LoadModel("Models/Batimovil.obj");
+	/*Model Batimovil = Model();
+	Batimovil.LoadModel("Models/Batimovil.obj");*/
 	
 
 	/*
@@ -350,13 +398,33 @@ int main()
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
 		0.3f, 0.3f, // intensidad ambiental (radiacion de la luz), intensidad difusa
 		0.0f, -1.0f, 0.0f);
+
 	//contador de luces puntuales
 	unsigned int pointLightCount = 0;
-	//Declaración de primer luz puntual
-	pointLights[0] = PointLight(1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f,
-		-6.0f, 1.5f, 1.5f, // pos
-		0.3f, 0.2f, 0.1f);
+
+	// Luces Puntuales
+	pointLights[0] = PointLight(1.0f, 1.0f, 1.0f,
+								7.0f, 5.5f,				// Ambiental | Difuso 
+								posPostesLuz[0].x, posPostesLuz[0].y, posPostesLuz[0].z, // pos
+								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+	pointLightCount++;
+
+	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f,
+								7.0f, 5.5f,				// Ambiental | Difuso 
+								posPostesLuz[1].x, posPostesLuz[1].y, posPostesLuz[1].z, // pos
+								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+	pointLightCount++;
+
+	pointLights[2] = PointLight(1.0f, 1.0f, 1.0f,
+								7.0f, 5.5f,				// Ambiental | Difuso 
+								posPostesLuz[2].x, posPostesLuz[2].y, posPostesLuz[2].z, // pos
+								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+	pointLightCount++;
+
+	pointLights[3] = PointLight(1.0f, 1.0f, 1.0f,
+								7.0f, 5.5f,				// Ambiental | Difuso 
+								posPostesLuz[3].x, posPostesLuz[3].y, posPostesLuz[3].z, // pos
+								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
 	pointLightCount++;
 
 	unsigned int spotLightCount = 0;
@@ -369,28 +437,6 @@ int main()
 		5.0f);
 	spotLightCount++;
 
-	/*
-	* Faros
-	*/
-
-	//luz fija
-	spotLights[1] = SpotLight(0.0f, 0.0f, 0.0f,
-		1.0f, 2.0f,
-		-5.0f, 1.0f, -3.0f,
-		-1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		15.0f);
-	spotLightCount++;
-
-	spotLights[2] = SpotLight(0.0f, 0.0f, 1.0f,
-		1.0f, 2.0f,
-		-5.0f, 1.0f, 3.0f,
-		-1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		15.0f);
-	spotLightCount++;
-	
-	//se crean mas luces puntuales y spotlight 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
 		uniformSpecularIntensity = 0, uniformShininess = 0, uniformTextureOffset = 0;;
 	GLuint uniformColor = 0;
@@ -441,11 +487,15 @@ int main()
 	*/
 	float girarRueda = 0.0f;
 	float animaAtomGlobos = 0.0f;
-	GLfloat lastTimeProy = 0.0f;
-
-	// variables para animacion de zona invencible
 	float animarZonaTrajes = 0.0f;
 	float animarInvencibleNPCs = 0.0f;
+	float animaLampara = 0.0;
+	GLfloat lastTimeProy = 0.0f;
+
+	// Posición del Avatar
+	bool hadSelected = false;
+
+
 
 	while (!mainWindow.getShouldClose())
 	{
@@ -477,10 +527,47 @@ int main()
 		// Actualiza la cámara elegida
 		activeCamera->update(deltaTime);
 
+		bool nowSelected = mainWindow.isPersonajeSeleccionado();
+		if (nowSelected && !hadSelected) {
+			// justo al pulsar “Select”: inicializamos posición y saltamos a 3ª p.
+			avatarPos = glm::vec3(0.0f, 0.0f, 0.0f);
+			activeCamera = &thirdCam;         // ← aquí
+			hadSelected = true;
+		}
+		hadSelected = nowSelected;
+
+
 		// Sólo la freeCam y thirdCam usan WASD+mouse:
-		if (activeCamera == &freeCam || activeCamera == &thirdCam) {
-			activeCamera->keyControl(mainWindow.getsKeys(), deltaTime);
-			activeCamera->mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+		if (nowSelected && activeCamera == &thirdCam) {
+			float speed = 2.0f;                         // ajusta a tu gusto
+			float vel = speed * deltaTime;
+
+			glm::vec3 forward = thirdCam.getCameraDirection();
+			forward.y = 0.0f;
+			forward = glm::normalize(forward);
+
+			glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0, 1, 0)));
+
+			
+			 
+			// WASD
+			if (mainWindow.getsKeys()[GLFW_KEY_W] || mainWindow.getsKeys()[GLFW_KEY_UP])    avatarPos += forward * vel;
+			if (mainWindow.getsKeys()[GLFW_KEY_S] || mainWindow.getsKeys()[GLFW_KEY_DOWN])  avatarPos -= forward * vel;
+			if (mainWindow.getsKeys()[GLFW_KEY_A] || mainWindow.getsKeys()[GLFW_KEY_LEFT])  avatarPos -= right * vel;
+			if (mainWindow.getsKeys()[GLFW_KEY_D] || mainWindow.getsKeys()[GLFW_KEY_RIGHT]) avatarPos += right * vel;
+
+			// Forzamos Y=0 para “simular” suelo
+			avatarPos.y = 0.0f;
+
+			// Actualizamos el target de la cámara
+			// (ya lo tienes apuntando a &avatarPos)
+			thirdCam.update(deltaTime);
+			thirdCam.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+		}
+		else if (activeCamera == &freeCam) {
+			// aquí dejas libreCam como antes
+			freeCam.keyControl(mainWindow.getsKeys(), deltaTime);
+			freeCam.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
 
 		glm::mat4 viewMatrix = activeCamera->getViewMatrix();
@@ -493,8 +580,9 @@ int main()
 		float x = 30.0f * cos(rotacionCamara);
 		float z = 30.0f * sin(rotacionCamara);
 
+		
+
 		if (mainWindow.isPersonajeSeleccionado()) {
-			activeCamera->keyControl(mainWindow.getsKeys(), deltaTime * 5);
 			activeCamera->mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
 		else {
@@ -528,13 +616,13 @@ int main()
 		glm::vec3 camPos = activeCamera->getCameraPosition();
 		glm::vec3 camDir = activeCamera->getCameraDirection();
 		glUniform3f(uniformEyePosition, camPos.x, camPos.y, camPos.z);
-		spotLights[0].SetFlash(camPos, camDir);
+		//spotLights[0].SetFlash(camPos, camDir);
 
 
 
 		//información al shader de fuentes de iluminación
-		shaderList[0].SetDirectionalLight(&mainLight);
-		shaderList[0].SetPointLights(pointLights, pointLightCount);
+		//shaderList[0].SetDirectionalLight(&mainLight);
+		if (isPosteLuzOn) shaderList[0].SetPointLights(pointLights, pointLightCount);
 		shaderList[0].SetSpotLights(spotLights, spotLightCount);
 
 		/*
@@ -558,10 +646,127 @@ int main()
 
 		/*
 		* ------------------
-		* Ambientacion 
+		* Ambientacion
 		* Aqui renderizar todos los modelos decorativos
 		* ------------------
 		*/
+
+		// Bancas Frontales 
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-3.156f, 0.0f, 11.62f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Banca.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(3.156f, 0.0f, 11.62f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Banca.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-3.156f, 0.0f, -11.65f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Banca.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(3.156f, 0.0f, -11.65f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Banca.RenderModel();
+
+		// Bancas Laterales 
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-10.543f, 0.0f, 2.305f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Banca.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-10.543f, 0.0f, -2.805f));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BancaTecho.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(13.3f, 0.0f, 2.305f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BancaTecho.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(13.3f, 0.0f, -2.805f));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Banca.RenderModel();
+
+		// BancasTecho
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 11.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BancaTecho.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -11.65f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BancaTecho.RenderModel();
+
+
+		// Bancas Dsipersas
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-14.39f, 0.0f, 20.322f));
+		model = glm::rotate(model, glm::radians(135.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BancaTecho.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-16.012f, 0.0f, 7.7102f));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		BancaTecho.RenderModel();
+
+
+		/*
+		* Postes de Luz
+		*/
+		animaLampara += 0.06 * deltaTime;
+
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(8.072f, 0.0f, 15.362f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		PosteLampara.RenderModel();
+
+		model = glm::translate(model, glm::vec3(0.0f, 5.02f + sin(animaLampara) / 15.0, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Lampara.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(12.429f, 0.0f, -8.4947f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		PosteLampara.RenderModel();
+
+		model = glm::translate(model, glm::vec3(0.0f, 5.02f + sin(animaLampara) / 15.0, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Lampara.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-16.142f, 0.0f, -1.0662f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		PosteLampara.RenderModel();
+
+		model = glm::translate(model, glm::vec3(0.0f, 5.02f + sin(animaLampara) / 15.0, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Lampara.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-19.785f, 0.0f, -25.709f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		PosteLampara.RenderModel();
+
+		model = glm::translate(model, glm::vec3(0.0f, 5.02f + sin(animaLampara) / 15.0, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Lampara.RenderModel();
 
 		// puesto de tortas invencible
 		glm::vec3 posPuestoTortas(-7.366f, 0.0f, -16.264f);
@@ -1156,6 +1361,36 @@ int main()
 
 		// desaparecer interfaz si el usuario ya selecciono un avatar
 		if (mainWindow.isPersonajeSeleccionado()) {
+			switch (idPersonaje) {
+			case 0:
+				DannyPhantom_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z), glm::vec3(0, 1, 0), thirdCam.getYaw());
+				DannyPhantom_M.TransformHead(glm::vec3(0.0f, 0.21f, 0.0f));
+				DannyPhantom_M.TransformLegR(glm::vec3(-0.04f, -0.2f, 0.0f));
+				DannyPhantom_M.TransformLegL(glm::vec3(0.035f, -0.2f, 0.0f));
+				DannyPhantom_M.TransformArmR(glm::vec3(-0.1445f, 0.123f, 0.0f));
+				DannyPhantom_M.TransformArmL(glm::vec3(0.13f, 0.12f, 0.0f));
+				DannyPhantom_M.RenderModelJ(uniformModel);
+				break;
+			case 1:
+				Invencible_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z), glm::vec3(0, 1, 0), thirdCam.getYaw());
+				Invencible_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
+				Invencible_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
+				Invencible_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
+				Invencible_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f));
+				Invencible_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
+				Invencible_M.RenderModelJ(uniformModel);
+				break;
+			case 2:
+				Batman_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z), glm::vec3(0, 1, 0), thirdCam.getYaw());
+				Batman_M.TransformHead(glm::vec3(0.0f, 0.0f, 0.0f));
+				Batman_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
+				Batman_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
+				Batman_M.TransformArmR(glm::vec3(-0.010f, 0.025f, -0.023f));
+				Batman_M.TransformArmL(glm::vec3(0.010f, 0.025f, -0.028f));
+				Batman_M.RenderModelJ(uniformModel);
+				break;
+				// más cases según los avatares...
+			}
 			glDisable(GL_BLEND);
 			glUseProgram(0);
 			mainWindow.swapBuffers();

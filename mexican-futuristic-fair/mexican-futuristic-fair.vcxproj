@@ -152,7 +152,6 @@
     <ClInclude Include="ObjectFocusCamera.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Shader_light.h" />
-    <ClInclude Include="SimpleModel.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="stb_image.h" />
@@ -175,7 +174,6 @@
     <ClCompile Include="ObjectFocusCamera.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Shader_light.cpp" />
-    <ClCompile Include="SimpleModel.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="Texture.cpp" />

@@ -1,4 +1,8 @@
 #include "Window.h"
+// main.cpp (era después de los includes)
+struct AppPointers {
+	Window* win;
+};
 
 Window::Window()
 {
@@ -98,7 +102,9 @@ GLfloat Window::getYChange()
 
 void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, int mode)
 {
-	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	auto* p = static_cast<AppPointers*>(glfwGetWindowUserPointer(window));
+	Window* theWindow = p ? p->win : nullptr;
+	if (!theWindow) return;
 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
@@ -147,7 +153,9 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 
 void Window::ManejaMouse(GLFWwindow* window, double xPos, double yPos)
 {
-	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	auto* p = static_cast<AppPointers*>(glfwGetWindowUserPointer(window));
+	Window* theWindow = p ? p->win : nullptr;
+	if (!theWindow) return;
 
 	if (theWindow->mouseFirstMoved)
 	{
