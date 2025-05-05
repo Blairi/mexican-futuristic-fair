@@ -1,7 +1,7 @@
- /*
+/*
 Proyecto Final Computacion Grafica
 Autores:
-	- 
+	-
 */
 //para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
@@ -80,12 +80,12 @@ void CreateShaders()
 	static const char* vShader = "shaders/shader_light.vert";
 	// Fragment Shader
 	static const char* fShader = "shaders/shader_light.frag";
-	Shader *shader1 = new Shader();
+	Shader* shader1 = new Shader();
 	shader1->CreateFromFiles(vShader, fShader);
 	shaderList.push_back(*shader1);
 }
 
-void SetPinesBoliche(GLuint &uniformModel, std::vector <glm::mat4> &pinesTrans, glm::mat4 modelroot, Model &pinBoliche) {
+void SetPinesBoliche(GLuint& uniformModel, std::vector <glm::mat4>& pinesTrans, glm::mat4 modelroot, Model& pinBoliche) {
 
 	GLfloat spaceBetwen_z = 0.0f, spaceBetwen_x = 0.0f;
 	glm::mat4 modelaux(1.0);
@@ -94,7 +94,7 @@ void SetPinesBoliche(GLuint &uniformModel, std::vector <glm::mat4> &pinesTrans, 
 	for (int i = 0; i < 4; i++) {
 
 		for (int j = i; j < 4; j++) {
-			
+
 			modelaux = modelroot;
 			modelaux = glm::translate(modelroot, glm::vec3(spaceBetwen_x, 0.0f, spaceBetwen_z));
 			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
@@ -141,7 +141,7 @@ int main()
 	glm::vec3 posRevientaGlobos(-25.0f, 0.0f, 11.0f); // 4 - A5
 	glm::vec3 posmaquinaWhack(-22.0786f, 0.0f, -7.53293f); // 5 - A6
 	bool activarAtraccionAnimacion[6] = { false, false, false, false, false, false };
-	glm::vec3 posicionAtracciones[6] = { posLanzaHacha, posBoliche, posLanzaDados, 
+	glm::vec3 posicionAtracciones[6] = { posLanzaHacha, posBoliche, posLanzaDados,
 		posJaulaBateo, posRevientaGlobos, posmaquinaWhack, };
 
 	// posicion de atracciones con interaccion
@@ -186,8 +186,8 @@ int main()
 		[](GLFWwindow* w, double /*x*/, double y)
 		{
 			auto* p = static_cast<AppPointers*>(glfwGetWindowUserPointer(w));
-	if (p && p->cam3p)
-		p->cam3p->addDistance(-static_cast<float>(y)); // ↑ acerca, ↓ aleja
+			if (p && p->cam3p)
+				p->cam3p->addDistance(-static_cast<float>(y)); // ↑ acerca, ↓ aleja
 		});
 
 	Texture ProjectDefaultFont = Texture("Textures/fuente-proy.png");
@@ -206,68 +206,68 @@ int main()
 	// Base 
 	Model Base = Model();
 	Base.LoadModel("Models/base.obj");
-	
+
 	//Model Arbol
 	Model arbol = Model();
-	arbol.LoadModel("Models/HoraAventura/casaArbol.obj");
+	//arbol.LoadModel("Models/HoraAventura/casaArbol.obj");
 
 	/*
 	* Puestos de comida
 	*/
 	Model TortasInvencible = Model();
-	TortasInvencible.LoadModel("Models/PuestoTortasInvencible/puesto-tortas-invencible.obj");
+	//TortasInvencible.LoadModel("Models/PuestoTortasInvencible/puesto-tortas-invencible.obj");
 
-	
+
 	Model PuestoElotes = Model();
-	PuestoElotes.LoadModel("Models/PuestoBatielotes/PuestoElotes.obj");
+	//PuestoElotes.LoadModel("Models/PuestoBatielotes/PuestoElotes.obj");
 
 	/*
-	* Ambientación 
+	* Ambientación
 	*/
 
 	// Bancas
 	Model Banca = Model();
-	Banca.LoadModel("Models/Ambientacion/Banca.obj");
+	//Banca.LoadModel("Models/Ambientacion/Banca.obj");
 
 	Model BancaTecho = Model();
-	BancaTecho.LoadModel("Models/Ambientacion/bancaTecho.obj");
+	//BancaTecho.LoadModel("Models/Ambientacion/bancaTecho.obj");
 
 	// Postes de Luz
 	Model PosteLampara = Model();
-	PosteLampara.LoadModel("Models/Ambientacion/posteLampara.obj");
+	//PosteLampara.LoadModel("Models/Ambientacion/posteLampara.obj");
 	Model Lampara = Model();
 	Lampara.LoadModel("Models/Ambientacion/lampara.obj");
 
 	//Batimovil
 	Model batimovil = Model();
-	batimovil.LoadModel("Models/Ambientacion/batimovil.obj");
+	//batimovil.LoadModel("Models/Ambientacion/batimovil.obj");
 
 	/*
 	* Atracciones
 	*/
 	Model RevientaGlobosInvencible = Model();
-	RevientaGlobosInvencible.LoadModel("Models/RevientaGlobos/invencible-revienta-globos.obj");
+	//RevientaGlobosInvencible.LoadModel("Models/RevientaGlobos/invencible-revienta-globos.obj");
 
 
 	Model RuedaFortunaInvencibleBase = Model();
-	RuedaFortunaInvencibleBase.LoadModel("Models/RuedaFortuna/rueda-fortuna-base.obj");
+	//RuedaFortunaInvencibleBase.LoadModel("Models/RuedaFortuna/rueda-fortuna-base.obj");
 	Model RuedaFortunaInvencibleWheel = Model();
-	RuedaFortunaInvencibleWheel.LoadModel("Models/RuedaFortuna/rueda-fortuna-wheel.obj");
+	//RuedaFortunaInvencibleWheel.LoadModel("Models/RuedaFortuna/rueda-fortuna-wheel.obj");
 	Model RuedaFortunaInvencibleCabina = Model();
-	RuedaFortunaInvencibleCabina.LoadModel("Models/RuedaFortuna/rueda-fortuna-cabina.obj");
+	//RuedaFortunaInvencibleCabina.LoadModel("Models/RuedaFortuna/rueda-fortuna-cabina.obj");
 
 	Model ProyectorInvencible = Model();
-	ProyectorInvencible.LoadModel("Models/Proyector/screen_1.obj");
+	//ProyectorInvencible.LoadModel("Models/Proyector/screen_1.obj");
 
 	// Boliche 
 	Model SueloBoliche = Model();
-	SueloBoliche.LoadModel("Models/AtraccionBoliche/sueloBoliche.obj");
+	//SueloBoliche.LoadModel("Models/AtraccionBoliche/sueloBoliche.obj");
 
 	Model paredBoliche = Model();
-	paredBoliche.LoadModel("Models/AtraccionBoliche/paredBoliche.obj");
+	//paredBoliche.LoadModel("Models/AtraccionBoliche/paredBoliche.obj");
 
 	Model recibidorBoliche = Model();
-	recibidorBoliche.LoadModel("Models/AtraccionBoliche/recibidorBoliche.obj");
+	//recibidorBoliche.LoadModel("Models/AtraccionBoliche/recibidorBoliche.obj");
 
 	Model pinBoliche = Model();
 	pinBoliche.LoadModel("Models/AtraccionBoliche/pinBoliche.obj");
@@ -365,9 +365,9 @@ int main()
 	Model Conquest_M = Model();
 	Conquest_M.LoadModel("Models/ZonaInvencible/Conquest.obj");
 
-	
-	
-	
+
+
+
 
 	/*
 	* Avatares
@@ -425,27 +425,27 @@ int main()
 
 	// Luces Puntuales
 	pointLights[0] = PointLight(1.0f, 1.0f, 1.0f,
-								7.0f, 5.5f,				// Ambiental | Difuso 
-								posPostesLuz[0].x, posPostesLuz[0].y, posPostesLuz[0].z, // pos
-								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+		7.0f, 5.5f,				// Ambiental | Difuso 
+		posPostesLuz[0].x, posPostesLuz[0].y, posPostesLuz[0].z, // pos
+		0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
 	pointLightCount++;
 
 	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f,
-								7.0f, 5.5f,				// Ambiental | Difuso 
-								posPostesLuz[1].x, posPostesLuz[1].y, posPostesLuz[1].z, // pos
-								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+		7.0f, 5.5f,				// Ambiental | Difuso 
+		posPostesLuz[1].x, posPostesLuz[1].y, posPostesLuz[1].z, // pos
+		0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
 	pointLightCount++;
 
 	pointLights[2] = PointLight(1.0f, 1.0f, 1.0f,
-								7.0f, 5.5f,				// Ambiental | Difuso 
-								posPostesLuz[2].x, posPostesLuz[2].y, posPostesLuz[2].z, // pos
-								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+		7.0f, 5.5f,				// Ambiental | Difuso 
+		posPostesLuz[2].x, posPostesLuz[2].y, posPostesLuz[2].z, // pos
+		0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
 	pointLightCount++;
 
 	pointLights[3] = PointLight(1.0f, 1.0f, 1.0f,
-								7.0f, 5.5f,				// Ambiental | Difuso 
-								posPostesLuz[3].x, posPostesLuz[3].y, posPostesLuz[3].z, // pos
-								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+		7.0f, 5.5f,				// Ambiental | Difuso 
+		posPostesLuz[3].x, posPostesLuz[3].y, posPostesLuz[3].z, // pos
+		0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
 	pointLightCount++;
 
 	unsigned int spotLightCount = 0;
@@ -572,8 +572,8 @@ int main()
 
 			glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0, 1, 0)));
 
-			
-			 
+
+
 			// WASD
 			if (mainWindow.getsKeys()[GLFW_KEY_W] || mainWindow.getsKeys()[GLFW_KEY_UP])    avatarPos += forward * vel;
 			if (mainWindow.getsKeys()[GLFW_KEY_S] || mainWindow.getsKeys()[GLFW_KEY_DOWN])  avatarPos -= forward * vel;
@@ -603,7 +603,7 @@ int main()
 		float x = 30.0f * cos(rotacionCamara);
 		float z = 30.0f * sin(rotacionCamara);
 
-		
+
 
 		if (mainWindow.isPersonajeSeleccionado()) {
 			activeCamera->mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
@@ -625,7 +625,7 @@ int main()
 		uniformEyePosition = shaderList[0].GetEyePositionLocation();
 		uniformColor = shaderList[0].getColorLocation();
 		uniformTextureOffset = shaderList[0].getOffsetLocation();
-		
+
 		//información en el shader de intensidad especular y brillo
 		uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
 		uniformShininess = shaderList[0].GetShininessLocation();
@@ -675,15 +675,15 @@ int main()
 		*/
 
 		// Batimovil
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-21.8945f, 0.120827f, 21.5915f));
-		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		batimovil.RenderModel();
+		//model = glm::mat4(1.0);
+		//model = glm::translate(model, glm::vec3(-21.8945f, 0.120827f, 21.5915f));
+		////model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		//batimovil.RenderModel();
 
 
 		// Bancas Frontales 
-		model = glm::mat4(1.0);
+		/*model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-3.156f, 0.0f, 11.62f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -693,9 +693,9 @@ int main()
 		model = glm::translate(model, glm::vec3(3.156f, 0.0f, 11.62f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Banca.RenderModel();
+		Banca.RenderModel();*/
 
-		model = glm::mat4(1.0);
+		/*model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-3.156f, 0.0f, -11.65f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Banca.RenderModel();
@@ -703,35 +703,35 @@ int main()
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(3.156f, 0.0f, -11.65f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Banca.RenderModel();
+		Banca.RenderModel();*/
 
 		// Bancas Laterales 
-		model = glm::mat4(1.0);
+		/*model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-10.543f, 0.0f, 2.305f));
 		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Banca.RenderModel();
+		Banca.RenderModel();*/
 
-		model = glm::mat4(1.0);
+		/*model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-10.543f, 0.0f, -2.805f));
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		BancaTecho.RenderModel();
+		BancaTecho.RenderModel();*/
 
-		model = glm::mat4(1.0);
+		/*model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(13.3f, 0.0f, 2.305f));
 		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		BancaTecho.RenderModel();
+		BancaTecho.RenderModel();*/
 
-		model = glm::mat4(1.0);
+		/*model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(13.3f, 0.0f, -2.805f));
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Banca.RenderModel();
+		Banca.RenderModel();*/
 
 		// BancasTecho
-		model = glm::mat4(1.0);
+		/*model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 11.5f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		BancaTecho.RenderModel();
@@ -740,11 +740,11 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -11.65f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		BancaTecho.RenderModel();
+		BancaTecho.RenderModel();*/
 
 
 		// Bancas Dsipersas
-		model = glm::mat4(1.0);
+		/*model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-14.39f, 0.0f, 20.322f));
 		model = glm::rotate(model, glm::radians(135.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -754,13 +754,13 @@ int main()
 		model = glm::translate(model, glm::vec3(-16.012f, 0.0f, 7.7102f));
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		BancaTecho.RenderModel();
+		BancaTecho.RenderModel();*/
 
 
 		/*
 		* Postes de Luz
 		*/
-		animaLampara += 0.06 * deltaTime;
+		/*animaLampara += 0.06 * deltaTime;
 
 		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
@@ -797,181 +797,177 @@ int main()
 
 		model = glm::translate(model, glm::vec3(0.0f, 5.02f + sin(animaLampara) / 15.0, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Lampara.RenderModel();
+		Lampara.RenderModel();*/
 
 		// puesto de tortas invencible
-		glm::vec3 posPuestoTortas(-7.366f, 0.0f, -16.264f);
-		model = glm::mat4(1.0);
-		model = glm::translate(model, posPuestoTortas);
-		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
-		model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		TortasInvencible.RenderModel();
-
-		glm::vec3 posPuestoElotes(8.28819f, 0.008754f, -15.0227f);
-		model = glm::mat4(1.0);
-		model = glm::translate(model, posPuestoElotes);
+		//glm::vec3 posPuestoTortas(-7.366f, 0.0f, -16.264f);
+		//model = glm::mat4(1.0);
+		//model = glm::translate(model, posPuestoTortas);
 		//model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
 		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		PuestoElotes.RenderModel(); 
-		
+		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		////TortasInvencible.RenderModel();
 
-		
-
+		//glm::vec3 posPuestoElotes(8.28819f, 0.008754f, -15.0227f);
+		//model = glm::mat4(1.0);
+		//model = glm::translate(model, posPuestoElotes);
+		////model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+		////model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		////PuestoElotes.RenderModel(); 
 
 		/*
 		* Feria de la fortuna
 		*/
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-0.876f, 0.0f, 18.489f));
-		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		RuedaFortunaInvencibleBase.RenderModel();
+		//model = glm::mat4(1.0);
+		//model = glm::translate(model, glm::vec3(-0.876f, 0.0f, 18.489f));
+		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		////RuedaFortunaInvencibleBase.RenderModel();
 
-		girarRueda += 0.5 * deltaTime; // TODO: evitar desbordamiento 
+		//girarRueda += 0.5 * deltaTime; // TODO: evitar desbordamiento 
 
-		model = glm::translate(model, glm::vec3(0.0f, 7.187f, 0.0f));
-		model = glm::rotate(model, glm::radians(girarRueda), glm::vec3(0.0f, 0.0f, 1.0f));
-		modelaux = model;
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		RuedaFortunaInvencibleWheel.RenderModel();
+		//model = glm::translate(model, glm::vec3(0.0f, 7.187f, 0.0f));
+		//model = glm::rotate(model, glm::radians(girarRueda), glm::vec3(0.0f, 0.0f, 1.0f));
+		//modelaux = model;
+		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		////RuedaFortunaInvencibleWheel.RenderModel();
 
-		std::vector<std::pair<float, float>> posCabinas = {
-			//				x,      y
-			std::make_pair(-5.782f, 0.0f),
-			std::make_pair(-4.8f, 3.478f),
-			std::make_pair(-2.527, 5.258f),
-			std::make_pair(0.0f, 5.656f),
-			std::make_pair(2.546f, 5.258f),
-			std::make_pair(4.63f, 3.478f),
-			std::make_pair(5.815f, 0.0f),
-			std::make_pair(4.7f, -3.317f),
-			std::make_pair(2.553f, -5.169f),
-			std::make_pair(0.0f, -5.792f),
-			std::make_pair(-2.521f, -5.169f),
-			std::make_pair(-4.701f, -3.317f),
-		};
+		//std::vector<std::pair<float, float>> posCabinas = {
+		//	//				x,      y
+		//	std::make_pair(-5.782f, 0.0f),
+		//	std::make_pair(-4.8f, 3.478f),
+		//	std::make_pair(-2.527, 5.258f),
+		//	std::make_pair(0.0f, 5.656f),
+		//	std::make_pair(2.546f, 5.258f),
+		//	std::make_pair(4.63f, 3.478f),
+		//	std::make_pair(5.815f, 0.0f),
+		//	std::make_pair(4.7f, -3.317f),
+		//	std::make_pair(2.553f, -5.169f),
+		//	std::make_pair(0.0f, -5.792f),
+		//	std::make_pair(-2.521f, -5.169f),
+		//	std::make_pair(-4.701f, -3.317f),
+		//};
 
-		for (int i = 0; i < posCabinas.size(); i++) {
-			model = modelaux;
-			model = glm::translate(model, glm::vec3(posCabinas[i].first, posCabinas[i].second, 0.0f));
-			model = glm::rotate(model, glm::radians(-girarRueda), glm::vec3(0.0f, 0.0f, 1.0f));
-			if(i % 2 == 0)
-				color = glm::vec3(0.14509f, 0.58823f, 0.74509f); // azul invencible
-			else
-				color = glm::vec3(0.9215f, 0.3647f, 0.4823f); // rosa atom eve
-			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-			RuedaFortunaInvencibleCabina.RenderModel();
-		}
-		// reiniciar color blanco
-		glUniform3fv(uniformColor, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+		//for (int i = 0; i < posCabinas.size(); i++) {
+		//	model = modelaux;
+		//	model = glm::translate(model, glm::vec3(posCabinas[i].first, posCabinas[i].second, 0.0f));
+		//	model = glm::rotate(model, glm::radians(-girarRueda), glm::vec3(0.0f, 0.0f, 1.0f));
+		//	if(i % 2 == 0)
+		//		color = glm::vec3(0.14509f, 0.58823f, 0.74509f); // azul invencible
+		//	else
+		//		color = glm::vec3(0.9215f, 0.3647f, 0.4823f); // rosa atom eve
+		//	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		//	glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		//	RuedaFortunaInvencibleCabina.RenderModel();
+		//}
+		//// reiniciar color blanco
+		//glUniform3fv(uniformColor, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
 
 		/*
 		* Zona Invencible
 		* Se renderizan modelos de personajes con un showcase
 		*/
-		float posShowCases[5][4] = {
-			// x,        y,    z,     rotacion
-			{19.501f, 0.0f, -13.491f, -19.852f},
-			{21.367f, 0.0f, -12.757f, -29.925f},
-			{22.677f, 0.0f, -11.303f, -63.702f},
-			{23.371f, 0.0f, -9.75f, -90.554f},
-			{23.356f, 0.0f, -7.766f, -95.562f},
-		};
+		//float posShowCases[5][4] = {
+		//	// x,        y,    z,     rotacion
+		//	{19.501f, 0.0f, -13.491f, -19.852f},
+		//	{21.367f, 0.0f, -12.757f, -29.925f},
+		//	{22.677f, 0.0f, -11.303f, -63.702f},
+		//	{23.371f, 0.0f, -9.75f, -90.554f},
+		//	{23.356f, 0.0f, -7.766f, -95.562f},
+		//};
 
-		Model personajes[5] = {
-			Cecil_M, Conquest_M, Duplikate_M, KidOmniMan_M, Powerplex_M,
-		};
+		//Model personajes[5] = {
+		//	Cecil_M, Conquest_M, Duplikate_M, KidOmniMan_M, Powerplex_M,
+		//};
 
-		animarZonaTrajes += 0.5 * deltaTime; //TODO: evitar desbordamiento de float
-		for (int i = 0; i < 5; i++) {
-			// renderiza showcase
-			model = glm::mat4(1.0);
-			model = glm::translate(model, glm::vec3(posShowCases[i][0], 0.0f, posShowCases[i][2]));
-			model = glm::rotate(model, glm::radians(posShowCases[i][3]), glm::vec3(0.0f, 1.0f, 0.0f));
-			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-			ShowSuit.RenderModel();
-			// renderiza personajes dentro del showcase
-			model = glm::translate(model, glm::vec3(0.0f, 0.12f, 0.0f));
-			if(i == 1) // escalar Conquest
-				model = glm::scale(model, glm::vec3(0.8f));
-			model = glm::scale(model, glm::vec3(1.0f) * (1.0f + 0.05f * sin(animarZonaTrajes*0.1f)));
-			model = glm::rotate(model, glm::radians(animarZonaTrajes), glm::vec3(0.0f, 1.0f, 0.0f));
-			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-			personajes[i].RenderModel();
-		}
+		////animarZonaTrajes += 0.5 * deltaTime; //TODO: evitar desbordamiento de float
+		////for (int i = 0; i < 5; i++) {
+		////	// renderiza showcase
+		////	model = glm::mat4(1.0);
+		////	model = glm::translate(model, glm::vec3(posShowCases[i][0], 0.0f, posShowCases[i][2]));
+		////	model = glm::rotate(model, glm::radians(posShowCases[i][3]), glm::vec3(0.0f, 1.0f, 0.0f));
+		////	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		////	ShowSuit.RenderModel();
+		////	// renderiza personajes dentro del showcase
+		////	model = glm::translate(model, glm::vec3(0.0f, 0.12f, 0.0f));
+		////	if(i == 1) // escalar Conquest
+		////		model = glm::scale(model, glm::vec3(0.8f));
+		////	model = glm::scale(model, glm::vec3(1.0f) * (1.0f + 0.05f * sin(animarZonaTrajes*0.1f)));
+		////	model = glm::rotate(model, glm::radians(animarZonaTrajes), glm::vec3(0.0f, 1.0f, 0.0f));
+		////	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		////	personajes[i].RenderModel();
+		////}
 
-		/*
-		* Pantalla
-		*/
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(27.441f, 0.0f, -13.418f));
-		model = glm::rotate(model, glm::radians(-44.398f), glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		color = glm::vec3(0.1f, 0.1f, 0.1f); // negro
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		ProyectorInvencible.RenderModel();
+		///*
+		//* Pantalla
+		//*/
+		//model = glm::mat4(1.0);
+		//model = glm::translate(model, glm::vec3(27.441f, 0.0f, -13.418f));
+		//model = glm::rotate(model, glm::radians(-44.398f), glm::vec3(0.0f, 1.0f, 0.0f));
+		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		//color = glm::vec3(0.1f, 0.1f, 0.1f); // negro
+		//glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		////ProyectorInvencible.RenderModel();
 
-		// animacion para cambiar entre frames
-		now = glfwGetTime();
-		if (now - lastTimeProy >= 3.0f) {
-			offsetFrames += 0.2f;
-			if (offsetFrames >= 1.0f)
-				offsetFrames = 0.0f;
-			lastTimeProy = now;
-		}
-		model = glm::translate(model, glm::vec3(0.0f, 5.5f, 1.3f));
-		model = glm::scale(model, glm::vec3(8.0f, 2.0f, 2.0f));
-		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(glm::vec2(offsetFrames, 0.0f)));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		color = glm::vec3(1.0f, 1.0f, 1.0f);
-		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		FramesInvencible.UseTexture();
-		meshBuilder.meshList[2]->RenderMesh();
+		//// animacion para cambiar entre frames
+		//now = glfwGetTime();
+		//if (now - lastTimeProy >= 3.0f) {
+		//	offsetFrames += 0.2f;
+		//	if (offsetFrames >= 1.0f)
+		//		offsetFrames = 0.0f;
+		//	lastTimeProy = now;
+		//}
+		//model = glm::translate(model, glm::vec3(0.0f, 5.5f, 1.3f));
+		//model = glm::scale(model, glm::vec3(8.0f, 2.0f, 2.0f));
+		//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		//glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(glm::vec2(offsetFrames, 0.0f)));
+		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		//color = glm::vec3(1.0f, 1.0f, 1.0f);
+		//glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		//FramesInvencible.UseTexture();
+		//meshBuilder.meshList[2]->RenderMesh();
 
-		// reiniciar offset de texturas
-		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(glm::vec2(0.0f)));
-		/*
-		* Escenario Ember
-		* Se renderiza Escenario, Bocinas.
-		*/
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f,0.0f,-30.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Stage.RenderModel();
+		//// reiniciar offset de texturas
+		//glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(glm::vec2(0.0f)));
+		///*
+		//* Escenario Ember
+		//* Se renderiza Escenario, Bocinas.
+		//*/
+		//model = glm::mat4(1.0);
+		//model = glm::translate(model, glm::vec3(0.0f,0.0f,-30.0f));
+		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		////Stage.RenderModel();
 
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		BocinasStageEmber.RenderModel();
+		//model = glm::mat4(1.0);
+		//model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
+		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		////BocinasStageEmber.RenderModel();
 
-		// —––– Árbol de Aventura —–––
-		model = glm::mat4(1.0f);
-		model = glm::translate(model,
-			glm::vec3(0.49539f, -1.48f, -1.227f));
-		model = glm::rotate(model,
-			glm::radians(90.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::scale(model,
-			glm::vec3(0.033f, 0.042f, 0.040f));
+		//// —––– Árbol de Aventura —–––
+		//model = glm::mat4(1.0f);
+		//model = glm::translate(model,
+		//	glm::vec3(0.49539f, -1.48f, -1.227f));
+		//model = glm::rotate(model,
+		//	glm::radians(90.0f),
+		//	glm::vec3(0.0f, 1.0f, 0.0f));
+		//model = glm::scale(model,
+		//	glm::vec3(0.033f, 0.042f, 0.040f));
 
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		arbol.RenderModel();
-
-
+		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		////arbol.RenderModel();
 
 
-		/*
-		* ------------------
-		* Atracciones
-		* Aqui renderizar todos los modelos de atracciones
-		* ------------------
-		*/
 
-		
+
+		///*
+		//* ------------------
+		//* Atracciones
+		//* Aqui renderizar todos los modelos de atracciones
+		//* ------------------
+		//*/
+
+
 
 
 		/*
@@ -986,7 +982,7 @@ int main()
 		* Boliche - A2
 		*/
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-3.68f,0.0f, 28.854f));
+		model = glm::translate(model, glm::vec3(-3.68f, 0.0f, 28.854f));
 		modelrootBoliche = model;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		LineasBoliche.RenderModel();
@@ -1217,7 +1213,7 @@ int main()
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-21.918f, 3.74297f, -5.35381f));
 		if (activarAtraccionAnimacion[5]) {
-			model = glm::rotate(model, sin(animarTopos),glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::rotate(model, sin(animarTopos), glm::vec3(1.0f, 0.0f, 0.0f));
 		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		martillo_topos.RenderModel();
@@ -1234,7 +1230,7 @@ int main()
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(22.0665f, 0.24572f, 20.1201f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		maquinaTenis.RenderModel(); 
+		maquinaTenis.RenderModel();
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(22.5352f, 2.22829f, 12.6117f));
@@ -1287,23 +1283,23 @@ int main()
 		* ------------------
 		*/
 		// Atom eve - revienta globos
-		animaAtomGlobos += 0.1f * deltaTime;
-		AtomEve_M.MovFullModel(glm::vec3(-25.7f, 0.95f, 10.5f), 
+		/*animaAtomGlobos += 0.1f * deltaTime;
+		AtomEve_M.MovFullModel(glm::vec3(-25.7f, 0.95f, 10.5f),
 			glm::vec3(0.0, 1.0f, 0.0f), 135.753f);
-		AtomEve_M.TransformHead(glm::vec3(0.0f, 0.567f, -0.015f), 
+		AtomEve_M.TransformHead(glm::vec3(0.0f, 0.567f, -0.015f),
 			glm::vec3(1.0f, 0.0f, 0.0f), 5*sin(animaAtomGlobos));
 		AtomEve_M.TransformLegR(glm::vec3(-0.065f, 0.03f, -0.008f));
 		AtomEve_M.TransformLegL(glm::vec3(0.015f, 0.01f, -0.003f));
 		AtomEve_M.TransformArmR(glm::vec3(-0.103f, 0.462f, -0.018f));
 		AtomEve_M.TransformArmL(glm::vec3(0.108f, 0.444f, -0.039f),
 			glm::vec3(1.0f, 0.0f, 0.0f), 50 * cos(animaAtomGlobos));
-		AtomEve_M.RenderModelJ(uniformModel);
+		AtomEve_M.RenderModelJ(uniformModel);*/
 
-		// Ember del Escenario
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Ember_M.RenderModel();
+		//// Ember del Escenario
+		//model = glm::mat4(1.0);
+		//model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
+		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		//Ember_M.RenderModel();
 
 		/*
 		* ------------------
@@ -1312,62 +1308,62 @@ int main()
 		* ------------------
 		*/
 		//Harley Quinn -  Zona Bateo
-		HarleyQuinn.MovFullModel(glm::vec3(25.2693f, 0.967349f, 5.02014f));
-		HarleyQuinn.TransformHead(glm::vec3(0.0f, 0.683806f, 0.021197f));//
-		HarleyQuinn.TransformLegR(glm::vec3(0.053826f, 0.139596f, 0.0f));//
-		HarleyQuinn.TransformLegL(glm::vec3(-0.053826f, 0.139596f, 0.0f));//
-		HarleyQuinn.TransformArmR(glm::vec3(0.189628f, 0.573444f, 0.023411f));//
-		HarleyQuinn.TransformArmL(glm::vec3(-0.189628f, 0.573444f, 0.023411f));//
-		HarleyQuinn.RenderModelJ(uniformModel);
+		//HarleyQuinn.MovFullModel(glm::vec3(25.2693f, 0.967349f, 5.02014f));
+		//HarleyQuinn.TransformHead(glm::vec3(0.0f, 0.683806f, 0.021197f));//
+		//HarleyQuinn.TransformLegR(glm::vec3(0.053826f, 0.139596f, 0.0f));//
+		//HarleyQuinn.TransformLegL(glm::vec3(-0.053826f, 0.139596f, 0.0f));//
+		//HarleyQuinn.TransformArmR(glm::vec3(0.189628f, 0.573444f, 0.023411f));//
+		//HarleyQuinn.TransformArmL(glm::vec3(-0.189628f, 0.573444f, 0.023411f));//
+		//HarleyQuinn.RenderModelJ(uniformModel);
 
-		//Joker -  Bati elotes
-		Joker.MovFullModel(glm::vec3(10.49f, 0.0f, -12.8796f));
-		Joker.TransformHead(glm::vec3(0.0f, 0.931009f, -0.113821f));//
-		Joker.TransformLegR(glm::vec3(-0.165213f, 0.009248f, 0.0f));//
-		Joker.TransformLegL(glm::vec3(0.230091f, 0.033922f, 0.0f));//
-		Joker.TransformArmR(glm::vec3(-0.251991f, 0.831474f, -0.053465f));//
-		Joker.TransformArmL(glm::vec3(0.251991f, 0.831474f, -0.053465f));//
-		Joker.RenderModelJ(uniformModel);
+		////Joker -  Bati elotes
+		//Joker.MovFullModel(glm::vec3(10.49f, 0.0f, -12.8796f));
+		//Joker.TransformHead(glm::vec3(0.0f, 0.931009f, -0.113821f));//
+		//Joker.TransformLegR(glm::vec3(-0.165213f, 0.009248f, 0.0f));//
+		//Joker.TransformLegL(glm::vec3(0.230091f, 0.033922f, 0.0f));//
+		//Joker.TransformArmR(glm::vec3(-0.251991f, 0.831474f, -0.053465f));//
+		//Joker.TransformArmL(glm::vec3(0.251991f, 0.831474f, -0.053465f));//
+		//Joker.RenderModelJ(uniformModel);
 
 		/*
 		* NPC de zona invencible
 		*/
-		animarInvencibleNPCs += 0.05 * deltaTime;
+		//animarInvencibleNPCs += 0.05 * deltaTime;
 
-		OmniMan_M.MovFullModel(glm::vec3(18.543f, 0.9f, -5.768f), 
-			glm::vec3(0.0f, 1.0f, 0.0f), 51.252f);
-		OmniMan_M.TransformHead(glm::vec3(0.0f, 0.683f, -0.015f),
-			glm::vec3(0.0f, 0.0f, 1.0f), 8.0f*sin(animarInvencibleNPCs));
-		OmniMan_M.TransformLegR(glm::vec3(-0.081f, 0.033f, 0.017f));
-		OmniMan_M.TransformLegL(glm::vec3(0.075f, 0.036f, -0.003f));
-		OmniMan_M.TransformArmR(glm::vec3(-0.163f, 0.549f, -0.037f),
-			glm::vec3(0.0f, 0.0f, 1.0f), 10.0f * sin(animarInvencibleNPCs));
-		OmniMan_M.TransformArmL(glm::vec3(0.177f, 0.551f, -0.034f),
-			glm::vec3(1.0f, 0.0f, 0.0f), 20.0f * sin(animarInvencibleNPCs));
-		OmniMan_M.RenderModelJ(uniformModel);
+		//OmniMan_M.MovFullModel(glm::vec3(18.543f, 0.9f, -5.768f), 
+		//	glm::vec3(0.0f, 1.0f, 0.0f), 51.252f);
+		//OmniMan_M.TransformHead(glm::vec3(0.0f, 0.683f, -0.015f),
+		//	glm::vec3(0.0f, 0.0f, 1.0f), 8.0f*sin(animarInvencibleNPCs));
+		//OmniMan_M.TransformLegR(glm::vec3(-0.081f, 0.033f, 0.017f));
+		//OmniMan_M.TransformLegL(glm::vec3(0.075f, 0.036f, -0.003f));
+		//OmniMan_M.TransformArmR(glm::vec3(-0.163f, 0.549f, -0.037f),
+		//	glm::vec3(0.0f, 0.0f, 1.0f), 10.0f * sin(animarInvencibleNPCs));
+		//OmniMan_M.TransformArmL(glm::vec3(0.177f, 0.551f, -0.034f),
+		//	glm::vec3(1.0f, 0.0f, 0.0f), 20.0f * sin(animarInvencibleNPCs));
+		//OmniMan_M.RenderModelJ(uniformModel);
 
-		AtomEve_M.MovFullModel(glm::vec3(19.892f, 0.95f, -4.6f),
-			glm::vec3(0.0, 1.0f, 0.0f), -131.151f);
-		AtomEve_M.TransformHead(glm::vec3(0.0f, 0.567f, -0.015f),
-			glm::vec3(0.0f, 1.0f, 0.0f), 8.0f * sin(animarInvencibleNPCs));
-		AtomEve_M.TransformLegR(glm::vec3(-0.065f, 0.03f, -0.008f));
-		AtomEve_M.TransformLegL(glm::vec3(0.015f, 0.01f, -0.003f));
-		AtomEve_M.TransformArmR(glm::vec3(-0.103f, 0.462f, -0.018f),
-			glm::vec3(1.0f, 0.0f, 0.0f), 40.0f);
-		AtomEve_M.TransformArmR(glm::vec3(-0.103f, 0.462f, -0.018f),
-			glm::vec3(0.0f, 0.0f, 1.0f), 20.739);
-		AtomEve_M.TransformArmL(glm::vec3(0.108f, 0.444f, -0.039f));
-		AtomEve_M.RenderModelJ(uniformModel);
+		//AtomEve_M.MovFullModel(glm::vec3(19.892f, 0.95f, -4.6f),
+		//	glm::vec3(0.0, 1.0f, 0.0f), -131.151f);
+		//AtomEve_M.TransformHead(glm::vec3(0.0f, 0.567f, -0.015f),
+		//	glm::vec3(0.0f, 1.0f, 0.0f), 8.0f * sin(animarInvencibleNPCs));
+		//AtomEve_M.TransformLegR(glm::vec3(-0.065f, 0.03f, -0.008f));
+		//AtomEve_M.TransformLegL(glm::vec3(0.015f, 0.01f, -0.003f));
+		//AtomEve_M.TransformArmR(glm::vec3(-0.103f, 0.462f, -0.018f),
+		//	glm::vec3(1.0f, 0.0f, 0.0f), 40.0f);
+		//AtomEve_M.TransformArmR(glm::vec3(-0.103f, 0.462f, -0.018f),
+		//	glm::vec3(0.0f, 0.0f, 1.0f), 20.739);
+		//AtomEve_M.TransformArmL(glm::vec3(0.108f, 0.444f, -0.039f));
+		//AtomEve_M.RenderModelJ(uniformModel);
 
-		// omniman - tortas invencible
-		OmniMan_M.MovFullModel(posPuestoTortas + glm::vec3(-0.6f, 0.9f, -0.6f),
-			glm::vec3(0.0f, 1.0f, 0.0f), 32.953f);
-		OmniMan_M.TransformHead(glm::vec3(0.0f, 0.683f, -0.015f));
-		OmniMan_M.TransformLegR(glm::vec3(-0.081f, 0.033f, 0.017f));
-		OmniMan_M.TransformLegL(glm::vec3(0.075f, 0.036f, -0.003f));
-		OmniMan_M.TransformArmR(glm::vec3(-0.163f, 0.549f, -0.037f));
-		OmniMan_M.TransformArmL(glm::vec3(0.177f, 0.551f, -0.034f));
-		OmniMan_M.RenderModelJ(uniformModel);
+		//// omniman - tortas invencible
+		//OmniMan_M.MovFullModel(posPuestoTortas + glm::vec3(-0.6f, 0.9f, -0.6f),
+		//	glm::vec3(0.0f, 1.0f, 0.0f), 32.953f);
+		//OmniMan_M.TransformHead(glm::vec3(0.0f, 0.683f, -0.015f));
+		//OmniMan_M.TransformLegR(glm::vec3(-0.081f, 0.033f, 0.017f));
+		//OmniMan_M.TransformLegL(glm::vec3(0.075f, 0.036f, -0.003f));
+		//OmniMan_M.TransformArmR(glm::vec3(-0.163f, 0.549f, -0.037f));
+		//OmniMan_M.TransformArmL(glm::vec3(0.177f, 0.551f, -0.034f));
+		//OmniMan_M.RenderModelJ(uniformModel);
 
 		// variables auxiliares para la interfaz de selección de personaje
 		glm::vec3 camFront = glm::normalize(freeCam.getCameraDirection());
@@ -1397,7 +1393,7 @@ int main()
 			Invencible_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
 			Invencible_M.RenderModelJ(uniformModel);
 		}
-		
+
 		else if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 2) {
 			glm::vec3 modeloPos = camPos + camFront * 4.0f; // distancia a la camara
 			Batman_M.TranformFullModel(glm::vec3(modeloPos), orientacion);
@@ -1445,7 +1441,7 @@ int main()
 					glm::vec3 offsetPos = basePos + camRight * (-7.0f + espaciado * i) + camUp * -4.5f;
 					// Configurar textura de letras
 					toffset = glm::vec2(offsetFuenteProyU + letrasOffset[texto[i]].first,
-					(1 - offsetFuenteProyV) + letrasOffset[texto[i]].second);
+						(1 - offsetFuenteProyV) + letrasOffset[texto[i]].second);
 					model = glm::mat4(1.0f);
 					model = glm::translate(model, offsetPos);
 					model *= glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
@@ -1508,7 +1504,7 @@ int main()
 		* Interfaz ligada a la camara
 		*/
 
-		
+
 
 		// renderizar encabezados
 		texto = "FERIA FUTURISTA";
@@ -1519,7 +1515,7 @@ int main()
 			glm::vec3 offsetPos = basePos + camRight * (-7.0f + espaciado * i) + camUp * 4.5f;
 
 			// Configurar textura de letras
-			toffset = glm::vec2(offsetFuenteProyU + letrasOffset[texto[i]].first, 
+			toffset = glm::vec2(offsetFuenteProyU + letrasOffset[texto[i]].first,
 				(1 - offsetFuenteProyV) + letrasOffset[texto[i]].second);
 
 			model = glm::mat4(1.0f);
