@@ -147,6 +147,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshBuilder.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelJerarquia.h" />
     <ClInclude Include="ObjectFocusCamera.h" />
@@ -167,6 +168,7 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MeshBuilder.cpp" />
     <ClCompile Include="Mesh_tn.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelJerarquia.cpp" />
