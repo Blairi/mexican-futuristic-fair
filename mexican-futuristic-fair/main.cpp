@@ -12,6 +12,9 @@ Autores:
 #include <vector>
 #include <math.h>
 #include <map>
+#include "ModelJerarquia.h"
+
+
 
 #include <glew.h>
 #include <glfw3.h>
@@ -43,6 +46,7 @@ Autores:
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "Material.h"
+#include "NPC.h"
 
 #include "MeshBuilder.h"
 
@@ -66,6 +70,7 @@ Texture pisoTexture;
 Texture AgaveTexture;
 
 Texture ProjectDefaultFont;
+
 
 Model Base;
 
@@ -99,7 +104,11 @@ void CreateShaders()
 	Shader *shader1 = new Shader();
 	shader1->CreateFromFiles(vShader, fShader);
 	shaderList.push_back(*shader1);
+
 }
+
+
+
 
 void SetPinesBoliche(GLuint &uniformModel, std::vector <glm::mat4> &pinesTrans, glm::mat4 modelroot, Model &pinBoliche) {
 
@@ -138,6 +147,54 @@ int main()
 	*/
 	MeshBuilder meshBuilder = MeshBuilder();
 
+	std::map<char, std::pair<float, float>> letrasOffset = {
+		{ 'A', std::make_pair(0.0f, 0.8164f) },
+		{ 'B', std::make_pair(0.125f, 0.8164f) },
+		{ 'C', std::make_pair(0.2324f, 0.8164f) },
+		{ 'D', std::make_pair(0.34375f, 0.8164f) },
+		{ 'E', std::make_pair(0.4589f, 0.8164f) },
+		{ 'F', std::make_pair(0.5609f, 0.8164f) },
+		{ 'G', std::make_pair(0.6757f, 0.8164f) },
+		{ 'H', std::make_pair(0.7890f, 0.8164f) },
+
+		{ 'I', std::make_pair(0.0136f, 0.6015f) },
+		{ 'J', std::make_pair(0.1191f, 0.6015f) },
+		{ 'K', std::make_pair(0.2324f, 0.6015f) },
+		{ 'L', std::make_pair(0.3515f, 0.6015f) },
+		{ 'M', std::make_pair(0.4511f, 0.6015f) },
+		{ 'N', std::make_pair(0.5664f, 0.6015f) },
+		{ 'O', std::make_pair(0.7871f, 0.6015f) },
+
+		{ 'P', std::make_pair(0.0175f, 0.3847f) },
+		{ 'Q', std::make_pair(0.1210f, 0.3847f) },
+		{ 'R', std::make_pair(0.2343f, 0.3847f) },
+		{ 'S', std::make_pair(0.3457f, 0.3847f) },
+		{ 'T', std::make_pair(0.4492f, 0.3847f) },
+		{ 'U', std::make_pair(0.5703f, 0.3847f) },
+		{ 'V', std::make_pair(0.6718f, 0.3847f) },
+		{ 'W', std::make_pair(0.7832f, 0.3847f) },
+
+		{ 'X', std::make_pair(0.0f, 0.1679f) },
+		{ 'Y', std::make_pair(0.1171f, 0.1679f) },
+		{ 'Z', std::make_pair(0.2382f, 0.1679f) },
+	};
+
+
+
+
+	// 1) Crear y compilar tu shader de texto
+	Shader textShader;
+	textShader.CreateFromFiles("shaders/text.vert", "shaders/text.frag");
+	GLuint shaderTextProgram = textShader.GetProgramID();
+
+	// 2) Obtener ubicaciones de uniforms
+	GLuint uniformTextModel = glGetUniformLocation(shaderTextProgram, "model");
+	GLuint uniformTextView = glGetUniformLocation(shaderTextProgram, "view");
+	GLuint uniformTextProj = glGetUniformLocation(shaderTextProgram, "projection");
+	GLuint uniformTextColor = glGetUniformLocation(shaderTextProgram, "textColor");
+	GLuint uniformTextOffset = glGetUniformLocation(shaderTextProgram, "offset");
+
+	
 	CreateShaders();
 
 	// Posición Postes de Luz:
@@ -232,6 +289,7 @@ int main()
 	Texture LogoDany = Texture("Textures/DanyPhantomLogo.png");
 	LogoDany.LoadTextureA();
 
+
 	Model SkayBoxDia = Model();
 	SkayBoxDia.LoadModel("Models/SkyBoxNubesDia.obj");
 
@@ -242,6 +300,28 @@ int main()
 
 	Model arbol = Model();
 	arbol.LoadModel("Models/HoraAventura/casaArbol.obj");
+
+	// Jake
+	Model JakeBody, JakeArm;
+	JakeBody.LoadModel("Models/HoraAventura/Jake/jake.obj");
+	JakeArm.LoadModel("Models/HoraAventura/Jake/jake_brazo.obj");
+
+
+	// Arboles AT
+
+	Model ArbolRosa, ArbolColor;
+	ArbolRosa.LoadModel("Models/HoraAventura/arbol_algodon_horaaventura1.obj");
+	ArbolColor.LoadModel("Models/HoraAventura/arbol_algodon2.obj");
+
+	// Arcade
+
+	Model Arcade;
+
+	Arcade.LoadModel("Models/arcade.obj");
+
+	
+
+
 
 	/*
 	* Puestos de comida
@@ -423,6 +503,10 @@ int main()
 	ModelJerarquia AtomEve_M = ModelJerarquia("Models/AtomEve");
 	AtomEve_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 
+	Mesh* quadUI = meshList[0];            // tu quad plano de interfaz
+	Texture* uiFont = &ProjectDefaultFont;
+	
+	
 	ModelJerarquia OmniMan_M = ModelJerarquia("Models/OmniMan");
 	OmniMan_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -523,37 +607,7 @@ int main()
 
 	float offsetFrames = 0.0f;
 
-	std::map<char, std::pair<float, float>> letrasOffset = {
-		{ 'A', std::make_pair(0.0f, 0.8164f) },
-		{ 'B', std::make_pair(0.125f, 0.8164f) },
-		{ 'C', std::make_pair(0.2324f, 0.8164f) },
-		{ 'D', std::make_pair(0.34375f, 0.8164f) },
-		{ 'E', std::make_pair(0.4589f, 0.8164f) },
-		{ 'F', std::make_pair(0.5609f, 0.8164f) },
-		{ 'G', std::make_pair(0.6757f, 0.8164f) },
-		{ 'H', std::make_pair(0.7890f, 0.8164f) },
 
-		{ 'I', std::make_pair(0.0136f, 0.6015f) },
-		{ 'J', std::make_pair(0.1191f, 0.6015f) },
-		{ 'K', std::make_pair(0.2324f, 0.6015f) },
-		{ 'L', std::make_pair(0.3515f, 0.6015f) },
-		{ 'M', std::make_pair(0.4511f, 0.6015f) },
-		{ 'N', std::make_pair(0.5664f, 0.6015f) },
-		{ 'O', std::make_pair(0.7871f, 0.6015f) },
-
-		{ 'P', std::make_pair(0.0175f, 0.3847f) },
-		{ 'Q', std::make_pair(0.1210f, 0.3847f) },
-		{ 'R', std::make_pair(0.2343f, 0.3847f) },
-		{ 'S', std::make_pair(0.3457f, 0.3847f) },
-		{ 'T', std::make_pair(0.4492f, 0.3847f) },
-		{ 'U', std::make_pair(0.5703f, 0.3847f) },
-		{ 'V', std::make_pair(0.6718f, 0.3847f) },
-		{ 'W', std::make_pair(0.7832f, 0.3847f) },
-
-		{ 'X', std::make_pair(0.0f, 0.1679f) },
-		{ 'Y', std::make_pair(0.1171f, 0.1679f) },
-		{ 'Z', std::make_pair(0.2382f, 0.1679f) },
-	};
 
 	/*
 	* variables auxiliares para las animaciones
@@ -617,6 +671,21 @@ int main()
 		deltaTime = now - lastTime;
 		deltaTime += (now - lastTime) / limitFPS;
 		lastTime = now;
+
+		// NPCs
+		// 1) Procesar interacciones+
+		// 1) Interacción con AtomEve
+		/*if (mainWindow.getsKeys()[GLFW_KEY_E]) {
+			float dist = glm::length(avatarPos - atomEveNPC.getPosition());
+			if (dist < 3.0f) {
+				atomEveNPC.interact();
+			}
+		}*/
+
+	
+
+
+
 
 		/*
 		*  Ciclo Día / Noche 
@@ -737,8 +806,8 @@ int main()
 			freeCam.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
 
-		glm::mat4 viewMatrix = activeCamera->getViewMatrix();
 
+		glm::mat4 viewMatrix = activeCamera->getViewMatrix();
 
 
 		// controlar la velocidad con la que rota la camara de seleccion de personaje
@@ -1114,6 +1183,35 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		arbol.RenderModel();
 
+		glm::vec3 bodyPos(-0.523869f, 2.1f, 6.750570f);
+		glm::vec3 armPos(-0.228839f, 2.6f, 6.969260f);
+
+		// JAKE
+
+		// Calcula el offset LOCAL del brazo respecto al cuerpo:
+		glm::vec3 armOffset = armPos - bodyPos;
+		// → (0.32503, 0.54314, 0.91869) aprox.
+
+		// 2a) Matriz padre para el cuerpo:
+		glm::mat4 M = glm::mat4(1.0f);
+		M = glm::translate(M, bodyPos);
+		M = glm::rotate(M, glm::radians(90.0f), glm::vec3(0, 1, 0));  // X = 90°
+		M = glm::scale(M,
+			glm::vec3(0.5f, 0.5f, 0.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(M));
+		JakeBody.RenderModel();
+
+		// 2b) Matriz del brazo, partiendo de M:
+		glm::mat4 A = M;
+		A = glm::translate(A, armOffset);
+		// Aplicamos las rotaciones locales extra:
+		A = glm::rotate(A, glm::radians(183.295f), glm::vec3(0, 1, 0)); // Y
+		A = glm::rotate(A, glm::radians(167.638f), glm::vec3(0, 0, 1)); // Z
+		// Escala en Z negativa (1,1,-1) según Blender:
+		A = glm::scale(A, glm::vec3(1.0f, 1.0f, -1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(A));
+		JakeArm.RenderModel();
+
 
 
 
@@ -1412,6 +1510,8 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
+		
+
 		//Topos traseros de izquierda a derecha
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(-0.619f, 2.174f, 0.385f));
@@ -1446,6 +1546,23 @@ int main()
 		topo.RenderModel();
 
 		// FIN ATRACCION GUACAMOLE ----------------------------------------------------------------------
+
+		// MAQ ARCADE
+
+		// Arcade
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-22.93f, 0.0f, -17.15559f));
+		model = glm::rotate(
+			model,
+			glm::radians(90.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f)
+		);
+
+		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Arcade.RenderModel();
 
 		//ZONA BATEO ----------------------------------------------------------------------
 		model = glm::mat4(1.0);
@@ -1513,17 +1630,26 @@ int main()
 		* ------------------
 		*/
 		// Atom eve - revienta globos
+		//atomEveNPC.update(deltaTime);
+
+		//// 2) Render modelo
+		//atomEveNPC.render(uniformModel);
+
 		animaAtomGlobos += 0.1f * deltaTime;
-		AtomEve_M.MovFullModel(glm::vec3(-25.7f, 0.95f, 10.5f), 
+		AtomEve_M.MovFullModel(glm::vec3(-25.7f, 0.95f, 10.5f),
 			glm::vec3(0.0, 1.0f, 0.0f), 135.753f);
-		AtomEve_M.TransformHead(glm::vec3(0.0f, 0.567f, -0.015f), 
-			glm::vec3(1.0f, 0.0f, 0.0f), 5*sin(animaAtomGlobos));
+		AtomEve_M.TransformHead(glm::vec3(0.0f, 0.567f, -0.015f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 5 * sin(animaAtomGlobos));
 		AtomEve_M.TransformLegR(glm::vec3(-0.065f, 0.03f, -0.008f));
 		AtomEve_M.TransformLegL(glm::vec3(0.015f, 0.01f, -0.003f));
 		AtomEve_M.TransformArmR(glm::vec3(-0.103f, 0.462f, -0.018f));
 		AtomEve_M.TransformArmL(glm::vec3(0.108f, 0.444f, -0.039f),
 			glm::vec3(1.0f, 0.0f, 0.0f), 50 * cos(animaAtomGlobos));
 		AtomEve_M.RenderModelJ(uniformModel);
+	
+
+
+
 
 		// Ember del Escenario
 		model = glm::mat4(1.0);
@@ -2018,6 +2144,10 @@ int main()
 			LogoBatman.UseTexture();
 			meshBuilder.meshList[1]->RenderMesh();
 		}
+
+		
+	
+
 		// TODO: renderizar condicionalmente los demas logos
 
 		glDisable(GL_BLEND);

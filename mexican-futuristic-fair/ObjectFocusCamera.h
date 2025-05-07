@@ -10,6 +10,9 @@ public:
     glm::mat4 getViewMatrix() override;
     void      update(float deltaTime) override;
     void      nextObject();
+    void  beginFocus(glm::vec3* target); // activa foco temporal
+    void  endFocus();                    // desactiva
+    bool  isFocusing() const { return tempTarget != nullptr; }
 
     // **Nuevos**:
     glm::vec3 getCameraPosition() const override;
@@ -18,4 +21,7 @@ public:
 private:
     std::vector<glm::vec3*> targets;
     int currentTarget;
+    glm::vec3* tempTarget = nullptr;
+
+
 };

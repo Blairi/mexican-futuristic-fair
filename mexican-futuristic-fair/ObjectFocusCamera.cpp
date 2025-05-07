@@ -9,13 +9,21 @@ ObjectFocusCamera::ObjectFocusCamera(glm::vec3 up,
 {}
 
 glm::mat4 ObjectFocusCamera::getViewMatrix() {
-    position = *targets[currentTarget] + glm::vec3(0, 2, 5);
-    return glm::lookAt(position, *targets[currentTarget], up);
+    glm::vec3* tgt = tempTarget ? tempTarget : targets[currentTarget];
+
+    position = *tgt + glm::vec3(0, 2, 5);
+
+    return glm::lookAt(position, *tgt, up);
+
 }
+
+void ObjectFocusCamera::beginFocus(glm::vec3* tgt) { tempTarget = tgt; }
+void ObjectFocusCamera::endFocus() { tempTarget = nullptr; }
 
 void ObjectFocusCamera::update(float /*deltaTime*/) {}
 
 void ObjectFocusCamera::nextObject() {
+    if (isFocusing()) return;            // no cambies mientras hay diálogo
     currentTarget = (currentTarget + 1) % targets.size();
 }
 

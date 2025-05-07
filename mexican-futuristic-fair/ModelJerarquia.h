@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Model.h" 
 #include <vector>
 #include <glm.hpp>
