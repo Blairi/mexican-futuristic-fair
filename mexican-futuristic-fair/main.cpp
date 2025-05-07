@@ -311,6 +311,11 @@ int main()
 	glm::vec3 posCabina(-25.0f, 0.0f, 11.0f);
 	glm::vec3 posBoliche(-3.68f, 0.0f, 28.85f);
 
+	// Posición de Luces Escenario
+	glm::vec3 posLuz1(0.34811f, 4.82231f, -30.285066f);
+	glm::vec3 posLuz2(-1.73563f, 4.82231f, -30.285066f);
+	glm::vec3 posLuz3(2.40227f, 4.82231f, -30.285066f);
+
 	std::vector<glm::vec3*> objetos = {
 		// Ejemplo: &posPuestoTortas, &posRevientaGlobos, ...
 		 &posCabina, &posBoliche // (sólo placeholder)
@@ -386,7 +391,7 @@ int main()
 	SkayBoxDia.LoadModel("Models/SkyBoxNubesDia.obj");
 
 	Base = Model();
-	Base.LoadModel("Models/base.obj");
+	Base.LoadModel("Models/BaseTexturizada/base.obj");
 	
 	//Model Arbol
 
@@ -531,6 +536,9 @@ int main()
 	Model BocinasStageEmber = Model();
 	BocinasStageEmber.LoadModel("Models/StageEmber/BocinasEmber.obj");
 
+	Model LuzEscenario = Model();
+	LuzEscenario.LoadModel("Models/StageEmber/luzEscenario.obj");
+
 	/*
 	* Zona Invencible
 	*/
@@ -581,8 +589,10 @@ int main()
 	ModelJerarquia Joker = ModelJerarquia("Models/Joker");
 	Joker.InitModel(glm::vec3(0.0f, 1.1065f, 0.0f));
 
-	Model Ember_M = Model();
-	Ember_M.LoadModel("Models/Ember/Ember.obj");
+	ModelJerarquia Ember_M = ModelJerarquia("Models/Ember");
+	Ember_M.InitModel(glm::vec3(0.0f, 0.0f,0.0f));
+	Model GuitarEmber = Model();
+	GuitarEmber.LoadModel("Models/Ember/Guitar.obj");
 
 	std::vector<std::string> skyboxFaces;
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -736,12 +746,15 @@ int main()
 	float animarZonaTrajes = 0.0f;
 	float animaLampara = 0.0;
 	GLfloat lastTimeProy = 0.0f;
+	GLfloat anguloLaparaEscenario = 0.0f;
+	GLfloat anguloLuzEscenario = 0.0f;
+	GLfloat anguloBrazoEmber = 0.0f, anguloCabezaEmber = 0.0f;
 
 	// Posición del Avatar
 	bool hadSelected = false;
 
 	GLfloat timer = 0.0f, delay = 2.0f, movementLigts = -5.0f;
-	bool reverse = false;
+	bool reverse = false, luzReverse = true;
 	copiespotLights[0] = spotLights[0];
 	copiespotLights[1] = spotLights[1];
 	copiespotLights[2] = spotLights[2];
@@ -781,7 +794,26 @@ int main()
 		mainLight.setDiffuseIntensity(diffuse);
 
 		// ----------------------------------------------------------------------------------------------------------
+		
 
+		// Animación Luces Escenario
+		if (mainWindow.getisEscenarioOn()) {
+			if (luzReverse) {
+				if (anguloLaparaEscenario > 100.0f) {
+					luzReverse = false;
+				}
+				else anguloLaparaEscenario += 2.5f * deltaTime;
+
+			}
+			else {
+				if (anguloLaparaEscenario < 0.0f) {
+					luzReverse = true;
+				}
+				else anguloLaparaEscenario -= 2.5f * deltaTime;
+
+			}
+		}
+		// ----------------------------------------------------------------------------------------------------------
 
 		//Recibir eventos del usuario
 		glfwPollEvents();
@@ -914,35 +946,66 @@ int main()
 
 
 		// Ambientación Rueda de la Fortuna
-		if (isDay) {
-			if (deltaTime < 2.0) {
-				if (reverse) {
-					if (movementLigts > 6.5f) {
-						reverse = false;
-					}
-					else { movementLigts += 0.2 * deltaTime; }
-				}
-				else {
-					if (movementLigts < -6.5f) {
-						reverse = true;
-					}
-					else { movementLigts -= 0.2 * deltaTime; }
-				}
-			}
+		copiespotLights[0] = spotLights[0];
+		copiespotLights[1] = spotLights[1];
+		copiespotLights[2] = spotLights[2];
 
-			// Para Ilumiinar Rueda de la Fortuna
-			copiespotLights[0].SetPos(glm::vec3(movementLigts, 20.0f, 18.489f));
-			copiespotLights[1].SetPos(glm::vec3(-1 * movementLigts, 20.0f, 18.489f));
-			copiespotLights[2].SetPos(glm::vec3(-0.876f, 20.0f + movementLigts * 1.5, 18.489f));
+		if (!mainWindow.getisEscenarioOn()) {
+			if (isDay) {
+				if (deltaTime < 2.0) {
+					if (reverse) {
+						if (movementLigts > 6.5f) {
+							reverse = false;
+						}
+						else { movementLigts += 0.2 * deltaTime; }
+					}
+					else {
+						if (movementLigts < -6.5f) {
+							reverse = true;
+						}
+						else { movementLigts -= 0.2 * deltaTime; }
+					}
+				}
+				// Para Ilumiinar Rueda de la Fortuna
+				copiespotLights[0].SetPos(glm::vec3(movementLigts, 20.0f, 18.489f));
+				copiespotLights[1].SetPos(glm::vec3(-1 * movementLigts, 20.0f, 18.489f));
+				copiespotLights[2].SetPos(glm::vec3(-0.876f, 20.0f + movementLigts * 1.5, 18.489f));
 
-			timer += 0.1 * deltaTime;
-			if (timer >= delay) {
-				shaderList[0].SetSpotLights(copiespotLights, spotLightCount - 1);
-				timer = 0;
+				timer += 0.1 * deltaTime;
+				if (timer >= delay) {
+					shaderList[0].SetSpotLights(copiespotLights, spotLightCount - 1);
+					timer = 0;
+				}
+				else shaderList[0].SetSpotLights(copiespotLights, spotLightCount);
 			}
-			else shaderList[0].SetSpotLights(copiespotLights, spotLightCount);
+			else shaderList[0].SetSpotLights(copiespotLights, 0);
 		}
-		else shaderList[0].SetSpotLights(copiespotLights, 0);
+		else {
+
+			// Se activan luces de Escenario
+			anguloLuzEscenario += 2.0 * deltaTime;
+
+			// Luz central (roja)
+			copiespotLights[0].setAmbientIntensity(0.5f);
+			copiespotLights[0].setDiffuseIntensity(1.0f);
+			copiespotLights[0].setAtenuacion(0.0f, 0.3f, 0.7f),
+			copiespotLights[0].SetFlash(posLuz1, glm::vec3(0.0f, -1.0, cos(glm::radians(anguloLaparaEscenario))));
+
+			// Luz izquierda (azul)
+			copiespotLights[1].setAmbientIntensity(0.5f);
+			copiespotLights[1].setDiffuseIntensity(1.0f);
+			copiespotLights[1].setAtenuacion(0.0f, 0.3f, 0.7f),
+			copiespotLights[1].SetFlash(posLuz2, glm::vec3(sin(glm::radians(-anguloLaparaEscenario)), -1.0, cos(glm::radians(-anguloLaparaEscenario))));
+
+			// Luz derecha (verde)
+			copiespotLights[2].setAmbientIntensity(0.5f);
+			copiespotLights[2].setDiffuseIntensity(1.0f);
+			copiespotLights[2].setAtenuacion(0.0f, 0.3f, 0.7f),
+			copiespotLights[2].SetFlash(posLuz3, glm::vec3(sin(glm::radians(anguloLaparaEscenario)), -1.0, cos(glm::radians(anguloLaparaEscenario))));
+			shaderList[0].SetSpotLights(copiespotLights, spotLightCount);
+
+			 
+		}
 		
 
 
@@ -1250,6 +1313,24 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		BocinasStageEmber.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.34811f, 5.02231f, -30.285066f));
+		model = glm::rotate(model, glm::radians(anguloLaparaEscenario), glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		LuzEscenario.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-1.73563f, 5.02231f, -30.285066f));
+		model = glm::rotate(model, glm::radians(-anguloLaparaEscenario), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		LuzEscenario.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(2.40227f, 5.02231f, -30.285066f));
+		model = glm::rotate(model, glm::radians(anguloLaparaEscenario), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		LuzEscenario.RenderModel();
 
 		// —––– Árbol de Aventura —–––
 		model = glm::mat4(1.0f);
@@ -1580,10 +1661,20 @@ int main()
 		AtomEve_M.RenderModelJ(uniformModel);
 
 		// Ember del Escenario
+		anguloCabezaEmber += 0.2f * deltaTime;
+		anguloBrazoEmber += 5.0f * deltaTime;
+		Ember_M.MovFullModel(glm::vec3(0.0f, 2.3f, -28.0f));
+		Ember_M.TransformHead(glm::vec3(0.0f, 0.059094f, 0.007059f), glm::vec3(1.0f, 0.0f, 0.0f), 10 * sin(anguloCabezaEmber));
+		Ember_M.TransformLegR(glm::vec3(-0.048772f, -0.333642f, 0.0f));
+		Ember_M.TransformLegL(glm::vec3(0.075321f, -0.383061f, -0.008162f));
+		Ember_M.TransformArmR(glm::vec3(-0.074838f, 0.000344f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), -80.0f + 60.0f * sin(glm::radians(anguloBrazoEmber)) / 2);
+		Ember_M.TransformArmL(glm::vec3(0.074127f, 0.000064f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), -80.0f + 60.f * sin(glm::radians(-anguloBrazoEmber)) / 2);
+		Ember_M.RenderModelJ(uniformModel);
+
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 2.3f, -28.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Ember_M.RenderModel();
+		GuitarEmber.RenderModel();
 
 		/*
 		* ------------------

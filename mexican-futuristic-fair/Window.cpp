@@ -21,6 +21,7 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	this->NUMERO_PERSONAJES = 4;
 	this->idPersonaje = 0;
 	this->personajeSeleccionado = false;
+	isEscenarioOn = false;
 	for (size_t i = 0; i < 1024; i++)
 	{
 		keys[i] = 0;
@@ -135,6 +136,8 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 	{
 		theWindow->personajeSeleccionado = true;
 	}
+
+	if (key == GLFW_KEY_M && action == GLFW_RELEASE) theWindow->isEscenarioOn = !theWindow->isEscenarioOn;
 
 	if (key >= 0 && key < 1024)
 	{
