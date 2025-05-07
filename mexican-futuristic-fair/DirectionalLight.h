@@ -13,6 +13,16 @@ public:
 	void UseLight(GLfloat ambientIntensityLocation, GLfloat ambientcolorLocation,
 		GLfloat diffuseIntensityLocation, GLfloat directionLocation);
 
+	void setDirection(const glm::vec3& dir) {
+		direction = glm::normalize(dir);
+	}
+	void setAmbientIntensity(GLfloat amb) {
+		ambientIntensity = amb;
+	}
+	void setDiffuseIntensity(GLfloat diff) {
+		diffuseIntensity = diff;
+	}
+
 	~DirectionalLight();
 
 private:

@@ -124,7 +124,7 @@ int main()
 	CreateShaders();
 
 	// Posición Postes de Luz:
-	bool isPosteLuzOn = true;
+	bool isDay = false;
 	std::vector <glm::vec3> posPostesLuz;
 	posPostesLuz.push_back(glm::vec3(8.072f, 5.03f, 15.362f));
 	posPostesLuz.push_back(glm::vec3(12.429f, 5.03f, -8.4947f));
@@ -200,8 +200,13 @@ int main()
 	Texture LogoDany = Texture("Textures/DanyPhantomLogo.png");
 	LogoDany.LoadTextureA();
 
+
 	Texture FramesInvencible = Texture("Textures/frames-invencible.png");
 	FramesInvencible.LoadTextureA();
+
+	Model SkayBoxDia = Model();
+	SkayBoxDia.LoadModel("Models/SkyBoxNubesDia.obj");
+
 
 	// Base 
 	Model Base = Model();
@@ -389,10 +394,29 @@ int main()
 	Material_brillante = Material(4.0f, 256);
 	Material_opaco = Material(0.3f, 4);
 
-	//luz direccional, sólo 1 y siempre debe de existir
+	/* --------------------------------------------
+	*			Ciclo Día/Noche
+	*///-------------------------------------------
+
+	// Duración del "día" en segundos reales:
+	const float DAY_LENGTH = 780.0f;    // por ejemplo, 1 minuto = 24 h
+	float timeOfDay = 0.0f;           // contador que recorre [0, DAY_LENGTH)
+
+	// Intensidades escalar día/noche:
+	const GLfloat ambientDay = 0.4f;   // antes 0.3
+	const GLfloat diffuseDay = 1.0f;   // antes 0.8
+	const GLfloat ambientNight = 0.02f;  // antes 0.05
+	const GLfloat diffuseNight = 0.05f;  // antes 0.1
+
+
+
+	// Luz Direccional para Día/Noche
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
-		0.3f, 0.3f, // intensidad ambiental (radiacion de la luz), intensidad difusa
-		0.0f, -1.0f, 0.0f);
+								 0.3f, 0.8f, // intensidad ambiental (radiacion de la luz), intensidad difusa
+								 0.0f, -1.0f, 0.0f);
+
+	// --------------------------------------------------------------------
+
 
 	//contador de luces puntuales
 	unsigned int pointLightCount = 0;
@@ -540,6 +564,36 @@ int main()
 		deltaTime += (now - lastTime) / limitFPS;
 		lastTime = now;
 
+		/*
+		*  Ciclo Día / Noche 
+		*/
+
+		timeOfDay += deltaTime;
+		if (timeOfDay >= DAY_LENGTH) timeOfDay -= DAY_LENGTH;
+
+		// Normalizar t ∈ [0,1]
+		float t = timeOfDay / DAY_LENGTH;
+
+		// Calcular ángulo del sol
+		float sunAngle = glm::radians(t * 360.0f - 90.0f);
+
+		// Factor de interpolación basado en la altura del sol
+		float f = glm::clamp(sin(sunAngle) * 0.5f + 0.5f, 0.0f, 1.0f);
+
+		// Interpolación lineal de las intensidades escalares
+		GLfloat ambient = ambientNight + f * (ambientDay - ambientNight);
+		GLfloat diffuse = diffuseNight + f * (diffuseDay - diffuseNight);
+
+		// Actualizar la luz direccional
+		glm::vec3 sunDir = glm::normalize(glm::vec3(-cos(sunAngle), -sin(sunAngle), 0.0f));
+
+		mainLight.setDirection(sunDir);
+		mainLight.setAmbientIntensity(ambient);
+		mainLight.setDiffuseIntensity(diffuse);
+
+		// ----------------------------------------------------------------------------------------------------------
+
+
 		//Recibir eventos del usuario
 		glfwPollEvents();
 
@@ -676,9 +730,16 @@ int main()
 		glUniform3f(uniformEyePosition, camPos.x, camPos.y, camPos.z);
 		//spotLights[0].SetFlash(camPos, camDir);
 
+		isDay = sin(sunAngle) < 0; // True = dia | False = noche
+
+
 		//información al shader de fuentes de iluminación
-		//shaderList[0].SetDirectionalLight(&mainLight);
-		if (isPosteLuzOn) shaderList[0].SetPointLights(pointLights, pointLightCount);
+		shaderList[0].SetDirectionalLight(&mainLight);
+		if (isDay) {
+			shaderList[0].SetPointLights(pointLights, pointLightCount);
+		}
+		else shaderList[0].SetPointLights(pointLights, 0);
+
 		shaderList[0].SetSpotLights(spotLights, spotLightCount);
 
 		/*
@@ -694,6 +755,11 @@ int main()
 		glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 		glm::vec2 toffset = glm::vec2(0.0f, 0.0f);
 		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+
+		model = glm::mat4(1.0);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		SkayBoxDia.RenderModel();
 
 		model = glm::mat4(1.0);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
