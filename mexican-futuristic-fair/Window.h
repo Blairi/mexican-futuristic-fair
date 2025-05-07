@@ -22,6 +22,7 @@ public:
 	void swapBuffers() { return glfwSwapBuffers(mainWindow); }
 	int getIdPersonaje() { return idPersonaje; }
 	bool isPersonajeSeleccionado(){ return personajeSeleccionado; }
+	bool getisEscenarioOn() { return isEscenarioOn; }
 	~Window();
 private: 
 	GLFWwindow *mainWindow;
@@ -34,6 +35,7 @@ private:
 	GLfloat xChange;
 	GLfloat yChange;
 	GLfloat muevex;
+	bool isEscenarioOn;
 
 	int idPersonaje;
 	int NUMERO_PERSONAJES;
