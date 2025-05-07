@@ -274,6 +274,17 @@ void SetPinesBoliche(GLuint &uniformModel, std::vector <glm::mat4> &pinesTrans, 
 	}
 }
 
+void swapSpotLight(SpotLight* spotLights, std::vector<int> ligths, int numLights) {
+
+	SpotLight itemAux;
+
+	for (int i = 0; i < numLights; i++) {
+		itemAux = spotLights[i];
+		spotLights[i] = spotLights[ligths[i]];
+		spotLights[ligths[i]] = itemAux;
+	}
+
+}
 
 int main()
 {
@@ -389,8 +400,8 @@ int main()
 	TortasInvencible.LoadModel("Models/PuestoTortasInvencible/puesto-tortas-invencible.obj");
 
 	
-	Model PuestoElotes = Model();
-	PuestoElotes.LoadModel("Models/PuestoBatielotes/PuestoElotes.obj");
+	/*Model PuestoElotes = Model();
+	PuestoElotes.LoadModel("Models/PuestoBatielotes/PuestoElotes.obj");*/
 
 	/*
 	* Ambientación 
@@ -410,8 +421,8 @@ int main()
 	Lampara.LoadModel("Models/Ambientacion/lampara.obj");
 
 	//Batimovil
-	Model batimovil = Model();
-	batimovil.LoadModel("Models/Ambientacion/batimovil.obj");
+	/*Model batimovil = Model();
+	batimovil.LoadModel("Models/Ambientacion/batimovil.obj");*/
 
 	/*
 	* Atracciones
@@ -638,15 +649,39 @@ int main()
 								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
 	pointLightCount++;
 
+
+	// Contador Luces SpotLight
 	unsigned int spotLightCount = 0;
-	//linterna
-	spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f,
-		0.0f, 2.0f,
-		0.0f, 0.0f, 0.0f,
-		0.0f, -1.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		5.0f);
+	
+	// Luces SpotLight
+	spotLights[0] = SpotLight(1.0f, 0.0f, 0.0f,
+							  20.0f, 15.0f,				// Ambiental | Difuso 
+						      0.0f, 20.0f, 0.0f,			// Posición 
+							  0.0f, -1.0f, 0.0f,        // Dirección
+							  0.3f, 0.8f, 0.0f,			// Atenuación cons, lin, exp
+							  5.0f);					// Angulo Apertura
 	spotLightCount++;
+
+	spotLights[1] = SpotLight(0.0f, 0.0f, 1.0f,
+							  20.0f, 15.0f,				// Ambiental | Difuso 
+							  0.0f, 20.0f, 0.0f,			// Posición 
+							  0.0f, -1.0f, 0.0f,        // Dirección
+							  0.3f, 0.8f, 0.0f,			// Atenuación cons, lin, exp
+							  5.0f);					// Angulo Apertura
+	spotLightCount++;
+
+	spotLights[2] = SpotLight(0.0f, 1.0f, 0.0f,
+							  20.0f, 15.0f,				// Ambiental | Difuso 
+							  0.0f, 20.0f, 0.0f,			// Posición 
+							  0.0f, -1.0f, 0.0f,        // Dirección
+							  0.3f, 0.8f, 0.0f,			// Atenuación cons, lin, exp
+							  5.0f);					// Angulo Apertura
+	spotLightCount++;
+
+	// Arreglo Copia de Luces SpotLigt
+	SpotLight copiespotLights[MAX_SPOT_LIGHTS];
+	unsigned int indexSpotLight = 0;
+	std::vector <int> indexSpotLights;
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
 		uniformSpecularIntensity = 0, uniformShininess = 0, uniformTextureOffset = 0;;
@@ -705,7 +740,11 @@ int main()
 	// Posición del Avatar
 	bool hadSelected = false;
 
-
+	GLfloat timer = 0.0f, delay = 2.0f, movementLigts = -5.0f;
+	bool reverse = false;
+	copiespotLights[0] = spotLights[0];
+	copiespotLights[1] = spotLights[1];
+	copiespotLights[2] = spotLights[2];
 
 	while (!mainWindow.getShouldClose())
 	{
@@ -858,16 +897,54 @@ int main()
 		glUniform3f(uniformEyePosition, camPos.x, camPos.y, camPos.z);
 		//spotLights[0].SetFlash(camPos, camDir);
 
-		isDay = sin(sunAngle) < 0; // True = dia | False = noche
+		isDay = sin(sunAngle) < 0; // True = noche | False = dia
 
-		//información al shader de fuentes de iluminación
+
+		// -------- Información al shader de fuentes de iluminación ---------
+
+		// Para ciclo Día/Noche
 		shaderList[0].SetDirectionalLight(&mainLight);
+
+
+		// Para Postes de Luz
 		if (isDay) {
 			shaderList[0].SetPointLights(pointLights, pointLightCount);
 		}
 		else shaderList[0].SetPointLights(pointLights, 0);
 
-		shaderList[0].SetSpotLights(spotLights, spotLightCount);
+
+		// Ambientación Rueda de la Fortuna
+		if (isDay) {
+			if (deltaTime < 2.0) {
+				if (reverse) {
+					if (movementLigts > 6.5f) {
+						reverse = false;
+					}
+					else { movementLigts += 0.2 * deltaTime; }
+				}
+				else {
+					if (movementLigts < -6.5f) {
+						reverse = true;
+					}
+					else { movementLigts -= 0.2 * deltaTime; }
+				}
+			}
+
+			// Para Ilumiinar Rueda de la Fortuna
+			copiespotLights[0].SetPos(glm::vec3(movementLigts, 20.0f, 18.489f));
+			copiespotLights[1].SetPos(glm::vec3(-1 * movementLigts, 20.0f, 18.489f));
+			copiespotLights[2].SetPos(glm::vec3(-0.876f, 20.0f + movementLigts * 1.5, 18.489f));
+
+			timer += 0.1 * deltaTime;
+			if (timer >= delay) {
+				shaderList[0].SetSpotLights(copiespotLights, spotLightCount - 1);
+				timer = 0;
+			}
+			else shaderList[0].SetSpotLights(copiespotLights, spotLightCount);
+		}
+		else shaderList[0].SetSpotLights(copiespotLights, 0);
+		
+
 
 		/*
 		* eleccion de personaje
@@ -901,11 +978,11 @@ int main()
 		*/
 
 		// Batimovil
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-21.8945f, 0.120827f, 21.5915f));
-		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		batimovil.RenderModel();
+		//model = glm::mat4(1.0);
+		//model = glm::translate(model, glm::vec3(-21.8945f, 0.120827f, 21.5915f));
+		////model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		//batimovil.RenderModel();
 
 
 		// Bancas Frontales 
@@ -1034,13 +1111,13 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		TortasInvencible.RenderModel();
 
-		glm::vec3 posPuestoElotes(8.28819f, 0.008754f, -15.0227f);
-		model = glm::mat4(1.0);
-		model = glm::translate(model, posPuestoElotes);
-		//model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		PuestoElotes.RenderModel(); 
+		//glm::vec3 posPuestoElotes(8.28819f, 0.008754f, -15.0227f);
+		//model = glm::mat4(1.0);
+		//model = glm::translate(model, posPuestoElotes);
+		////model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+		////model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		//PuestoElotes.RenderModel(); 
 		
 
 		
