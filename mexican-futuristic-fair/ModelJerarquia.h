@@ -56,8 +56,6 @@ class ModelJerarquia: public Model {
 
 		void OrientToCamera(glm::vec3 camFront);
 
-		std::vector<glm::mat4> getModelMatrixs();
-
 		~ModelJerarquia();
 
 	private:

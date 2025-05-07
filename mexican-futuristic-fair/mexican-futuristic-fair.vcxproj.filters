@@ -13,180 +13,126 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Camera">
-      <UniqueIdentifier>{b6215041-8835-46e0-ab4a-19a6000af2da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Material">
-      <UniqueIdentifier>{3ceaad0c-4de1-4b5f-8a5c-6b9e7524aebb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Light">
-      <UniqueIdentifier>{69011e48-4f8a-4df2-9726-5049ee27d7f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Mesh">
-      <UniqueIdentifier>{3b21e6a3-4c09-4b9f-931b-6d28378a5975}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Model">
-      <UniqueIdentifier>{0ad599a4-1c6e-4c65-87fa-de643ae9a74f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Window">
-      <UniqueIdentifier>{9666361f-c5fd-4999-b5b5-e2610690773b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Shader">
-      <UniqueIdentifier>{a4db337e-df0f-4992-923a-d7be9e007820}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Texture">
-      <UniqueIdentifier>{d2095da1-9a03-4e0b-9b28-e0f14df9525b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Skybox">
-      <UniqueIdentifier>{47b2cec8-f793-4edb-9a6f-000fddae3e37}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Camera">
-      <UniqueIdentifier>{fa34012e-1ba7-4dc7-9a05-7c2d56414ae7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Mesh">
-      <UniqueIdentifier>{fb9430cd-e7bc-4820-9b1f-ae5fad66cd45}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Light">
-      <UniqueIdentifier>{d953c857-bea5-4832-ac35-14ece35dc180}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Material">
-      <UniqueIdentifier>{5f7a3657-8ca4-4fcf-8204-f1864ea3d590}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Model">
-      <UniqueIdentifier>{ee06c278-7b25-4378-9a8a-d4ad44a5edfe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Shader">
-      <UniqueIdentifier>{18a68dc4-a868-4897-b1e6-e74445aca903}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Skybox">
-      <UniqueIdentifier>{06333416-6e6b-44f5-967d-14d1847fb9f4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Texture">
-      <UniqueIdentifier>{12612946-da29-48ea-9f96-ed819bc6d821}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Window">
-      <UniqueIdentifier>{d9c1ed6f-3c8d-44ad-b54c-ac34090cbe41}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="CommonValues.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="definition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader_light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpotLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="FreeCamera.h">
-      <Filter>Header Files\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectionalLight.h">
-      <Filter>Header Files\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectFocusCamera.h">
-      <Filter>Header Files\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="TopDownCamera.h">
-      <Filter>Header Files\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdPersonCamera.h">
-      <Filter>Header Files\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Header Files\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files\Material</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelJerarquia.h">
-      <Filter>Header Files\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="PointLight.h">
-      <Filter>Header Files\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="SpotLight.h">
-      <Filter>Header Files\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader_light.h">
-      <Filter>Header Files\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Skybox.h">
-      <Filter>Header Files\Skybox</Filter>
-    </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Header Files\Texture</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Window.h">
-      <Filter>Header Files\Window</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelJerarquia.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectFocusCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdPersonCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TopDownCamera.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FreeCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FreeCamera.cpp">
-      <Filter>Source Files\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="TopDownCamera.cpp">
-      <Filter>Source Files\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdPersonCamera.cpp">
-      <Filter>Source Files\Camera</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
-      <Filter>Source Files\Material</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Source Files\Light</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectionalLight.cpp">
-      <Filter>Source Files\Light</Filter>
-    </ClCompile>
-    <ClCompile Include="PointLight.cpp">
-      <Filter>Source Files\Light</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mesh_tn.cpp">
-      <Filter>Source Files\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshBuilder.cpp">
-      <Filter>Source Files\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="SpotLight.cpp">
-      <Filter>Source Files\Light</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
-      <Filter>Source Files\Model</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ModelJerarquia.cpp">
-      <Filter>Source Files\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectFocusCamera.cpp">
-      <Filter>Source Files\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Source Files\Window</Filter>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shader_light.cpp">
-      <Filter>Source Files\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Texture</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Skybox.cpp">
-      <Filter>Source Files\Skybox</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MeshBuilder.h">
-      <Filter>Header Files\Mesh</Filter>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpotLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelJerarquia.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectFocusCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdPersonCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TopDownCamera.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
