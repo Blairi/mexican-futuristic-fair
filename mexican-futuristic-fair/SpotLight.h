@@ -20,6 +20,20 @@ public:
 
 	void SetFlash(glm::vec3 pos, glm::vec3 dir);
 	void SetPos(glm::vec3 pos);
+
+	void setAmbientIntensity(GLfloat amb) {
+		ambientIntensity = amb;
+	}
+	void setDiffuseIntensity(GLfloat diff) {
+		diffuseIntensity = diff;
+	}
+
+	void setAtenuacion(GLfloat con, GLfloat lin, GLfloat exp) {
+		constant = con;
+		linear = lin;
+		exponent = exp;
+	}
+
 	~SpotLight();
 
 private:
