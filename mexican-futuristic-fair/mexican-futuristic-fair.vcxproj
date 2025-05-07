@@ -153,7 +153,6 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Shader_light.h" />
     <ClInclude Include="Skybox.h" />
-    <ClInclude Include="Sphere.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
@@ -164,6 +163,8 @@
   <ItemGroup>
     <ClCompile Include="FreeCamera.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
+    <ClCompile Include="MeshBuilder.cpp" />
+    <ClCompile Include="MeshBuilder.h" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -174,18 +175,11 @@
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Shader_light.cpp" />
     <ClCompile Include="Skybox.cpp" />
-    <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="ThirdPersonCamera.cpp" />
     <ClCompile Include="TopDownCamera.cpp" />
     <ClCompile Include="Window.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="shaders\shader_light.frag" />
-    <None Include="shaders\shader_light.vert" />
-    <None Include="shaders\skybox.frag" />
-    <None Include="shaders\skybox.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
