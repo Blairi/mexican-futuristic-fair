@@ -46,3 +46,9 @@ glm::vec3 ThirdPersonCamera::getCameraDirection() const {
     return glm::normalize((*target) - position);            // hacia el avatar
 }
 float ThirdPersonCamera::getYaw() const { return yaw; }
+
+glm::vec3 ThirdPersonCamera::getHorizontalDirection() const {
+    glm::vec3 dir = getCameraDirection();
+    dir.y = 0.0f; // ignorar inclinación vertical
+    return glm::normalize(dir);
+}

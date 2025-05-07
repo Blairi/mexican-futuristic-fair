@@ -13,9 +13,11 @@ public:
     float     getYaw()  const;
     glm::vec3 getCameraPosition()   const override;
     glm::vec3 getCameraDirection()  const override;
+    glm::vec3 getHorizontalDirection() const;
 
     // zoom con la rueda
     void      addDistance(float d);
+    // obtener direccion de la camara
 
 private:
     void      recalcOffsetDir();          // <— solo dirección

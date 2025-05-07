@@ -134,10 +134,10 @@ int main()
 	glm::vec3 avatarPos(0.0f, 0.0f, 0.0f);
 
 	// banderas para interactuar con las atracciones, cada indice es la atraccion correspondiente
-	glm::vec3 posLanzaHacha(13.4928f, 2.92542f, 18.9578f); // 0 - A1
+	glm::vec3 posLanzaHacha(13.4928f, 1.445f, 18.9578f); // 0 - A1
 	glm::vec3 posBoliche(-3.68f, 0.0f, 28.85f); // 1 - A2
-	glm::vec3 posLanzaDados(-30.304f, 0.782451f, 0.799495f); // 2 - A3
-	glm::vec3 posJaulaBateo(22.7181f, 3.04362f, 21.3295f); // 3 - A4
+	glm::vec3 posLanzaDados(-30.304f, 0.482451f, 0.799495f); // 2 - A3
+	glm::vec3 posJaulaBateo(22.7181f, 1.24362f, 21.3295f); // 3 - A4
 	glm::vec3 posRevientaGlobos(-25.0f, 0.0f, 11.0f); // 4 - A5
 	glm::vec3 posmaquinaWhack(-22.0786f, 0.0f, -7.53293f); // 5 - A6
 	bool activarAtraccionAnimacion[6] = { false, false, false, false, false, false };
@@ -236,18 +236,11 @@ int main()
 	Model PosteLampara = Model();
 	//PosteLampara.LoadModel("Models/Ambientacion/posteLampara.obj");
 	Model Lampara = Model();
-	Lampara.LoadModel("Models/Ambientacion/lampara.obj");
+	//Lampara.LoadModel("Models/Ambientacion/lampara.obj");
 
 	//Batimovil
 	Model batimovil = Model();
 	//batimovil.LoadModel("Models/Ambientacion/batimovil.obj");
-
-	/*
-	* Atracciones
-	*/
-	Model RevientaGlobosInvencible = Model();
-	//RevientaGlobosInvencible.LoadModel("Models/RevientaGlobos/invencible-revienta-globos.obj");
-
 
 	Model RuedaFortunaInvencibleBase = Model();
 	//RuedaFortunaInvencibleBase.LoadModel("Models/RuedaFortuna/rueda-fortuna-base.obj");
@@ -259,76 +252,60 @@ int main()
 	Model ProyectorInvencible = Model();
 	//ProyectorInvencible.LoadModel("Models/Proyector/screen_1.obj");
 
+	/*
+	* Atracciones
+	*/
+	Model RevientaGlobosInvencible = Model();
+	RevientaGlobosInvencible.LoadModel("Models/RevientaGlobos/invencible-revienta-globos.obj");
+	Model Globo = Model();
+	Globo.LoadModel("Models/RevientaGlobos/globo.obj");
+
 	// Boliche 
 	Model SueloBoliche = Model();
-	//SueloBoliche.LoadModel("Models/AtraccionBoliche/sueloBoliche.obj");
-
+	SueloBoliche.LoadModel("Models/AtraccionBoliche/sueloBoliche.obj");
 	Model paredBoliche = Model();
-	//paredBoliche.LoadModel("Models/AtraccionBoliche/paredBoliche.obj");
-
+	paredBoliche.LoadModel("Models/AtraccionBoliche/paredBoliche.obj");
 	Model recibidorBoliche = Model();
-	//recibidorBoliche.LoadModel("Models/AtraccionBoliche/recibidorBoliche.obj");
-
+	recibidorBoliche.LoadModel("Models/AtraccionBoliche/recibidorBoliche.obj");
 	Model pinBoliche = Model();
 	pinBoliche.LoadModel("Models/AtraccionBoliche/pinBoliche.obj");
 	std::vector <glm::mat4> pinesTrans;
-
 	Model LineasBoliche = Model();
 	LineasBoliche.LoadModel("Models/AtraccionBoliche/lineasBoliche.obj");
-
 	Model MaquinaBolasBolicheRoja = Model();
 	MaquinaBolasBolicheRoja.LoadModel("Models/AtraccionBoliche/maquinaBolasRoja.obj");
-
 	Model MaquinaBolasBolicheAzul = Model();
 	MaquinaBolasBolicheAzul.LoadModel("Models/AtraccionBoliche/maquinaBolasAzul.obj");
-
 	Model BolaVerde = Model();
 	BolaVerde.LoadModel("Models/AtraccionBoliche/BolaVerde.obj");
-
 	Model BolaRoja = Model();
 	BolaRoja.LoadModel("Models/AtraccionBoliche/BolaRoja.obj");
-
 	Model BolaAzul = Model();
 	BolaAzul.LoadModel("Models/AtraccionBoliche/BolaAzul.obj");
 
 	//------------------ ATRACCION DADOS ------------------------
-
-	//CARPA
-
 	Model carpa = Model();
 	carpa.LoadModel("Models/AtraccionDados/carpa.obj");
-
-	//Mesa dados
-
 	Model mesa_dados = Model();
 	mesa_dados.LoadModel("Models/AtraccionDados/mesa_dados.obj");
-
-	//dado
 	Model dado = Model();
 	dado.LoadModel("Models/AtraccionDados/dado.obj");
 
 	//------------------ ATRACCION Whack A Mole ------------------------
-
 	Model maquinaWhack = Model();
 	maquinaWhack.LoadModel("Models/AtraccionWhackAMole/WhackAMole.obj");
-
 	Model topo = Model();
 	topo.LoadModel("Models/AtraccionWhackAMole/topo.obj");
-
 	Model martillo_topos = Model();
 	martillo_topos.LoadModel("Models/AtraccionWhackAMole/martillo_topos.obj");
 
 	//------------------ ATRACCION ZONA BATEO ------------------------
-
 	Model zonabateo = Model();
 	zonabateo.LoadModel("Models/AtraccionBateo/zonabateo.obj");
-
 	Model maquinaTenis = Model();
 	maquinaTenis.LoadModel("Models/AtraccionBateo/maquinaTenis.obj");
-
 	Model pelotaTenis = Model();
 	pelotaTenis.LoadModel("Models/AtraccionBateo/pelotaTenis.obj");
-
 	Model bat = Model();
 	bat.LoadModel("Models/AtraccionBateo/bat.obj");
 
@@ -344,29 +321,26 @@ int main()
 	* Escenario de Musica
 	*/
 	Model Stage = Model();
-	Stage.LoadModel("Models/StageEmber/concertStage.obj");
+	//Stage.LoadModel("Models/StageEmber/concertStage.obj");
 
 	Model BocinasStageEmber = Model();
-	BocinasStageEmber.LoadModel("Models/StageEmber/BocinasEmber.obj");
+	//BocinasStageEmber.LoadModel("Models/StageEmber/BocinasEmber.obj");
 
 	/*
 	* Zona Invencible
 	*/
 	Model ShowSuit = Model();
-	ShowSuit.LoadModel("Models/ZonaInvencible/show-suit.obj");
+	//ShowSuit.LoadModel("Models/ZonaInvencible/show-suit.obj");
 	Model KidOmniMan_M = Model();
-	KidOmniMan_M.LoadModel("Models/ZonaInvencible/KidOmniman.obj");
+	//KidOmniMan_M.LoadModel("Models/ZonaInvencible/KidOmniman.obj");
 	Model Duplikate_M = Model();
-	Duplikate_M.LoadModel("Models/ZonaInvencible/Duplikate.obj");
+	//Duplikate_M.LoadModel("Models/ZonaInvencible/Duplikate.obj");
 	Model Powerplex_M = Model();
-	Powerplex_M.LoadModel("Models/ZonaInvencible/Powerplex.obj");
+	//Powerplex_M.LoadModel("Models/ZonaInvencible/Powerplex.obj");
 	Model Cecil_M = Model();
-	Cecil_M.LoadModel("Models/ZonaInvencible/cecil-model.obj");
+	//Cecil_M.LoadModel("Models/ZonaInvencible/cecil-model.obj");
 	Model Conquest_M = Model();
-	Conquest_M.LoadModel("Models/ZonaInvencible/Conquest.obj");
-
-
-
+	//Conquest_M.LoadModel("Models/ZonaInvencible/Conquest.obj");
 
 
 	/*
@@ -387,20 +361,20 @@ int main()
 	* Agregar modelos de los NPC aqui
 	* ------
 	*/
-	ModelJerarquia AtomEve_M = ModelJerarquia("Models/AtomEve");
-	AtomEve_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+	//ModelJerarquia AtomEve_M = ModelJerarquia("Models/AtomEve");
+	//AtomEve_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 
-	ModelJerarquia OmniMan_M = ModelJerarquia("Models/OmniMan");
-	OmniMan_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+	//ModelJerarquia OmniMan_M = ModelJerarquia("Models/OmniMan");
+	//OmniMan_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 
-	ModelJerarquia HarleyQuinn = ModelJerarquia("Models/HarleyQuinn");
-	HarleyQuinn.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+	//ModelJerarquia HarleyQuinn = ModelJerarquia("Models/HarleyQuinn");
+	//HarleyQuinn.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 
-	ModelJerarquia Joker = ModelJerarquia("Models/Joker");
-	Joker.InitModel(glm::vec3(0.0f, 1.1065f, 0.0f));
+	//ModelJerarquia Joker = ModelJerarquia("Models/Joker");
+	//Joker.InitModel(glm::vec3(0.0f, 1.1065f, 0.0f));
 
-	Model Ember_M = Model();
-	Ember_M.LoadModel("Models/Ember/Ember.obj");
+	//Model Ember_M = Model();
+	//Ember_M.LoadModel("Models/Ember/Ember.obj");
 
 	std::vector<std::string> skyboxFaces;
 	skyboxFaces.push_back("Textures/Skybox/cupertin-lake_rt.tga");
@@ -512,14 +486,52 @@ int main()
 	float animarInvencibleNPCs = 0.0f;
 	float animaLampara = 0.0;
 	GLfloat lastTimeProy = 0.0f;
+
+	// animacion atracccion dados
+	float animarDados = 0.0f;
+
+	// animacion atraccion topos
 	float animarTopos = 0.0f;
 
+	// animacion atraccion hachas
 	float animarHachas = 0.0f;
+
+	//animacion atraccion jaula de bateo
+	float animarBateo = 0.0f;
+	float animarBola = 0.0f;
+
+	//animacion revienta globos
+	float animarLanzarDardo = 0.0f;
+	float animarDardo = 0.0f;
+	std::vector<glm::vec3> posGlobos = {
+		glm::vec3(0.662f, 1.334f, 1.465),
+		glm::vec3(0.006f, 1.334f, 1.465),
+		glm::vec3(-0.653f, 1.334f, 1.465),
+		glm::vec3(-0.653f, 1.885f, 1.465),
+		glm::vec3(0.006f, 1.885f, 1.465),
+		glm::vec3(0.662f, 1.885f, 1.465),
+	};
+	std::vector<float> tiempoPorGlobo(posGlobos.size(), 0.0f);
+
+	//animacion boliche
+	float animarLanzaBola = 0.0f;
+	std::vector<glm::vec3> posBolas = {
+		glm::vec3(8.373f, 0.123f, 1.888),
+		glm::vec3(8.373f, 0.123f, 0.258),
+		glm::vec3(8.373f, 0.123f, -1.432),
+	};
+	float animarPines = 0.0f;
+	float animarBolaboliche = 0.0f;
+	bool pinesDesaparecieron = false;
+	float tiempoReinicio = 0.0f;
+	const float TIEMPO_REAPARICION = 3.0f;  // segundos después de desaparecer
 
 	// Posición del Avatar
 	bool hadSelected = false;
 
-
+	//variables auxiliares para animacion de caminata
+	bool avatarCaminando = false;
+	float animarCaminata = 0.0f;
 
 	while (!mainWindow.getShouldClose())
 	{
@@ -563,7 +575,7 @@ int main()
 
 		// Sólo la freeCam y thirdCam usan WASD+mouse:
 		if (nowSelected && activeCamera == &thirdCam) {
-			float speed = 0.5f;                         // ajusta a tu gusto
+			float speed = 0.1f;                         // ajusta a tu gusto
 			float vel = speed * deltaTime;
 
 			glm::vec3 forward = thirdCam.getCameraDirection();
@@ -572,13 +584,36 @@ int main()
 
 			glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0, 1, 0)));
 
-
-
 			// WASD
-			if (mainWindow.getsKeys()[GLFW_KEY_W] || mainWindow.getsKeys()[GLFW_KEY_UP])    avatarPos += forward * vel;
-			if (mainWindow.getsKeys()[GLFW_KEY_S] || mainWindow.getsKeys()[GLFW_KEY_DOWN])  avatarPos -= forward * vel;
-			if (mainWindow.getsKeys()[GLFW_KEY_A] || mainWindow.getsKeys()[GLFW_KEY_LEFT])  avatarPos -= right * vel;
-			if (mainWindow.getsKeys()[GLFW_KEY_D] || mainWindow.getsKeys()[GLFW_KEY_RIGHT]) avatarPos += right * vel;
+			if (mainWindow.getsKeys()[GLFW_KEY_W] || mainWindow.getsKeys()[GLFW_KEY_UP]) {
+				avatarPos += forward * vel;
+				avatarCaminando = true;
+				animarCaminata += 0.5f * deltaTime;
+			}
+			if (mainWindow.getsKeys()[GLFW_KEY_S] || mainWindow.getsKeys()[GLFW_KEY_DOWN]) {
+				avatarPos -= forward * vel;
+				avatarCaminando = true;
+				animarCaminata += 0.5f * deltaTime;
+			}
+			if (mainWindow.getsKeys()[GLFW_KEY_A] || mainWindow.getsKeys()[GLFW_KEY_LEFT]) {
+				avatarPos -= right * vel;
+				avatarCaminando = true;
+				animarCaminata += 0.5f * deltaTime;
+			}
+			if (mainWindow.getsKeys()[GLFW_KEY_D] || mainWindow.getsKeys()[GLFW_KEY_RIGHT]) {
+				avatarPos += right * vel;
+				avatarCaminando = true;
+				animarCaminata += 0.5f * deltaTime;
+			}
+
+			if (!mainWindow.getsKeys()[GLFW_KEY_W] && !mainWindow.getsKeys()[GLFW_KEY_UP] &&
+				!mainWindow.getsKeys()[GLFW_KEY_S] && !mainWindow.getsKeys()[GLFW_KEY_DOWN] &&
+				!mainWindow.getsKeys()[GLFW_KEY_A] && !mainWindow.getsKeys()[GLFW_KEY_LEFT] &&
+				!mainWindow.getsKeys()[GLFW_KEY_D] && !mainWindow.getsKeys()[GLFW_KEY_RIGHT]
+				) {
+				avatarCaminando = false;
+				animarCaminata = 0.0f;
+			}
 
 			// Forzamos Y=0 para “simular” suelo
 			avatarPos.y = 0.0f;
@@ -640,8 +675,6 @@ int main()
 		glm::vec3 camDir = activeCamera->getCameraDirection();
 		glUniform3f(uniformEyePosition, camPos.x, camPos.y, camPos.z);
 		//spotLights[0].SetFlash(camPos, camDir);
-
-
 
 		//información al shader de fuentes de iluminación
 		//shaderList[0].SetDirectionalLight(&mainLight);
@@ -975,14 +1008,48 @@ int main()
 		*/
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posRevientaGlobos);
+		modelaux = model;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		RevientaGlobosInvencible.RenderModel();
+		if (activarAtraccionAnimacion[4]) {
+			animarLanzarDardo += 0.1 * deltaTime;
+			for (int i = 0; i < posGlobos.size(); i++) {
+				tiempoPorGlobo[i] += 0.01f * deltaTime;
+				model = modelaux;
+				model = glm::translate(model, glm::vec3(posGlobos[i].x, posGlobos[i].y, posGlobos[i].z));
+				float scaleFactor = 1.0f;
+				if (tiempoPorGlobo[i] < 1.0f) {
+					scaleFactor = tiempoPorGlobo[i];  // escalar desde 0 a 1
+				}
+				// Fase de mantener visible
+				else if (tiempoPorGlobo[i] < 2.0f + i) {
+					scaleFactor = 1.0f;  // completamente visible
+				}
+				else {
+					scaleFactor = 0.0f;    // escalar hacia 0
+				}
+				model = glm::scale(model, glm::vec3(scaleFactor));
+				glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+				Globo.RenderModel();
+			}
+
+			animarDardo += 0.02 * deltaTime;
+			model = modelaux;
+			model = glm::translate(model, glm::vec3(0.0f, 1.898f, -1.418 + animarDardo));
+			model = glm::scale(model, glm::vec3(0.5));
+			model = glm::rotate(model, glm::radians(animarDardo * 1000.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			if (animarDardo >= 3.0f) { // terminar animacion
+				animarDardo = 0;
+			}
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			batgarang.RenderModel();
+		}
 
 		/*
 		* Boliche - A2
 		*/
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-3.68f, 0.0f, 28.854f));
+		model = glm::translate(model, posBoliche);
 		modelrootBoliche = model;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		LineasBoliche.RenderModel();
@@ -1020,7 +1087,7 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		BolaRoja.RenderModel();
 
-		// Bola Azul
+		//// Bola Azul
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(0.0f, 0.494f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -1052,7 +1119,7 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		BolaVerde.RenderModel();
 
-		// ------------
+		//// ------------
 
 		model = modelrootBoliche;
 		model = glm::translate(model, glm::vec3(11.8745f, 0.0f, 1.2f));
@@ -1078,24 +1145,62 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		BolaAzul.RenderModel();
 
-		/*
-		* Pines de Boliche por Linea
-		*/
+		///*
+		//* Pines de Boliche por Linea
+		//*/
+		if (activarAtraccionAnimacion[1]) {
+			// Mover la bola
+			if (!pinesDesaparecieron) {
+				animarBolaboliche += 0.1f * deltaTime;
+				if (animarBolaboliche >= 14.0f) {
+					animarPines = glm::clamp(animarPines + 0.5f * deltaTime, 0.0f, 1.0f);
+				}
+				if (animarPines >= 1.0f) {
+					pinesDesaparecieron = true;
+					tiempoReinicio = 0.0f;  // iniciar conteo
+				}
+			}
 
-		// Linea 1
-		model = modelrootBoliche;
-		model = glm::translate(model, glm::vec3(-5.5f, 0.0f, -1.0f));
-		SetPinesBoliche(uniformModel, pinesTrans, model, pinBoliche);
+			// Contar tiempo para reaparecer
+			if (pinesDesaparecieron) {
+				tiempoReinicio += deltaTime;
+				if (tiempoReinicio >= TIEMPO_REAPARICION) {
+					// Reiniciar animaciones
+					animarBolaboliche = 0.0f;
+					animarPines = 0.0f;
+					pinesDesaparecieron = false;
+				}
+			}
 
-		// Linea 3
-		model = modelrootBoliche;
-		model = glm::translate(model, glm::vec3(-5.5f, 0.0f, 2.3f));
-		SetPinesBoliche(uniformModel, pinesTrans, model, pinBoliche);
+			float eased = animarPines * animarPines * (3 - 2 * animarPines);
 
-		// Linea 2
-		model = modelrootBoliche;
-		model = glm::translate(model, glm::vec3(-5.5f, 0.0f, 0.7f));
-		SetPinesBoliche(uniformModel, pinesTrans, model, pinBoliche);
+			if (!pinesDesaparecieron) {
+				// Línea 1
+				model = modelrootBoliche;
+				model = glm::translate(model, glm::vec3(-5.5f, 0.0f, -1.0f));
+				model = glm::translate(model, glm::vec3(0.0f, -0.432f * eased, 0.0f));
+				SetPinesBoliche(uniformModel, pinesTrans, model, pinBoliche);
+
+				// Línea 2
+				model = modelrootBoliche;
+				model = glm::translate(model, glm::vec3(-5.5f, 0.0f, 0.7f));
+				model = glm::translate(model, glm::vec3(0.0f, -0.432f * eased, 0.0f));
+				SetPinesBoliche(uniformModel, pinesTrans, model, pinBoliche);
+
+				// Línea 3
+				model = modelrootBoliche;
+				model = glm::translate(model, glm::vec3(-5.5f, 0.0f, 2.3f));
+				model = glm::translate(model, glm::vec3(0.0f, -0.432f * eased, 0.0f));
+				SetPinesBoliche(uniformModel, pinesTrans, model, pinBoliche);
+			}
+
+			for (int i = 0; i < 3; i++) {
+				model = modelrootBoliche;
+				model = glm::translate(model, glm::vec3(posBolas[i].x - animarBolaboliche, posBolas[i].y, posBolas[i].z));
+				glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+				BolaAzul.RenderModel();
+			}
+		}
 
 		// -----------------------
 
@@ -1105,37 +1210,43 @@ int main()
 		*/
 
 		//ATRACCION DADOS --------------------------------------------------------------------------------
-
-		//carpa
+		if (activarAtraccionAnimacion[2])
+			animarDados += 0.05 * deltaTime;
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-30.3812f, 0.752064f, 1.1414f));
+		model = glm::translate(model, posLanzaDados);
+		model = glm::scale(model, glm::vec3(0.6));
+		modelaux = model;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		carpa.RenderModel();
 
-		//mesa dados
-		model = glm::mat4(1.0);
-		model = glm::translate(model, posLanzaDados);
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f, -0.085, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		mesa_dados.RenderModel();
-
 		//DADO IZQUIERDO
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-30.5297f, 1.51743f, 0.51303f));
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.285f, 0.643f, -0.307f));
+		if (activarAtraccionAnimacion[2]) {
+			model = glm::rotate(model, -sin(animarDados), glm::vec3(0.0f, 1.0f, 0.0f));
+			model = glm::translate(model, 0.05f * glm::vec3(0.0f, sin(animarDados), 0.0f));
+		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		dado.RenderModel();
-
 		//DADO DERECHO
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-30.0415f, 1.51743f, 0.51303f));
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(-0.248f, 0.643f, 0.062f));
+		if (activarAtraccionAnimacion[2]) {
+			model = glm::rotate(model, sin(animarDados), glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::translate(model, 0.05f * glm::vec3(0.0f, -sin(animarDados), 0.0f));
+		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		dado.RenderModel();
-
 		// FIN ATRACCION DADOS 
 
 		//ATRACCION GUACAMOLE ----------------------------------------------------------------------
-
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posmaquinaWhack);
+		model = glm::scale(model, glm::vec3(0.3f));
 		modelaux = model;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		maquinaWhack.RenderModel();
@@ -1143,117 +1254,111 @@ int main()
 		// Topos delanteros de izquierda a derecha
 		if (activarAtraccionAnimacion[5])
 			animarTopos += 0.05 * deltaTime;
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-22.6886f, 2.20458f, -7.12932f));
+
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(-0.599f, 2.174f, 0.0f));
 		if (activarAtraccionAnimacion[5]) {
-			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos * 1.5), 0.0f));
 		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-22.2885f, 2.20458f, -7.12932f));
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(-0.217f, 2.174f, 0.0f));
 		if (activarAtraccionAnimacion[5]) {
-			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos * 11.2), 0.0f));
 		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-21.8901f, 2.20458f, -7.12932f));
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.181f, 2.174f, 0.0f));
 		if (activarAtraccionAnimacion[5]) {
-			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos * 1.2), 0.0f));
 		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-21.4841f, 2.20458f, -7.12932f));
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.577f, 2.174f, 0.0f));
 		if (activarAtraccionAnimacion[5]) {
-			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos * 0.8), 0.0f));
 		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
 		//Topos traseros de izquierda a derecha
-
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-22.7037f, 2.20458f, -7.54801f));
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(-0.619f, 2.174f, 0.385f));
 		if (activarAtraccionAnimacion[5]) {
-			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos * 0.6), 0.0f));
 		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-22.2934f, 2.20458f, -7.54801f));
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(-0.191f, 2.174f, 0.385f));
 		if (activarAtraccionAnimacion[5]) {
-			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos * 0.3), 0.0f));
 		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-21.8927f, 2.20458f, -7.54801f));
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.206f, 2.174f, 0.385f));
 		if (activarAtraccionAnimacion[5]) {
-			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos * 0.1), 0.0f));
 		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-21.4841f, 2.20458f, -7.54801f));
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.616f, 2.174f, 0.385f));
 		if (activarAtraccionAnimacion[5]) {
-			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos), 0.0f));
+			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos*0.5), 0.0f));
 		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
-
-		//Martillo
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-21.918f, 3.74297f, -5.35381f));
-		if (activarAtraccionAnimacion[5]) {
-			model = glm::rotate(model, sin(animarTopos), glm::vec3(1.0f, 0.0f, 0.0f));
-		}
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		martillo_topos.RenderModel();
 
 		// FIN ATRACCION GUACAMOLE ----------------------------------------------------------------------
 
 		//ZONA BATEO ----------------------------------------------------------------------
-
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posJaulaBateo);
+		model = scale(model, glm::vec3(0.4f));
+		modelaux = model;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		zonabateo.RenderModel();
 
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(22.0665f, 0.24572f, 20.1201f));
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.375f, -2.877f, -16.207f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelaux = model;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		maquinaTenis.RenderModel();
-
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(22.5352f, 2.22829f, 12.6117f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		pelotaTenis.RenderModel();
-
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(22.5607f, 0.948299f, 3.60133f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		bat.RenderModel();
-
+		if (activarAtraccionAnimacion[3]) {
+			animarBateo += 0.1 * deltaTime;
+			animarBola += 0.1 * deltaTime;
+			model = modelaux;
+			model = glm::translate(model, glm::vec3(0.493f, 0.682f, -2.341f - animarBola));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			pelotaTenis.RenderModel();
+			if (animarBola >= 14.0f) { // terminar animacion
+				animarBola = 0;
+			}
+		}
 		// FIN ZONA BATEO ----------------------------------------------------------------------
 
 		//LANZAMIENTO DE HACHA -----------------------------------------------------------------
-
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posLanzaHacha);
+		model = glm::scale(model, glm::vec3(0.5f));
+		modelaux = model;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		LanzamientoDeHacha.RenderModel();
 
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(13.4737f, 2.89959f, 11.6697f));
-
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -6.642f));
 		if (activarAtraccionAnimacion[0]) {
 			animarHachas += 0.05 * deltaTime;
 
@@ -1397,18 +1502,17 @@ int main()
 		else if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 2) {
 			glm::vec3 modeloPos = camPos + camFront * 4.0f; // distancia a la camara
 			Batman_M.TranformFullModel(glm::vec3(modeloPos), orientacion);
-			Batman_M.TransformHead(glm::vec3(0.0f, 0.0f, 0.0f));
-			Batman_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
-			Batman_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
-			Batman_M.TransformArmR(glm::vec3(-0.010f, 0.025f, -0.023f));
-			Batman_M.TransformArmL(glm::vec3(0.010f, 0.025f, -0.028f));
+			Batman_M.TransformHead(glm::vec3(0.0f, 0.765671f, -0.10585f));
+			Batman_M.TransformLegR(glm::vec3(-0.206243f, 0.01851f, 0.0f));
+			Batman_M.TransformLegL(glm::vec3(0.174945f, 0.073709f, 0.0f));
+			Batman_M.TransformArmR(glm::vec3(-0.293808f, 0.658702f, -0.050691f));
+			Batman_M.TransformArmL(glm::vec3(0.293808f, 0.658702f, -0.050691f));
 			Batman_M.RenderModelJ(uniformModel);
 		}
 		else if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 3) {
 			glm::vec3 modeloPos = camPos + camFront * 3.0f;
 			BMO_M.TranformFullModel(modeloPos, orientacion);
 			BMO_M.RenderModelJ(uniformModel);
-
 		}
 
 		glEnable(GL_BLEND);
@@ -1431,7 +1535,6 @@ int main()
 				if (mainWindow.getsKeys()[GLFW_KEY_E])
 					activarAtraccionAnimacion[i] = true;
 
-				printf("activar atraccion %d\n", i);
 				//renderizar texto
 				texto = "PARA JUGAR PRESIONA E";
 				for (int i = 0; i < texto.size(); i++) {
@@ -1463,33 +1566,268 @@ int main()
 		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(glm::vec2(0.0f)));
 
 		// desaparecer interfaz si el usuario ya selecciono un avatar
+		float movArticulacion = 0.05f * sin(animarCaminata);
+		float rotArticulacion = 25 * sin(animarCaminata);
+		glm::vec3 forward = thirdCam.getHorizontalDirection();
 		if (mainWindow.isPersonajeSeleccionado()) {
 			switch (idPersonaje) {
 			case 0:
-				DannyPhantom_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z), glm::vec3(0, 1, 0), thirdCam.getYaw());
+				DannyPhantom_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 0.4f, avatarPos.z), 
+					glm::vec3(0, 1, 0), glm::degrees(atan2(forward.x, forward.z)));
 				DannyPhantom_M.TransformHead(glm::vec3(0.0f, 0.21f, 0.0f));
 				DannyPhantom_M.TransformLegR(glm::vec3(-0.04f, -0.2f, 0.0f));
+				if (avatarCaminando) {
+					DannyPhantom_M.TransformLegR(
+						glm::vec3(-0.04f, -0.2f + movArticulacion, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						rotArticulacion
+					);
+				}
 				DannyPhantom_M.TransformLegL(glm::vec3(0.035f, -0.2f, 0.0f));
+				if (avatarCaminando) {
+					DannyPhantom_M.TransformLegL(
+						glm::vec3(0.035f, -0.2 + -movArticulacion, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-rotArticulacion
+					);
+				}
 				DannyPhantom_M.TransformArmR(glm::vec3(-0.1445f, 0.123f, 0.0f));
+				if (avatarCaminando) {
+					DannyPhantom_M.TransformArmR(
+						glm::vec3(-0.1445f, 0.123f, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-rotArticulacion
+					);
+				}
+				if (activarAtraccionAnimacion[2]) { // dados
+					DannyPhantom_M.TransformArmR(
+						glm::vec3(-0.1445f, 0.123f, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-100.0f - 50 * sin(animarDados));
+					model = DannyPhantom_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.272f, -0.527f, -0.224f));
+					model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					model = glm::scale(model, glm::vec3(0.6f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					dado.RenderModel();
+				}
+				if (activarAtraccionAnimacion[3]) { // jaula de bateo
+					DannyPhantom_M.TransformArmR(
+						glm::vec3(-0.1445f, 0.123f, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-50 * sin(animarBateo));
+					model = DannyPhantom_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.339f, -0.473f, -0.094f));
+					model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					model = glm::scale(model, glm::vec3(0.8f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					bat.RenderModel();
+				}
+				if (activarAtraccionAnimacion[4]) { // batrang
+					DannyPhantom_M.TransformArmR(
+						glm::vec3(-0.1445f, 0.123f, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-144.377 - 50 * sin(animarLanzarDardo));
+					model = DannyPhantom_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.259f, -0.463f, -0.123f));
+					model = glm::scale(model, glm::vec3(0.5f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					batgarang.RenderModel();
+				}
+				if (activarAtraccionAnimacion[5]) { // topos
+					DannyPhantom_M.TransformArmR(
+						glm::vec3(-0.1445f, 0.123f, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-50 * sin(animarTopos));
+					model = DannyPhantom_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.272f, -0.527f, -0.224f));
+					model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					model = glm::scale(model, glm::vec3(0.3f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					martillo_topos.RenderModel();
+				}
 				DannyPhantom_M.TransformArmL(glm::vec3(0.13f, 0.12f, 0.0f));
+				if (avatarCaminando) {
+					DannyPhantom_M.TransformArmL(
+						glm::vec3(0.13f, 0.12f, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						rotArticulacion
+					);
+				}
 				DannyPhantom_M.RenderModelJ(uniformModel);
 				break;
 			case 1:
-				Invencible_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z), glm::vec3(0, 1, 0), thirdCam.getYaw());
+				Invencible_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 0.65f, avatarPos.z),
+					glm::vec3(0, 1, 0), glm::degrees(atan2(forward.x, forward.z)));
 				Invencible_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f));
 				Invencible_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
+				if (avatarCaminando) {
+					Invencible_M.TransformLegR(
+						glm::vec3(-0.011f, 0.061f + movArticulacion, 0.002f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						rotArticulacion
+					);
+				}
 				Invencible_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
+				if (avatarCaminando) {
+					Invencible_M.TransformLegL(
+						glm::vec3(0.007f, 0.071f - movArticulacion, 0.005f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-rotArticulacion
+					);
+				}
 				Invencible_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f));
+				if (avatarCaminando) {
+					Invencible_M.TransformArmR(
+						glm::vec3(-0.121f, 0.393f, -0.023f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-rotArticulacion
+					);
+				}
+				if (activarAtraccionAnimacion[5]) { // topos
+					Invencible_M.TransformArmR(
+						glm::vec3(-0.121f, 0.393f, -0.023f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-50 * sin(animarTopos)
+					);
+					model = Invencible_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.317f, -0.348f, 0.127f));
+					model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					model = glm::scale(model, glm::vec3(0.3f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					martillo_topos.RenderModel();
+				}
+				if (activarAtraccionAnimacion[3]) { // jaula de bateo
+					Invencible_M.TransformArmR(
+						glm::vec3(-0.121f, 0.393f, -0.023f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-50 * sin(animarBateo));
+					model = Invencible_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.327f, -0.285f, 0.184f));
+					model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					model = glm::scale(model, glm::vec3(0.8f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					bat.RenderModel();
+				}
+				if (activarAtraccionAnimacion[4]) { // batrang
+					Invencible_M.TransformArmR(
+						glm::vec3(-0.121f, 0.393f, -0.023f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-144.377 -50 * sin(animarLanzarDardo));
+					model = Invencible_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.259f, -0.292f, 0.124f));
+					model = glm::scale(model, glm::vec3(0.5f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					batgarang.RenderModel();
+				}
+				if (activarAtraccionAnimacion[2]) { // dados
+					Invencible_M.TransformArmR(
+						glm::vec3(-0.121f, 0.393f, -0.023f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-100.0f - 50 * sin(animarDados));
+					model = Invencible_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.275f, -0.315f, 0.054f));
+					model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					model = glm::scale(model, glm::vec3(0.6f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					dado.RenderModel();
+				}
 				Invencible_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f));
+				if (avatarCaminando) {
+					Invencible_M.TransformArmL(
+						glm::vec3(0.13f, 0.397f, -0.028f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						rotArticulacion
+					);
+				}
 				Invencible_M.RenderModelJ(uniformModel);
 				break;
 			case 2:
-				Batman_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.0f, avatarPos.z), glm::vec3(0, 1, 0), thirdCam.getYaw());
-				Batman_M.TransformHead(glm::vec3(0.0f, 0.0f, 0.0f));
-				Batman_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
-				Batman_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
-				Batman_M.TransformArmR(glm::vec3(-0.010f, 0.025f, -0.023f));
-				Batman_M.TransformArmL(glm::vec3(0.010f, 0.025f, -0.028f));
+				Batman_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 1.7f, avatarPos.z),
+					glm::vec3(0, 1, 0), glm::degrees(atan2(forward.x, forward.z)));
+				Batman_M.TransformHead(glm::vec3(0.0f, 0.765671f, -0.10585f));
+				Batman_M.TransformLegR(glm::vec3(-0.206243f, 0.01851f, 0.0f));
+				if (avatarCaminando) {
+					Batman_M.TransformLegR(
+						glm::vec3(-0.206243f, 0.01851f + movArticulacion, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						rotArticulacion
+					);
+				}
+				Batman_M.TransformLegL(glm::vec3(0.174945f, 0.073709f, 0.0f));
+				if (avatarCaminando) {
+					Batman_M.TransformLegL(
+						glm::vec3(0.174945f, 0.073709f - movArticulacion, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-rotArticulacion
+					);
+				}
+				Batman_M.TransformArmR(glm::vec3(-0.293808f, 0.658702f, -0.050691f));
+				if (avatarCaminando) {
+					Batman_M.TransformArmR(
+						glm::vec3(-0.293808f, 0.658702f, -0.050691f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-rotArticulacion
+					);
+				}
+				if (activarAtraccionAnimacion[2]) { // dados
+					Batman_M.TransformArmR(
+						glm::vec3(-0.293808f, 0.658702f, -0.050691f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-100.0f - 50 * sin(animarDados));
+					model = Batman_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.1f, -0.624f, 0.016f));
+					model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					model = glm::scale(model, glm::vec3(0.6f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					dado.RenderModel();
+				}
+				if (activarAtraccionAnimacion[3]) { // jaula de bateo
+					Batman_M.TransformArmR(
+						glm::vec3(-0.293808f, 0.658702f, -0.050691f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-50 * sin(animarBateo));
+					model = Batman_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.162f, -0.599f, 0.048f));
+					model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					model = glm::scale(model, glm::vec3(0.8f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					bat.RenderModel();
+				}
+				if (activarAtraccionAnimacion[4]) { // batrang
+					Batman_M.TransformArmR(
+						glm::vec3(-0.293808f, 0.658702f, -0.050691f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-144.377 - 50 * sin(animarLanzarDardo));
+					model = Batman_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.09f, -0.602f, -0.005f));
+					model = glm::scale(model, glm::vec3(0.5f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					batgarang.RenderModel();
+				}
+				if (activarAtraccionAnimacion[5]) { // topos
+					Batman_M.TransformArmR(
+						glm::vec3(-0.293808f, 0.658702f, -0.050691f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-50 * sin(animarTopos)
+					);
+					model = Batman_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.108f, -0.599f, -0.009f));
+					model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					model = glm::scale(model, glm::vec3(0.3f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					martillo_topos.RenderModel();
+				}
+				
+				
+				Batman_M.TransformArmL(glm::vec3(0.293808f, 0.658702f, -0.050691f));
+				if (avatarCaminando) {
+					Batman_M.TransformArmL(
+						glm::vec3(0.293808f, 0.658702f, -0.050691f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						rotArticulacion
+					);
+				}
 				Batman_M.RenderModelJ(uniformModel);
 				break;
 				// más cases según los avatares...
@@ -1503,7 +1841,6 @@ int main()
 		/*
 		* Interfaz ligada a la camara
 		*/
-
 
 
 		// renderizar encabezados

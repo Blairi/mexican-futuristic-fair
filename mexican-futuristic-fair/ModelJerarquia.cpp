@@ -123,6 +123,10 @@ void ModelJerarquia::OrientToCamera(glm::vec3 camFront)
 	}
 }
 
+std::vector<glm::mat4> ModelJerarquia::getModelMatrixs() {
+	return this->MatrixModels;
+}
+
 
 ModelJerarquia::~ModelJerarquia()
 {
