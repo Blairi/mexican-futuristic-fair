@@ -1,4 +1,8 @@
 #include "Window.h"
+// main.cpp (era después de los includes)
+struct AppPointers {
+	Window* win;
+};
 
 Window::Window()
 {
@@ -14,6 +18,10 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	width = windowWidth;
 	height = windowHeight;
 	muevex = 2.0f;
+	this->NUMERO_PERSONAJES = 4;
+	this->idPersonaje = 0;
+	this->personajeSeleccionado = false;
+	isEscenarioOn = false;
 	for (size_t i = 0; i < 1024; i++)
 	{
 		keys[i] = 0;
@@ -36,7 +44,7 @@ int Window::Initialise()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 	//CREAR VENTANA
-	mainWindow = glfwCreateWindow(width, height, "Practica 07: Iluminacion 1", NULL, NULL);
+	mainWindow = glfwCreateWindow(width, height, "Proyecto Final. Feria Mexicana Futurista", NULL, NULL);
 
 	if (!mainWindow)
 	{
@@ -93,12 +101,11 @@ GLfloat Window::getYChange()
 	return theChange;
 }
 
-
-
-
 void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, int mode)
 {
-	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	auto* p = static_cast<AppPointers*>(glfwGetWindowUserPointer(window));
+	Window* theWindow = p ? p->win : nullptr;
+	if (!theWindow) return;
 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
@@ -106,14 +113,31 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 	}
 	if (key == GLFW_KEY_Y)
 	{
-		theWindow-> muevex += 1.0;
+		theWindow-> muevex -= 0.1;
 	}
 	if (key == GLFW_KEY_U)
 	{
-		theWindow-> muevex -= 1.0;
+		theWindow-> muevex += 0.1;
+
 	}
 
+	if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE)
+	{
+		theWindow->idPersonaje = 
+			(theWindow->idPersonaje - 1 + theWindow->NUMERO_PERSONAJES) % theWindow->NUMERO_PERSONAJES;
+	}
+	
+	if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE)
+	{
+		theWindow->idPersonaje = (theWindow->idPersonaje + 1) % theWindow->NUMERO_PERSONAJES;
+	}
 
+	if (key == GLFW_KEY_ENTER && action == GLFW_RELEASE)
+	{
+		theWindow->personajeSeleccionado = true;
+	}
+
+	if (key == GLFW_KEY_M && action == GLFW_RELEASE) theWindow->isEscenarioOn = !theWindow->isEscenarioOn;
 
 	if (key >= 0 && key < 1024)
 	{
@@ -132,7 +156,9 @@ void Window::ManejaTeclado(GLFWwindow* window, int key, int code, int action, in
 
 void Window::ManejaMouse(GLFWwindow* window, double xPos, double yPos)
 {
-	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	auto* p = static_cast<AppPointers*>(glfwGetWindowUserPointer(window));
+	Window* theWindow = p ? p->win : nullptr;
+	if (!theWindow) return;
 
 	if (theWindow->mouseFirstMoved)
 	{
@@ -147,7 +173,6 @@ void Window::ManejaMouse(GLFWwindow* window, double xPos, double yPos)
 	theWindow->lastX = xPos;
 	theWindow->lastY = yPos;
 }
-
 
 Window::~Window()
 {

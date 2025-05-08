@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>README</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h1 id="chocolate-doom">Chocolate Doom</h1>
+<p>Chocolate Doom aims to accurately reproduce the original DOS version
+of Doom and other games based on the Doom engine in a form that can be
+run on modern computers.</p>
+<p>Originally, Chocolate Doom was only a Doom source port. The project
+now includes ports of Heretic and Hexen, and Strife.</p>
+<p>Chocolate Doom’s aims are:</p>
+<ul>
+<li>To always be 100% Free and Open Source software.</li>
+<li>Portability to as many different operating systems as possible.</li>
+<li>Accurate reproduction of the original DOS versions of the games,
+including bugs.</li>
+<li>Compatibility with the DOS demo, configuration and savegame
+files.</li>
+<li>To provide an accurate retro “feel” (display and input should behave
+the same).</li>
+</ul>
+<p>More information about the philosophy and design behind Chocolate
+Doom can be found in the PHILOSOPHY file distributed with the source
+code.</p>
+<h2 id="setting-up-gameplay">Setting up gameplay</h2>
+<p>For instructions on how to set up Chocolate Doom for play, see the
+INSTALL file.</p>
+<h2 id="configuration-file">Configuration File</h2>
+<p>Chocolate Doom is compatible with the DOS Doom configuration file
+(normally named <code>default.cfg</code>). Existing configuration files
+for DOS Doom should therefore simply work out of the box. However,
+Chocolate Doom also provides some extra settings. These are stored in a
+separate file named <code>chocolate-doom.cfg</code>.</p>
+<p>The configuration can be edited using the chocolate-setup tool.</p>
+<h2 id="command-line-options">Command line options</h2>
+<p>Chocolate Doom supports a number of command line parameters,
+including some extras that were not originally suported by the DOS
+versions. For binary distributions, see the CMDLINE file included with
+your download; more information is also available on the Chocolate Doom
+website.</p>
+<h2 id="playing-tcs">Playing TCs</h2>
+<p>With Vanilla Doom there is no way to include sprites in PWAD files.
+Chocolate Doom’s ‘-file’ command line option behaves exactly the same as
+Vanilla Doom, and trying to play TCs by adding the WAD files using
+‘-file’ will not work.</p>
+<p>Many Total Conversions (TCs) are distributed as a PWAD file which
+must be merged into the main IWAD. Typically a copy of DEUSF.EXE is
+included which performs this merge. Chocolate Doom includes a new
+option, ‘-merge’, which will simulate this merge. Essentially, the WAD
+directory is merged in memory, removing the need to modify the IWAD on
+disk.</p>
+<p>To play TCs using Chocolate Doom, run like this:</p>
+<pre><code>chocolate-doom -merge thetc.wad</code></pre>
+<p>Here are some examples:</p>
+<pre><code>chocolate-doom -merge batman.wad -deh batman.deh vbatman.deh  (Batman Doom)
+chocolate-doom -merge aoddoom1.wad -deh aoddoom1.deh  (Army of Darkness Doom)</code></pre>
+<h2 id="other-information">Other information</h2>
+<ul>
+<li><p>Chocolate Doom includes a number of different options for music
+playback. See the README.Music file for more details.</p></li>
+<li><p>More information, including information about how to play various
+classic TCs, is available on the Chocolate Doom website:</p>
+<p><a
+href="https://www.chocolate-doom.org/">https://www.chocolate-doom.org/</a></p>
+<p>You are encouraged to sign up and contribute any useful information
+you may have regarding the port!</p></li>
+<li><p>Chocolate Doom is not perfect. Although it aims to accurately
+emulate and reproduce the DOS executables, some behavior can be very
+difficult to reproduce. Because of the nature of the project, you may
+also encounter Vanilla Doom bugs; these are intentionally present; see
+the NOT-BUGS file for more information.</p>
+<p>New bug reports can be submitted to the issue tracker on Github:</p>
+<p><a
+href="https://github.com/chocolate-doom/chocolate-doom/issues">https://github.com/chocolate-doom/chocolate-doom/issues</a></p></li>
+<li><p>Source code patches are welcome, but please follow the style
+guidelines - see the file named HACKING included with the source
+distribution.</p></li>
+<li><p>Chocolate Doom is distributed under the GNU GPL. See the COPYING
+file for more information.</p></li>
+<li><p>Please send any feedback, questions or suggestions to <a
+href="mailto:chocolate-doom-dev-list@chocolate-doom.org">chocolate-doom-dev-list@chocolate-doom.org</a>.
+Thanks!</p></li>
+</ul>
+</body>
+</html>
