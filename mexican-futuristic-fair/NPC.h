@@ -1,41 +1,50 @@
-#pragma once
-#pragma once
-#include <string>
+﻿#pragma once
 #include <glm.hpp>
-#include "ModelJerarquia.h"
-#include "ObjectFocusCamera.h"
-#include <map>
-
+#include <string>
+#include <glew.h>
+// ───────── stb_easy_font ─────────────
+#define STB_EASY_FONT_IMPLEMENTATION   //  ❗ solo en un TU
+#include "stb_easy_font.h"
 class NPC {
 public:
-    NPC(ModelJerarquia& model,
-        const glm::vec3& worldPos,
-        const std::string& dialogText,
-        ObjectFocusCamera* focusCam,
-        Mesh* quad,             // NUEVO
-        Texture* font,          // NUEVO
-        const std::map<char, glm::vec2>& atlas);   // NUEVO
+    NPC(const glm::vec3& worldPos,
+        const std::string& message,
+        float triggerDist = 4.0f);
 
-    void render(const GLuint& uniformModel);
-    void interact();            // (pulso E)
-    void update(float dt);
-    void renderDialog(GLuint shaderID,
-        GLuint uModel, GLuint uColor);
+    // Llama una vez en la fase de inicialización OpenGL
+    void initGL();
+    void setShader(GLuint program);      //<— NUEVO
 
-    // --------------- (getters)
-    const glm::vec3& getPosition() const { return position; }
+
+    // Llama cada frame antes de dibujar la interfaz
+    // playerPos = posición del avatar en mundo
+    // keyPressedR = flanco de subida de la tecla R
+    void update(const glm::vec3& playerPos, bool keyPressedR);
+
+    // Llama después de todo tu render 3D,
+    // con depth-test desactivado y proyección ortográfica
+    void draw(const glm::mat4& orthoProj,
+        int screenW, int screenH);
 
 private:
-    ModelJerarquia& modelRef;
-    glm::vec3        position;
-    std::string      text;
+    glm::vec3 posW;          // posición del NPC en mundo
+    std::string text;        // mensaje a mostrar
+    float radius;            // distancia de activación
+    bool visible = false;    // ¿muestro el diálogo este frame?
+    GLuint textShaderID = 0;
+    GLint  uProj = -1;
+    GLint  uColor = -1;
 
-    // Recursos UI
-    Mesh* quadMesh;
-    Texture* fontTex;
-    const std::map<char, glm::vec2>& atlasRef;
+    // recursos OpenGL para el texto
+    GLuint vao = 0, vbo = 0;
+    int numVerts = 0;
 
-    ObjectFocusCamera* cam;
-    bool   dialogActive;
-    float  dialogTimer;
+    // Recursos para el rectángulo de fondo
+    GLuint quadVAO = 0, quadVBO = 0;
+
+    int textW = 0, textH = 0;
+
+
+    void buildTextGeometry();    // usa stb_easy_font
+    void buildQuadGeometry();
 };

@@ -156,7 +156,6 @@
     <ClInclude Include="MeshBuilder.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelJerarquia.h" />
-    <ClInclude Include="NPC.h" />
     <ClInclude Include="ObjectFocusCamera.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Shader_light.h" />
@@ -167,7 +166,6 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="ThirdPersonCamera.h" />
     <ClInclude Include="TopDownCamera.h" />
-    <ClInclude Include="UI.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -180,7 +178,6 @@
     <ClCompile Include="Mesh_tn.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelJerarquia.cpp" />
-    <ClCompile Include="NPC.cpp" />
     <ClCompile Include="ObjectFocusCamera.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Shader_light.cpp" />
