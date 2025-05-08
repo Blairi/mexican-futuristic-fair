@@ -201,17 +201,7 @@ int main()
 
 
 
-	// 1) Crear y compilar tu shader de texto
-	Shader textShader;
-	textShader.CreateFromFiles("shaders/text.vert", "shaders/text.frag");
-	GLuint shaderTextProgram = textShader.GetProgramID();
-
-	// 2) Obtener ubicaciones de uniforms
-	GLuint uniformTextModel = glGetUniformLocation(shaderTextProgram, "model");
-	GLuint uniformTextView = glGetUniformLocation(shaderTextProgram, "view");
-	GLuint uniformTextProj = glGetUniformLocation(shaderTextProgram, "projection");
-	GLuint uniformTextColor = glGetUniformLocation(shaderTextProgram, "textColor");
-	GLuint uniformTextOffset = glGetUniformLocation(shaderTextProgram, "offset");
+	
 
 	
 	CreateShaders();

@@ -1,6 +1,7 @@
 ﻿#include "ObjectFocusCamera.h"
 #include <gtc/matrix_transform.hpp>
 
+
 ObjectFocusCamera::ObjectFocusCamera(glm::vec3 up,
     const std::vector<glm::vec3*>& objects,
     float dist)
@@ -41,8 +42,10 @@ void ObjectFocusCamera::update(float deltaTime) {
     position = currentPosition;
 
     if (glm::distance(currentPosition, targetPosition) < 0.01f &&
-        glm::distance(currentLookAt, targetLookAt) < 0.01f)
+        glm::distance(currentLookAt, targetLookAt) < 0.01f) {
         inTransition = false;
+        tempTarget = nullptr;    // <-- aquí limpiamos la “flag”
+    }
 }
 
 void ObjectFocusCamera::beginFocus(glm::vec3* target) {
@@ -52,6 +55,22 @@ void ObjectFocusCamera::beginFocus(glm::vec3* target) {
     targetLookAt = *target;
     // Coloca la cámara a `distFromTarget` unidades justo enfrente del objeto.
     glm::vec3 dir = glm::normalize(*target - currentPosition);
+
+    // para boliche (1), hacha (0), globos (4) y bateo (3), gira +90° en Y
+    // si es una de las atracciones que quieres girar:
+    if (currentTarget == 1 || currentTarget == 0 ||
+        currentTarget == 4 || currentTarget == 3) {
+        float angle = glm::radians(90.0f);
+        float c = std::cos(angle);
+        float s = std::sin(angle);
+        // rotación Y: x' = x·c + z·s,   z' = -x·s + z·c
+        dir = glm::vec3(
+            dir.x * c + dir.z * s,
+            dir.y,
+            -dir.x * s + dir.z * c
+        );
+    }
+
     targetPosition = *target - dir * distFromTarget + glm::vec3(0.0f, 1.0f, 0.0f);
     inTransition = true;
 }
@@ -67,15 +86,16 @@ void ObjectFocusCamera::endFocus() {
 }
 
 void ObjectFocusCamera::nextObject() {
+    // si ya estoy en plena transición, ignoro
     if (isFocusing() || targets.empty()) return;
 
+    // avanzo al siguiente índice
     currentTarget = (currentTarget + 1) % targets.size();
-    glm::vec3* tgt = targets[currentTarget];
 
-    targetLookAt = *tgt;
-    targetPosition = *tgt + glm::vec3(0.0f, 3.0f, distFromTarget);
-    inTransition = true;
+    // reutilizo beginFocus para calcular posición, incluyendo tu giro de 90°
+    beginFocus(targets[currentTarget]);
 }
+
 
 glm::vec3 ObjectFocusCamera::getCameraPosition() const {
     return currentPosition;
