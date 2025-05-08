@@ -41,4 +41,3 @@ private:
 
 	GLfloat edge, procEdge;
 };
-

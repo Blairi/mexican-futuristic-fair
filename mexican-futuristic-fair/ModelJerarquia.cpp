@@ -1,4 +1,7 @@
 #include "ModelJerarquia.h"
+#include <iostream> // Para manejo de errores
+#include <fstream> // Para verificar si existe el archivo
+
 
 ModelJerarquia::ModelJerarquia(const std::string& filePath) {
 	
@@ -12,36 +15,74 @@ ModelJerarquia::ModelJerarquia(const std::string& filePath) {
 	modelPath = filePath;
 	modelroot = glm::mat4(1.0);
 	initAngulo = 0.0f;
+	globalScale = glm::vec3(1.0f, 1.0f, 1.0f); // Inicializa escala a 1
+	hasHead = true;
+}
+
+void ModelJerarquia::SetGlobalScale(glm::vec3 scale) {
+	globalScale = scale;
 }
 
 void ModelJerarquia::InitModel(glm::vec3 initialPos) {
-
 	actualPos = initialPos;
+	ModelItmes.clear(); // Limpiar cualquier modelo previo
 
+	// Preparamos 6 espacios para los modelos
 	for (int i = 0; i < 6; i++) {
 		ModelItmes.push_back(Model());
-		ModelItmes[i].LoadModel(modelPath + NameItems[i]);
+	}
+
+	// Verificamos si existe el archivo de cabeza
+	std::string headPath = modelPath + NameItems[0];
+	std::ifstream file(headPath);
+	hasHead = file.good();
+	file.close();
+
+	// Cargamos los modelos que existan
+	for (int i = 0; i < 6; i++) {
+		if (i == 0 && !hasHead) {
+			// Saltamos la cabeza si no existe
+			continue;
+		}
+
+		try {
+			std::string modelFile = modelPath + NameItems[i];
+			ModelItmes[i].LoadModel(modelFile);
+		}
+		catch (...) {
+			std::cout << "Warning: No se pudo cargar " << NameItems[i] << " para " << modelPath << std::endl;
+			// Continuamos con el siguiente modelo
+		}
 	}
 
 	// Definimos el Nodo Padre de la Gerarquia
+	modelroot = glm::mat4(1.0);
 	modelroot = glm::translate(modelroot, actualPos);
-	
-	for (int i = 0; i < 6; i++) {
-		MatrixModels.push_back(glm::mat4(1.0));
-		MatrixModels[i] = modelroot;
-	}
+	modelroot = glm::scale(modelroot, globalScale); // Aplicamos escala global
 
+	MatrixModels.clear();
+	for (int i = 0; i < 6; i++) {
+		MatrixModels.push_back(modelroot);
+	}
 }
 
-void ModelJerarquia::RenderModelJ(const GLuint& uniformModel) {
 
+void ModelJerarquia::RenderModelJ(const GLuint& uniformModel) {
 	for (int i = 0; i < 6; i++) {
+		if (i == 0 && !hasHead) {
+			// Saltamos la cabeza si no existe
+			continue;
+		}
+
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(MatrixModels[i]));
 		ModelItmes[i].RenderModel();
 	}
 }
 
+// Modificar los métodos de transformación para aplicar la escala global
 void ModelJerarquia::TransformHead(glm::vec3 tras, glm::vec3 rot, GLfloat angulo, glm::vec3 sca) {
+	if (!hasHead) return; // Saltamos si no hay cabeza
+
 	MatrixModels[0] = modelroot;
 	MatrixModels[0] = glm::translate(MatrixModels[0], tras);
 	MatrixModels[0] = glm::rotate(MatrixModels[0], glm::radians(angulo), rot);
@@ -90,6 +131,8 @@ void ModelJerarquia::TranformFullModel(glm::vec3 mueve, glm::mat4 extraTransform
 	modelroot = glm::mat4(1.0f);
 	modelroot = glm::translate(modelroot, nuevaPos);
 	modelroot *= extraTransform; // APLICA transformaciones extras
+	modelroot = glm::scale(modelroot, globalScale); // Aplicamos escala global
+
 
 	for (int i = 0; i < 6; i++) {
 		MatrixModels[i] = modelroot;
@@ -106,6 +149,8 @@ void ModelJerarquia::MovFullModel(glm::vec3 mueve, glm::vec3 rota, GLfloat angul
 	modelroot = glm::mat4(1.0);
 	modelroot = glm::translate(modelroot, nuevaPos);
 	modelroot = glm::rotate(modelroot, glm::radians(initAngulo + angulo), rota);
+	modelroot = glm::scale(modelroot, globalScale); // Aplicamos escala global
+
 
 	for (int i = 0; i < 6; i++) {
 		MatrixModels[i] = modelroot;

@@ -5,6 +5,8 @@ Autores:
 */
 //para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
+#define WIN32_LEAN_AND_MEAN   // opcional, reduce el tamaño de <windows.h>
+#define NOMINMAX 
 
 #include <stdio.h>
 #include <string.h>
@@ -12,6 +14,15 @@ Autores:
 #include <vector>
 #include <math.h>
 #include <map>
+#include "ModelJerarquia.h"
+
+
+#ifdef _WIN32
+#include <windows.h>
+#include <shellapi.h>   //  <-- ESTA LÍNEA
+#endif
+
+
 
 #include <glew.h>
 #include <glfw3.h>
@@ -67,6 +78,7 @@ Texture AgaveTexture;
 
 Texture ProjectDefaultFont;
 
+
 Model Base;
 
 Skybox skybox;
@@ -99,7 +111,11 @@ void CreateShaders()
 	Shader *shader1 = new Shader();
 	shader1->CreateFromFiles(vShader, fShader);
 	shaderList.push_back(*shader1);
+
 }
+
+
+
 
 void SetPinesBoliche(GLuint &uniformModel, std::vector <glm::mat4> &pinesTrans, glm::mat4 modelroot, Model &pinBoliche) {
 
@@ -140,6 +156,7 @@ int main()
 {
 	mainWindow = Window(1920, 1070); // 1280, 1024 or 1024, 768
 	mainWindow.Initialise();
+	
 
 	/*
 	* mesh[i]->renderMesh()
@@ -149,6 +166,44 @@ int main()
 	*/
 	MeshBuilder meshBuilder = MeshBuilder();
 
+	std::map<char, std::pair<float, float>> letrasOffset = {
+		{ 'A', std::make_pair(0.0f, 0.8164f) },
+		{ 'B', std::make_pair(0.125f, 0.8164f) },
+		{ 'C', std::make_pair(0.2324f, 0.8164f) },
+		{ 'D', std::make_pair(0.34375f, 0.8164f) },
+		{ 'E', std::make_pair(0.4589f, 0.8164f) },
+		{ 'F', std::make_pair(0.5609f, 0.8164f) },
+		{ 'G', std::make_pair(0.6757f, 0.8164f) },
+		{ 'H', std::make_pair(0.7890f, 0.8164f) },
+
+		{ 'I', std::make_pair(0.0136f, 0.6015f) },
+		{ 'J', std::make_pair(0.1191f, 0.6015f) },
+		{ 'K', std::make_pair(0.2324f, 0.6015f) },
+		{ 'L', std::make_pair(0.3515f, 0.6015f) },
+		{ 'M', std::make_pair(0.4511f, 0.6015f) },
+		{ 'N', std::make_pair(0.5664f, 0.6015f) },
+		{ 'O', std::make_pair(0.7871f, 0.6015f) },
+
+		{ 'P', std::make_pair(0.0175f, 0.3847f) },
+		{ 'Q', std::make_pair(0.1210f, 0.3847f) },
+		{ 'R', std::make_pair(0.2343f, 0.3847f) },
+		{ 'S', std::make_pair(0.3457f, 0.3847f) },
+		{ 'T', std::make_pair(0.4492f, 0.3847f) },
+		{ 'U', std::make_pair(0.5703f, 0.3847f) },
+		{ 'V', std::make_pair(0.6718f, 0.3847f) },
+		{ 'W', std::make_pair(0.7832f, 0.3847f) },
+
+		{ 'X', std::make_pair(0.0f, 0.1679f) },
+		{ 'Y', std::make_pair(0.1171f, 0.1679f) },
+		{ 'Z', std::make_pair(0.2382f, 0.1679f) },
+	};
+
+
+
+
+	
+
+	
 	CreateShaders();
 
 	// Posición Postes de Luz:
@@ -168,6 +223,8 @@ int main()
 	glm::vec3 posJaulaBateo(22.7181f, 1.24362f, 21.3295f); // 3 - A4
 	glm::vec3 posRevientaGlobos(-25.0f, 0.0f, 11.0f); // 4 - A5
 	glm::vec3 posmaquinaWhack(-22.0786f, 0.0f, -7.53293f); // 5 - A6
+	glm::vec3 posArcade(-22.93f, 0.0f, -17.15559f);        // posición exacta de tu modelo
+	bool doomLaunched = false;
 	bool activarAtraccionAnimacion[6] = { false, false, false, false, false, false };
 	glm::vec3 posicionAtracciones[6] = { posLanzaHacha, posBoliche, posLanzaDados,
 		posJaulaBateo, posRevientaGlobos, posmaquinaWhack, };
@@ -181,8 +238,13 @@ int main()
 	glm::vec3 posLuz3(2.40227f, 4.82231f, -30.285066f);
 
 	std::vector<glm::vec3*> objetos = {
-		// Ejemplo: &posPuestoTortas, &posRevientaGlobos, ...
-		 &posCabina, &posBoliche // (sólo placeholder)
+	&posLanzaHacha,      // Cabina de lanzamiento de hacha   (A1)
+	&posBoliche,         // Líneas de boliche                (A2)
+	&posLanzaDados,      // Mesa de lanzamiento de dados     (A3)
+	&posJaulaBateo,      // Jaula de bateo                   (A4)
+	&posRevientaGlobos,  // Juego de dardos/rompe-globos     (A5)
+	&posmaquinaWhack,     // Juego “Golpea al topo”           (A6)
+	&posArcade
 	};
 
 	// --- INSTANCIAR CÁMARAS ---
@@ -248,16 +310,42 @@ int main()
 	Texture LogoDany = Texture("Textures/DanyPhantomLogo.png");
 	LogoDany.LoadTextureA();
 
+	Texture LogoHA = Texture("Textures/HoradeAventura_Logo.png");
+	LogoHA.LoadTextureA();
+
+
 	Model SkayBoxDia = Model();
 	SkayBoxDia.LoadModel("Models/SkyBoxNubesDia.obj");
 
 	Base = Model();
-	Base.LoadModel("Models/BaseTexturizada/base.obj");
+	Base.LoadModel("Models/Base Texturizada/base.obj");
 	
 	//Model Arbol
 
 	Model arbol = Model();
 	arbol.LoadModel("Models/HoraAventura/casaArbol.obj");
+
+	// Jake
+	Model JakeBody, JakeArm;
+	JakeBody.LoadModel("Models/HoraAventura/Jake/jake.obj");
+	JakeArm.LoadModel("Models/HoraAventura/Jake/jake_brazo.obj");
+
+
+	// Arboles AT
+
+	Model ArbolRosa, ArbolColor;
+	ArbolRosa.LoadModel("Models/HoraAventura/arbol_algodon_horaaventura1.obj");
+	ArbolColor.LoadModel("Models/HoraAventura/arbol_algodon2.obj");
+
+	// Arcade
+
+	Model Arcade;
+
+	Arcade.LoadModel("Models/arcade.obj");
+
+	
+
+
 
 	/*
 	* Puestos de comida
@@ -266,8 +354,8 @@ int main()
 	TortasInvencible.LoadModel("Models/PuestoTortasInvencible/puesto-tortas-invencible.obj");
 
 	
-	/*Model PuestoElotes = Model();
-	PuestoElotes.LoadModel("Models/PuestoBatielotes/PuestoElotes.obj");*/
+	Model PuestoElotes = Model();
+	PuestoElotes.LoadModel("Models/PuestoBatielotes/PuestoElotes.obj");
 
 	/*
 	* Ambientación 
@@ -287,8 +375,8 @@ int main()
 	Lampara.LoadModel("Models/Ambientacion/lampara.obj");
 
 	//Batimovil
-	/*Model batimovil = Model();
-	batimovil.LoadModel("Models/Ambientacion/batimovil.obj");*/
+	Model batimovil = Model();
+	batimovil.LoadModel("Models/Ambientacion/batimovil.obj");
 
 	/*
 	* Atracciones
@@ -432,16 +520,15 @@ int main()
 	Batman_M.InitModel(glm::vec3(0.0f, -0.75f, 0.0f));
 
 	ModelJerarquia BMO_M("Models/HoraAventura/BMO");
-	BMO_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
+	BMO_M.InitModel(glm::vec3(0.0f, -1.5f, 0.0f));
 
-	/*-------
-	* NPC
-	* Agregar modelos de los NPC aqui
-	* ------
-	*/
+	
 	ModelJerarquia AtomEve_M = ModelJerarquia("Models/AtomEve");
 	AtomEve_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 
+	
+	
+	
 	ModelJerarquia OmniMan_M = ModelJerarquia("Models/OmniMan");
 	OmniMan_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -568,37 +655,7 @@ int main()
 
 	float offsetFrames = 0.0f;
 
-	std::map<char, std::pair<float, float>> letrasOffset = {
-		{ 'A', std::make_pair(0.0f, 0.8164f) },
-		{ 'B', std::make_pair(0.125f, 0.8164f) },
-		{ 'C', std::make_pair(0.2324f, 0.8164f) },
-		{ 'D', std::make_pair(0.34375f, 0.8164f) },
-		{ 'E', std::make_pair(0.4589f, 0.8164f) },
-		{ 'F', std::make_pair(0.5609f, 0.8164f) },
-		{ 'G', std::make_pair(0.6757f, 0.8164f) },
-		{ 'H', std::make_pair(0.7890f, 0.8164f) },
 
-		{ 'I', std::make_pair(0.0136f, 0.6015f) },
-		{ 'J', std::make_pair(0.1191f, 0.6015f) },
-		{ 'K', std::make_pair(0.2324f, 0.6015f) },
-		{ 'L', std::make_pair(0.3515f, 0.6015f) },
-		{ 'M', std::make_pair(0.4511f, 0.6015f) },
-		{ 'N', std::make_pair(0.5664f, 0.6015f) },
-		{ 'O', std::make_pair(0.7871f, 0.6015f) },
-
-		{ 'P', std::make_pair(0.0175f, 0.3847f) },
-		{ 'Q', std::make_pair(0.1210f, 0.3847f) },
-		{ 'R', std::make_pair(0.2343f, 0.3847f) },
-		{ 'S', std::make_pair(0.3457f, 0.3847f) },
-		{ 'T', std::make_pair(0.4492f, 0.3847f) },
-		{ 'U', std::make_pair(0.5703f, 0.3847f) },
-		{ 'V', std::make_pair(0.6718f, 0.3847f) },
-		{ 'W', std::make_pair(0.7832f, 0.3847f) },
-
-		{ 'X', std::make_pair(0.0f, 0.1679f) },
-		{ 'Y', std::make_pair(0.1171f, 0.1679f) },
-		{ 'Z', std::make_pair(0.2382f, 0.1679f) },
-	};
 
 	/*
 	* variables auxiliares para las animaciones
@@ -663,13 +720,23 @@ int main()
 	bool avatarCaminando = false;
 	float animarCaminata = 0.0f;
 
+	
+
 
 	while (!mainWindow.getShouldClose())
 	{
+		
+
 		GLfloat now = glfwGetTime();
 		deltaTime = now - lastTime;
 		deltaTime += (now - lastTime) / limitFPS;
 		lastTime = now;
+
+	
+	
+
+
+
 
 		/*
 		*  Ciclo Día / Noche 
@@ -809,8 +876,8 @@ int main()
 			freeCam.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
 
-		glm::mat4 viewMatrix = activeCamera->getViewMatrix();
 
+		glm::mat4 viewMatrix = activeCamera->getViewMatrix();
 
 
 		// controlar la velocidad con la que rota la camara de seleccion de personaje
@@ -936,7 +1003,6 @@ int main()
 		}
 		
 
-
 		/*
 		* eleccion de personaje
 		*/
@@ -968,12 +1034,12 @@ int main()
 		* ------------------
 		*/
 
-		// Batimovil
-		//model = glm::mat4(1.0);
-		//model = glm::translate(model, glm::vec3(-21.8945f, 0.120827f, 21.5915f));
-		////model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		//batimovil.RenderModel();
+		 
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-21.8945f, 0.120827f, 21.5915f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		batimovil.RenderModel();
 
 
 		// Bancas Frontales 
@@ -1102,13 +1168,13 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		TortasInvencible.RenderModel();
 
-		//glm::vec3 posPuestoElotes(8.28819f, 0.008754f, -15.0227f);
-		//model = glm::mat4(1.0);
-		//model = glm::translate(model, posPuestoElotes);
-		////model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
-		////model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
-		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		//PuestoElotes.RenderModel(); 
+		glm::vec3 posPuestoElotes(8.28819f, 0.008754f, -15.0227f);
+		model = glm::mat4(1.0);
+		model = glm::translate(model, posPuestoElotes);
+		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+		model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		PuestoElotes.RenderModel(); 
 		
 
 		
@@ -1272,6 +1338,35 @@ int main()
 
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		arbol.RenderModel();
+
+		glm::vec3 bodyPos(-0.523869f, 2.1f, 6.750570f);
+		glm::vec3 armPos(-0.228839f, 2.6f, 6.969260f);
+
+		// JAKE
+
+		// Calcula el offset LOCAL del brazo respecto al cuerpo:
+		glm::vec3 armOffset = armPos - bodyPos;
+		// → (0.32503, 0.54314, 0.91869) aprox.
+
+		// 2a) Matriz padre para el cuerpo:
+		glm::mat4 M = glm::mat4(1.0f);
+		M = glm::translate(M, bodyPos);
+		M = glm::rotate(M, glm::radians(90.0f), glm::vec3(0, 1, 0));  // X = 90°
+		M = glm::scale(M,
+			glm::vec3(0.5f, 0.5f, 0.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(M));
+		JakeBody.RenderModel();
+
+		// 2b) Matriz del brazo, partiendo de M:
+		glm::mat4 A = M;
+		A = glm::translate(A, armOffset);
+		// Aplicamos las rotaciones locales extra:
+		A = glm::rotate(A, glm::radians(183.295f), glm::vec3(0, 1, 0)); // Y
+		A = glm::rotate(A, glm::radians(167.638f), glm::vec3(0, 0, 1)); // Z
+		// Escala en Z negativa (1,1,-1) según Blender:
+		A = glm::scale(A, glm::vec3(1.0f, 1.0f, -1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(A));
+		JakeArm.RenderModel();
 
 
 
@@ -1571,6 +1666,8 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
+		
+
 		//Topos traseros de izquierda a derecha
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(-0.619f, 2.174f, 0.385f));
@@ -1605,6 +1702,23 @@ int main()
 		topo.RenderModel();
 
 		// FIN ATRACCION GUACAMOLE ----------------------------------------------------------------------
+
+		// MAQ ARCADE
+
+		// Arcade
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-22.93f, 0.0f, -17.15559f));
+		model = glm::rotate(
+			model,
+			glm::radians(90.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f)
+		);
+
+		model = glm::scale(model, glm::vec3(0.6f, 0.6f, 0.6f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Arcade.RenderModel();
 
 		//ZONA BATEO ----------------------------------------------------------------------
 		model = glm::mat4(1.0);
@@ -1658,31 +1772,31 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		batgarang.RenderModel();
 
-		/*model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-21.8945f, 0.120827f, 21.5915f));
+		//model = glm::mat4(1.0);
+		//model = glm::translate(model, glm::vec3(-21.8945f, 0.120827f, 21.5915f));
 		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Batimovil.RenderModel();*/
+		//glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		//Batimovil.RenderModel();
 
 
-		/*
-		* ------------------
-		* NPC de atracciones
-		* Aqui renderizar todos los NPC de atracciones
-		* ------------------
-		*/
-		// Atom eve - revienta globos
+	
+
+
 		animaAtomGlobos += 0.1f * deltaTime;
-		AtomEve_M.MovFullModel(glm::vec3(-25.7f, 0.95f, 10.5f), 
+		AtomEve_M.MovFullModel(glm::vec3(-25.7f, 0.95f, 10.5f),
 			glm::vec3(0.0, 1.0f, 0.0f), 135.753f);
-		AtomEve_M.TransformHead(glm::vec3(0.0f, 0.567f, -0.015f), 
-			glm::vec3(1.0f, 0.0f, 0.0f), 5*sin(animaAtomGlobos));
+		AtomEve_M.TransformHead(glm::vec3(0.0f, 0.567f, -0.015f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 5 * sin(animaAtomGlobos));
 		AtomEve_M.TransformLegR(glm::vec3(-0.065f, 0.03f, -0.008f));
 		AtomEve_M.TransformLegL(glm::vec3(0.015f, 0.01f, -0.003f));
 		AtomEve_M.TransformArmR(glm::vec3(-0.103f, 0.462f, -0.018f));
 		AtomEve_M.TransformArmL(glm::vec3(0.108f, 0.444f, -0.039f),
 			glm::vec3(1.0f, 0.0f, 0.0f), 50 * cos(animaAtomGlobos));
 		AtomEve_M.RenderModelJ(uniformModel);
+	
+
+
+
 
 		// Ember del Escenario
 		anguloCabezaEmber += 0.2f * deltaTime;
@@ -1764,7 +1878,7 @@ int main()
 		}
 
 		else if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 2) {
-			glm::vec3 modeloPos = camPos + camFront * 4.0f; // distancia a la camara
+			glm::vec3 modeloPos = camPos + camFront * 4.0f + glm::vec3(0.0f, 1.0f, 0.0f);
 			Batman_M.TranformFullModel(glm::vec3(modeloPos), orientacion);
 			Batman_M.TransformHead(glm::vec3(0.0f, 0.765671f, -0.10585f));
 			Batman_M.TransformLegR(glm::vec3(-0.206243f, 0.01851f, 0.0f));
@@ -1774,8 +1888,14 @@ int main()
 			Batman_M.RenderModelJ(uniformModel);
 		}
 		else if (!mainWindow.isPersonajeSeleccionado() && idPersonaje == 3) {
-			glm::vec3 modeloPos = camPos + camFront * 3.0f;
+			glm::vec3 modeloPos = camPos + camFront * 10.0f;
 			BMO_M.TranformFullModel(modeloPos, orientacion);
+			BMO_M.TransformHead(glm::vec3(0.0f, 0.0f, 0.0f));
+			BMO_M.TransformLegR(glm::vec3(-0.424668f, 0.244946f, 0.0f));
+			BMO_M.TransformLegL(glm::vec3(0.880826f, 0.22822f, 0.0f));
+			BMO_M.TransformArmR(glm::vec3(-1.22908f, 2.11561f, 0.0f));
+			BMO_M.TransformArmL(glm::vec3(1.52277f, 2.11561f, 0.0f));
+
 			BMO_M.RenderModelJ(uniformModel);
 		}
 
@@ -1824,6 +1944,52 @@ int main()
 			}
 			else
 				activarAtraccionAnimacion[i] = false;
+		}
+
+		if (!doomLaunched && glm::distance(avatarPos, posArcade) <= DISTANCIA_PARA_ACTIVAR)
+		{
+			// Texto flotante “PARA JUGAR PRESIONA E”
+			std::string texto = "PARA JUGAR E";
+			for (int i = 0; i < texto.size(); ++i)
+			{
+				if (texto[i] == ' ') continue;
+				float espaciado = 1.0f;
+				glm::vec3 offsetPos = basePos + camRight * (-4.0f + espaciado * i) + camUp * -3.5f;
+				glm::mat4 modelTxt = glm::mat4(1.0f);
+				modelTxt = glm::translate(modelTxt, offsetPos);
+				modelTxt *= glm::inverse(glm::lookAt(glm::vec3(0), camFront, glm::vec3(0, 1, 0)));
+				modelTxt = glm::rotate(modelTxt, glm::radians(90.0f), glm::vec3(1, 0, 0));
+				glUniform2fv(uniformTextureOffset, 1,
+					glm::value_ptr(glm::vec2(offsetFuenteProyU + letrasOffset[texto[i]].first,
+						1.0f - offsetFuenteProyV + letrasOffset[texto[i]].second)));
+				glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelTxt));
+				glUniform3fv(uniformColor, 1, glm::value_ptr(glm::vec3(1, 1, 1)));
+				ProjectDefaultFont.UseTexture();
+				meshBuilder.meshList[0]->RenderMesh();
+			}
+
+			// Lanzar DOOM
+			if (mainWindow.getsKeys()[GLFW_KEY_E])
+			{
+#ifdef _WIN32
+				SHELLEXECUTEINFOA shExecInfo = { 0 };
+				shExecInfo.cbSize = sizeof(SHELLEXECUTEINFOA);
+				shExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+				shExecInfo.hwnd = nullptr;
+				shExecInfo.lpVerb = "open";
+				shExecInfo.lpFile = "doom.exe";   // ejecutable
+				shExecInfo.lpParameters = "";
+				shExecInfo.lpDirectory = "doom";       // carpeta donde está doom.exe
+				shExecInfo.nShow = SW_SHOWDEFAULT;
+				if (ShellExecuteExA(&shExecInfo))
+				{
+					// Opcional: espera a que DOOM termine antes de volver al juego
+					// WaitForSingleObject(shExecInfo.hProcess, INFINITE);
+					CloseHandle(shExecInfo.hProcess);
+					doomLaunched = true;                // evita relanzar
+				}
+#endif
+			}
 		}
 
 		// reiniciar offset
@@ -2095,6 +2261,112 @@ int main()
 				}
 				Batman_M.RenderModelJ(uniformModel);
 				break;
+
+			case 3: // BMO
+				// Aumentar la posición Y (elevar a BMO de la plataforma)
+				BMO_M.SetGlobalScale(glm::vec3(0.3f, 0.3f, 0.3f)); // Establecer escala global
+
+				BMO_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y +2.0f, avatarPos.z),
+					glm::vec3(0, 1, 0), glm::degrees(atan2(forward.x, forward.z)));
+
+				
+
+				BMO_M.TransformHead(glm::vec3(0.0f, 0.0f, 0.0f));
+
+				// Pierna derecha con animación
+				BMO_M.TransformLegR(glm::vec3(-0.424668f, 0.244946f, 0.0f));
+				if (avatarCaminando) {
+					BMO_M.TransformLegR(
+						glm::vec3(-0.424668f, 0.244946f + movArticulacion, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						rotArticulacion
+					);
+				}
+
+				// Pierna izquierda con animación
+				BMO_M.TransformLegL(glm::vec3(0.880826f, 0.22822f, 0.0f));
+				if (avatarCaminando) {
+					BMO_M.TransformLegL(
+						glm::vec3(0.880826f, 0.22822f - movArticulacion, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-rotArticulacion
+					);
+				}
+
+				// Brazo derecho con animación
+				BMO_M.TransformArmR(glm::vec3(-1.22908f, 2.11561f, 0.0f));
+				if (avatarCaminando) {
+					BMO_M.TransformArmR(
+						glm::vec3(-1.22908f, 2.11561f, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-rotArticulacion
+					);
+				}
+
+				// Interacciones con atracciones
+				if (activarAtraccionAnimacion[2]) { // dados
+					BMO_M.TransformArmR(
+						glm::vec3(-1.22908f, 2.11561f, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-100.0f - 50 * sin(animarDados));
+					model = BMO_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.5f, -0.8f, 0.0f));
+					model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					model = glm::scale(model, glm::vec3(0.4f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					dado.RenderModel();
+				}
+
+				if (activarAtraccionAnimacion[3]) { // jaula de bateo
+					BMO_M.TransformArmR(
+						glm::vec3(-1.22908f, 2.11561f, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-50 * sin(animarBateo));
+					model = BMO_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.6f, -0.7f, 0.0f));
+					model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					model = glm::scale(model, glm::vec3(0.6f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					bat.RenderModel();
+				}
+
+				if (activarAtraccionAnimacion[4]) { // batrang (dardo)
+					BMO_M.TransformArmR(
+						glm::vec3(-1.22908f, 2.11561f, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-144.377 - 50 * sin(animarLanzarDardo));
+					model = BMO_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.5f, -0.7f, 0.0f));
+					model = glm::scale(model, glm::vec3(0.3f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					batgarang.RenderModel();
+				}
+
+				if (activarAtraccionAnimacion[5]) { // topos
+					BMO_M.TransformArmR(
+						glm::vec3(-1.22908f, 2.11561f, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						-50 * sin(animarTopos));
+					model = BMO_M.getModelMatrixs()[3];
+					model = glm::translate(model, glm::vec3(-0.5f, -0.7f, 0.0f));
+					model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					model = glm::scale(model, glm::vec3(0.2f));
+					glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+					martillo_topos.RenderModel();
+				}
+
+				// Brazo izquierdo con animación
+				BMO_M.TransformArmL(glm::vec3(1.52277f, 2.11561f, 0.0f));
+				if (avatarCaminando) {
+					BMO_M.TransformArmL(
+						glm::vec3(1.52277f, 2.11561f, 0.0f),
+						glm::vec3(1.0f, 0.0f, 0.0f),
+						rotArticulacion
+					);
+				}
+
+				BMO_M.RenderModelJ(uniformModel);
+				break;
 				// más cases según los avatares...
 			}
 			glDisable(GL_BLEND);
@@ -2187,6 +2459,26 @@ int main()
 			LogoBatman.UseTexture();
 			meshBuilder.meshList[1]->RenderMesh();
 		}
+
+		if (idPersonaje == 3) {
+			glm::vec3 offsetPos = basePos + camRight * 0.0f + camUp * -2.5f;
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, offsetPos);
+			model *= glm::inverse(glm::lookAt(glm::vec3(0.0f), camFront, glm::vec3(0.0f, 1.0f, 0.0f)));
+			model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::scale(model, glm::vec3(8.0f, 1.0f, 2.5f));
+			glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(toffset));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			color = glm::vec3(1.0f, 1.0f, 1.0f);
+			glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+			LogoHA.UseTexture();
+			meshBuilder.meshList[1]->RenderMesh();
+		}
+
+		
+		
+	
+
 		// TODO: renderizar condicionalmente los demas logos
 
 		glDisable(GL_BLEND);

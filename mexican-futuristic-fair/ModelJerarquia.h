@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Model.h" 
 #include <vector>
 #include <glm.hpp>
@@ -12,6 +14,8 @@ class ModelJerarquia: public Model {
 		
 		void InitModel(glm::vec3 initialPos = glm::vec3(0.0f, 0.0f, 0.0f));
 		void RenderModelJ(const GLuint& uniformModel);
+		void SetGlobalScale(glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f));
+
 		
 		void TransformHead(
 			glm::vec3 tras = glm::vec3(0.0f, 0.0f, 0.0f),
@@ -68,5 +72,7 @@ class ModelJerarquia: public Model {
 		glm::mat4 modelroot;
 		glm::vec3 actualPos;
 		GLfloat initAngulo;
+		glm::vec3 globalScale; // Nueva variable para escala global
+		bool hasHead;
 		
 };
