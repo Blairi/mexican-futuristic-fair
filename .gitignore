@@ -23,8 +23,6 @@ ipch/
 # Archivos de salida de la compilación
 Debug/
 Release/
-*.exe
-*.dll
 *.lib
 *.exp
 *.o
@@ -61,7 +59,6 @@ cmake_install.cmake
 external/
 *.lib
 *.a
-*.dll
 *.dylib
 *.so
 *.pdb
