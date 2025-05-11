@@ -1409,7 +1409,6 @@ int main()
 				model = glm::scale(model, glm::vec3(scaleFactor));
 				glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 				Globo.RenderModel();
-				printf("funciona globos\n");
 			}
 
 			animarDardo += 0.02 * deltaTime;
