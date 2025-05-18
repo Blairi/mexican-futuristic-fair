@@ -56,6 +56,7 @@ Autores:
 #include "Material.h"
 
 #include "MeshBuilder.h"
+#include "AudioManager.h"
 
 // main.cpp (era después de los includes)
 struct AppPointers {
@@ -156,7 +157,14 @@ int main()
 {
 	mainWindow = Window(1920, 1070); // 1280, 1024 or 1024, 768
 	mainWindow.Initialise();
-	
+
+	AudioManager audio;
+	audio.init();
+	audio.loadSound("soundtrack", "sounds/un-petit-tour-de-manege-273911.mp3", true);
+	audio.loadSound("phantom", "sounds/Danny Phantom - Opening Latino.mp3", true);
+	audio.loadSound("invincible", "sounds/Invincible Main Theme  EPIC VERSION.mp3", true);
+	audio.loadSound("batman", "sounds/Batman Beyond Main Title.mp3", true);
+	audio.loadSound("adventure", "sounds/Come Along With Me.  Hora de Aventura.mp3", true);
 
 	/*
 	* mesh[i]->renderMesh()
@@ -721,8 +729,9 @@ int main()
 	float animarCaminata = 0.0f;
 
 	
-
-
+	// variables auxiliares para el sonido
+	static int lastId = -1; 
+	bool soundtrackStarted = false;
 	while (!mainWindow.getShouldClose())
 	{
 		
@@ -734,8 +743,14 @@ int main()
 
 	
 	
-
-
+		
+		/*
+		* cancion de fondo para la feria
+		*/
+		if (mainWindow.isPersonajeSeleccionado() && !soundtrackStarted) {
+			audio.playSound("soundtrack");
+			soundtrackStarted = true;
+		}
 
 
 		/*
@@ -2474,11 +2489,31 @@ int main()
 			meshBuilder.meshList[1]->RenderMesh();
 		}
 
-		
-		
-	
+		if (!mainWindow.isPersonajeSeleccionado() && idPersonaje != lastId) {
+			lastId = idPersonaje;
 
-		// TODO: renderizar condicionalmente los demas logos
+			// Detener el sonido anterior
+			audio.stopSound();
+
+			switch (idPersonaje) {
+			case 0:
+				audio.playSound("phantom");
+				break;
+			case 1:
+				audio.playSound("invincible");
+				break;
+			case 2:
+				audio.playSound("batman");
+				break;
+			case 3:
+				audio.playSound("adventure");
+				break;
+			}
+		}
+		
+		
+		// Actualizar FMOD (necesario para reproducir correctamente)
+		audio.update();
 
 		glDisable(GL_BLEND);
 		glUseProgram(0);
