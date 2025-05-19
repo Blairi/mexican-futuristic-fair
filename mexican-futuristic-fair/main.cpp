@@ -1,6 +1,11 @@
  /*
 Proyecto Final Computacion Grafica
 Autores:
+
+Guadarrama Herrera Ken Bryan
+Axel Fernando Montiel Aviles
+Julian
+Alan
 	- 
 */
 //para cargar imagen
