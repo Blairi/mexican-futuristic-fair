@@ -166,15 +166,6 @@ int main()
 	audio.loadSound("batman", "sounds/Batman Beyond Main Title.mp3", true);
 	audio.loadSound("adventure", "sounds/Come Along With Me.  Hora de Aventura.mp3", true);
 
-	//AUDIOS DE ATRACCIONES
-	AudioManager audioAtracciones;
-	audioAtracciones.init();
-	audioAtracciones.loadSound("WhackAMole", "sounds/WhackAMole.mp3", true);
-	audioAtracciones.loadSound("Dados", "sounds/Dados.mp3", true);
-	audioAtracciones.loadSound("Bolos", "sounds/Bolos.mp3", true);
-	audioAtracciones.loadSound("ExplosionGlobo", "sounds/ExplosionGlobo.mp3", true);
-	audioAtracciones.loadSound("Hacha", "sounds/Hacha.mp3", true);
-
 	/*
 	* mesh[i]->renderMesh()
 	* 0 -> letras
@@ -373,14 +364,6 @@ int main()
 	
 	Model PuestoElotes = Model();
 	PuestoElotes.LoadModel("Models/PuestoBatielotes/PuestoElotes.obj");
-
-	Model PuestoHelados = Model();
-	PuestoHelados.LoadModel("Models/PuestoHelados/PuestoHelados.obj");
-
-	Model PuestoBanderillas = Model();
-	PuestoBanderillas.LoadModel("Models/PuestoBanderillas/PuestoBanderillas.obj");
-
-
 
 	/*
 	* Ambientación 
@@ -749,13 +732,6 @@ int main()
 	// variables auxiliares para el sonido
 	static int lastId = -1; 
 	bool soundtrackStarted = false;
-
-	bool soundHacha = false;
-	bool soundWhackAMole = false;
-	bool soundExplosionGlobo = false;
-	bool soundDados = false;
-	bool soundBolos = false;
-
 	while (!mainWindow.getShouldClose())
 	{
 		
@@ -770,17 +746,11 @@ int main()
 		
 		/*
 		* cancion de fondo para la feria
-		* 
-		* 
-		* 
-		
 		*/
-
 		if (mainWindow.isPersonajeSeleccionado() && !soundtrackStarted) {
 			audio.playSound("soundtrack");
 			soundtrackStarted = true;
 		}
-		
 
 
 		/*
@@ -1213,38 +1183,14 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		TortasInvencible.RenderModel();
 
-		glm::vec3 posPuestoElotes(8.28819f, 0.008754f, -15.0227f); //Puesto elotes
+		glm::vec3 posPuestoElotes(8.28819f, 0.008754f, -15.0227f);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posPuestoElotes);
 		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
 		model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		PuestoElotes.RenderModel(); 
-
-		//Puesto Banderillas
-
-		glm::vec3 posPuestoBanderillas(30.889f, -0.060344f, 8.82818f); 
-		model = glm::mat4(1.0);
-		model = glm::translate(model, posPuestoBanderillas);
-		//model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		PuestoBanderillas.RenderModel();
-
-		//Puesto Helados
-		glm::vec3 posPuestoHelados(-14.3251f, 0.033852f, 26.355f);
-		model = glm::mat4(1.0);
-		model = glm::translate(model, posPuestoHelados);
-		//model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
-		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		PuestoHelados.RenderModel();
-
-
-
-
 		
-
 
 		
 
@@ -1448,7 +1394,7 @@ int main()
 		*/
 
 		
-		
+
 
 		/*
 * Revienta Globos - A5
@@ -1459,7 +1405,6 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		RevientaGlobosInvencible.RenderModel();
 		if (activarAtraccionAnimacion[4]) {
-			
 			animarLanzarDardo += 0.1 * deltaTime;
 			for (int i = 0; i < posGlobos.size(); i++) {
 				tiempoPorGlobo[i] += 0.01f * deltaTime;
@@ -1702,7 +1647,6 @@ int main()
 		// Topos delanteros de izquierda a derecha
 		if (activarAtraccionAnimacion[5])
 			animarTopos += 0.05 * deltaTime;
-			
 
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(-0.599f, 2.174f, 0.0f));
@@ -1771,8 +1715,6 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
-		
-
 		// FIN ATRACCION GUACAMOLE ----------------------------------------------------------------------
 
 		// MAQ ARCADE
@@ -1836,12 +1778,9 @@ int main()
 			model = glm::rotate(model, glm::radians(animarHachas * 1000.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 			if (animarHachas >= 8.0f) { // terminar animacion
-				audioAtracciones.playSound("ExplosionGlobo");
 				animarHachas = 0;
 				activarAtraccionAnimacion[0] = false;
-				
 			}
-			
 		}
 
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -2486,8 +2425,6 @@ int main()
 			meshBuilder.meshList[0]->RenderMesh();
 		}
 
-
-		
 		/*
 		* Renderizar logo/letrero de personajes
 		*/
@@ -2577,7 +2514,6 @@ int main()
 		
 		// Actualizar FMOD (necesario para reproducir correctamente)
 		audio.update();
-		audioAtracciones.update();
 
 		glDisable(GL_BLEND);
 		glUseProgram(0);
