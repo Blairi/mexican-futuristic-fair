@@ -1,12 +1,7 @@
- /*
+/*
 Proyecto Final Computacion Grafica
 Autores:
-
-Guadarrama Herrera Ken Bryan
-Axel Fernando Montiel Aviles
-Julian
-Alan
-	- 
+	-
 */
 //para cargar imagen
 #define STB_IMAGE_IMPLEMENTATION
@@ -114,7 +109,7 @@ static const char* fShader = "shaders/shader_light.frag";
 
 void CreateShaders()
 {
-	Shader *shader1 = new Shader();
+	Shader* shader1 = new Shader();
 	shader1->CreateFromFiles(vShader, fShader);
 	shaderList.push_back(*shader1);
 
@@ -123,7 +118,7 @@ void CreateShaders()
 
 
 
-void SetPinesBoliche(GLuint &uniformModel, std::vector <glm::mat4> &pinesTrans, glm::mat4 modelroot, Model &pinBoliche) {
+void SetPinesBoliche(GLuint& uniformModel, std::vector <glm::mat4>& pinesTrans, glm::mat4 modelroot, Model& pinBoliche) {
 
 	GLfloat spaceBetwen_z = 0.0f, spaceBetwen_x = 0.0f;
 	glm::mat4 modelaux(1.0);
@@ -132,7 +127,7 @@ void SetPinesBoliche(GLuint &uniformModel, std::vector <glm::mat4> &pinesTrans, 
 	for (int i = 0; i < 4; i++) {
 
 		for (int j = i; j < 4; j++) {
-			
+
 			modelaux = modelroot;
 			modelaux = glm::translate(modelroot, glm::vec3(spaceBetwen_x, 0.0f, spaceBetwen_z));
 			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
@@ -170,6 +165,15 @@ int main()
 	audio.loadSound("invincible", "sounds/Invincible Main Theme  EPIC VERSION.mp3", true);
 	audio.loadSound("batman", "sounds/Batman Beyond Main Title.mp3", true);
 	audio.loadSound("adventure", "sounds/Come Along With Me.  Hora de Aventura.mp3", true);
+
+	//AUDIOS DE ATRACCIONES
+	AudioManager audioAtracciones;
+	audioAtracciones.init();
+	audioAtracciones.loadSound("WhackAMole", "sounds/WhackAMole.mp3", true);
+	audioAtracciones.loadSound("Dados", "sounds/Dados.mp3", true);
+	audioAtracciones.loadSound("Bolos", "sounds/Bolos.mp3", true);
+	audioAtracciones.loadSound("ExplosionGlobo", "sounds/ExplosionGlobo.mp3", true);
+	audioAtracciones.loadSound("Hacha", "sounds/Hacha.mp3", true);
 
 	/*
 	* mesh[i]->renderMesh()
@@ -214,9 +218,9 @@ int main()
 
 
 
-	
 
-	
+
+
 	CreateShaders();
 
 	// Posición Postes de Luz:
@@ -294,8 +298,8 @@ int main()
 		[](GLFWwindow* w, double /*x*/, double y)
 		{
 			auto* p = static_cast<AppPointers*>(glfwGetWindowUserPointer(w));
-	if (p && p->cam3p)
-		p->cam3p->addDistance(-static_cast<float>(y)); // ↑ acerca, ↓ aleja
+			if (p && p->cam3p)
+				p->cam3p->addDistance(-static_cast<float>(y)); // ↑ acerca, ↓ aleja
 		});
 
 	brickTexture = Texture("Textures/brick.png");
@@ -332,7 +336,7 @@ int main()
 
 	Base = Model();
 	Base.LoadModel("Models/Base Texturizada/base.obj");
-	
+
 	//Model Arbol
 
 	Model arbol = Model();
@@ -356,7 +360,7 @@ int main()
 
 	Arcade.LoadModel("Models/arcade.obj");
 
-	
+
 
 
 
@@ -366,12 +370,20 @@ int main()
 	Model TortasInvencible = Model();
 	TortasInvencible.LoadModel("Models/PuestoTortasInvencible/puesto-tortas-invencible.obj");
 
-	
+
 	Model PuestoElotes = Model();
 	PuestoElotes.LoadModel("Models/PuestoBatielotes/PuestoElotes.obj");
 
+	Model PuestoHelados = Model();
+	PuestoHelados.LoadModel("Models/PuestoHelados/PuestoHelados.obj");
+
+	Model PuestoBanderillas = Model();
+	PuestoBanderillas.LoadModel("Models/PuestoBanderillas/PuestoBanderillas.obj");
+
+
+
 	/*
-	* Ambientación 
+	* Ambientación
 	*/
 
 	// Bancas
@@ -518,9 +530,9 @@ int main()
 	Model Conquest_M = Model();
 	Conquest_M.LoadModel("Models/ZonaInvencible/Conquest.obj");
 
-	
-	
-	
+
+
+
 
 	/*
 	* Avatares
@@ -535,13 +547,13 @@ int main()
 	ModelJerarquia BMO_M("Models/HoraAventura/BMO");
 	BMO_M.InitModel(glm::vec3(0.0f, -1.5f, 0.0f));
 
-	
+
 	ModelJerarquia AtomEve_M = ModelJerarquia("Models/AtomEve");
 	AtomEve_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 
-	
-	
-	
+
+
+
 	ModelJerarquia OmniMan_M = ModelJerarquia("Models/OmniMan");
 	OmniMan_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -552,7 +564,7 @@ int main()
 	Joker.InitModel(glm::vec3(0.0f, 1.1065f, 0.0f));
 
 	ModelJerarquia Ember_M = ModelJerarquia("Models/Ember");
-	Ember_M.InitModel(glm::vec3(0.0f, 0.0f,0.0f));
+	Ember_M.InitModel(glm::vec3(0.0f, 0.0f, 0.0f));
 	Model GuitarEmber = Model();
 	GuitarEmber.LoadModel("Models/Ember/Guitar.obj");
 
@@ -587,8 +599,8 @@ int main()
 
 	// Luz Direccional para Día/Noche
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
-								 0.3f, 0.8f, // intensidad ambiental (radiacion de la luz), intensidad difusa
-								 0.0f, -1.0f, 0.0f);
+		0.3f, 0.8f, // intensidad ambiental (radiacion de la luz), intensidad difusa
+		0.0f, -1.0f, 0.0f);
 
 	// --------------------------------------------------------------------
 
@@ -598,56 +610,56 @@ int main()
 
 	// Luces Puntuales
 	pointLights[0] = PointLight(1.0f, 1.0f, 1.0f,
-								7.0f, 5.5f,				// Ambiental | Difuso 
-								posPostesLuz[0].x, posPostesLuz[0].y, posPostesLuz[0].z, // pos
-								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+		7.0f, 5.5f,				// Ambiental | Difuso 
+		posPostesLuz[0].x, posPostesLuz[0].y, posPostesLuz[0].z, // pos
+		0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
 	pointLightCount++;
 
 	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f,
-								7.0f, 5.5f,				// Ambiental | Difuso 
-								posPostesLuz[1].x, posPostesLuz[1].y, posPostesLuz[1].z, // pos
-								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+		7.0f, 5.5f,				// Ambiental | Difuso 
+		posPostesLuz[1].x, posPostesLuz[1].y, posPostesLuz[1].z, // pos
+		0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
 	pointLightCount++;
 
 	pointLights[2] = PointLight(1.0f, 1.0f, 1.0f,
-								7.0f, 5.5f,				// Ambiental | Difuso 
-								posPostesLuz[2].x, posPostesLuz[2].y, posPostesLuz[2].z, // pos
-								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+		7.0f, 5.5f,				// Ambiental | Difuso 
+		posPostesLuz[2].x, posPostesLuz[2].y, posPostesLuz[2].z, // pos
+		0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
 	pointLightCount++;
 
 	pointLights[3] = PointLight(1.0f, 1.0f, 1.0f,
-								7.0f, 5.5f,				// Ambiental | Difuso 
-								posPostesLuz[3].x, posPostesLuz[3].y, posPostesLuz[3].z, // pos
-								0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
+		7.0f, 5.5f,				// Ambiental | Difuso 
+		posPostesLuz[3].x, posPostesLuz[3].y, posPostesLuz[3].z, // pos
+		0.3f, 0.5f, 0.1f);		// Atenuación cons, lin, exp
 	pointLightCount++;
 
 
 	// Contador Luces SpotLight
 	unsigned int spotLightCount = 0;
-	
+
 	// Luces SpotLight
 	spotLights[0] = SpotLight(1.0f, 0.0f, 0.0f,
-							  20.0f, 15.0f,				// Ambiental | Difuso 
-						      0.0f, 20.0f, 0.0f,			// Posición 
-							  0.0f, -1.0f, 0.0f,        // Dirección
-							  0.3f, 0.8f, 0.0f,			// Atenuación cons, lin, exp
-							  5.0f);					// Angulo Apertura
+		20.0f, 15.0f,				// Ambiental | Difuso 
+		0.0f, 20.0f, 0.0f,			// Posición 
+		0.0f, -1.0f, 0.0f,        // Dirección
+		0.3f, 0.8f, 0.0f,			// Atenuación cons, lin, exp
+		5.0f);					// Angulo Apertura
 	spotLightCount++;
 
 	spotLights[1] = SpotLight(0.0f, 0.0f, 1.0f,
-							  20.0f, 15.0f,				// Ambiental | Difuso 
-							  0.0f, 20.0f, 0.0f,			// Posición 
-							  0.0f, -1.0f, 0.0f,        // Dirección
-							  0.3f, 0.8f, 0.0f,			// Atenuación cons, lin, exp
-							  5.0f);					// Angulo Apertura
+		20.0f, 15.0f,				// Ambiental | Difuso 
+		0.0f, 20.0f, 0.0f,			// Posición 
+		0.0f, -1.0f, 0.0f,        // Dirección
+		0.3f, 0.8f, 0.0f,			// Atenuación cons, lin, exp
+		5.0f);					// Angulo Apertura
 	spotLightCount++;
 
 	spotLights[2] = SpotLight(0.0f, 1.0f, 0.0f,
-							  20.0f, 15.0f,				// Ambiental | Difuso 
-							  0.0f, 20.0f, 0.0f,			// Posición 
-							  0.0f, -1.0f, 0.0f,        // Dirección
-							  0.3f, 0.8f, 0.0f,			// Atenuación cons, lin, exp
-							  5.0f);					// Angulo Apertura
+		20.0f, 15.0f,				// Ambiental | Difuso 
+		0.0f, 20.0f, 0.0f,			// Posición 
+		0.0f, -1.0f, 0.0f,        // Dirección
+		0.3f, 0.8f, 0.0f,			// Atenuación cons, lin, exp
+		5.0f);					// Angulo Apertura
 	spotLightCount++;
 
 	// Arreglo Copia de Luces SpotLigt
@@ -733,33 +745,46 @@ int main()
 	bool avatarCaminando = false;
 	float animarCaminata = 0.0f;
 
-	
+
 	// variables auxiliares para el sonido
-	static int lastId = -1; 
+	static int lastId = -1;
 	bool soundtrackStarted = false;
+
+	bool soundHacha = false;
+	bool soundWhackAMole = false;
+	bool soundExplosionGlobo = false;
+	bool soundDados = false;
+	bool soundBolos = false;
+
 	while (!mainWindow.getShouldClose())
 	{
-		
+
 
 		GLfloat now = glfwGetTime();
 		deltaTime = now - lastTime;
 		deltaTime += (now - lastTime) / limitFPS;
 		lastTime = now;
 
-	
-	
-		
+
+
+
 		/*
 		* cancion de fondo para la feria
+		*
+		*
+		*
+
 		*/
+
 		if (mainWindow.isPersonajeSeleccionado() && !soundtrackStarted) {
 			audio.playSound("soundtrack");
 			soundtrackStarted = true;
 		}
 
 
+
 		/*
-		*  Ciclo Día / Noche 
+		*  Ciclo Día / Noche
 		*/
 
 		timeOfDay += deltaTime;
@@ -786,7 +811,7 @@ int main()
 		mainLight.setDiffuseIntensity(diffuse);
 
 		// ----------------------------------------------------------------------------------------------------------
-		
+
 
 		// Animación Luces Escenario
 		if (mainWindow.getisEscenarioOn()) {
@@ -906,7 +931,7 @@ int main()
 		float x = 30.0f * cos(rotacionCamara);
 		float z = 30.0f * sin(rotacionCamara);
 
-		
+
 
 		if (mainWindow.isPersonajeSeleccionado()) {
 			activeCamera->mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
@@ -928,7 +953,7 @@ int main()
 		uniformEyePosition = shaderList[0].GetEyePositionLocation();
 		uniformColor = shaderList[0].getColorLocation();
 		uniformTextureOffset = shaderList[0].getOffsetLocation();
-		
+
 		//información en el shader de intensidad especular y brillo
 		uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
 		uniformShininess = shaderList[0].GetShininessLocation();
@@ -1004,24 +1029,24 @@ int main()
 			copiespotLights[0].setAmbientIntensity(0.5f);
 			copiespotLights[0].setDiffuseIntensity(1.0f);
 			copiespotLights[0].setAtenuacion(0.0f, 0.3f, 0.7f),
-			copiespotLights[0].SetFlash(posLuz1, glm::vec3(0.0f, -1.0, cos(glm::radians(anguloLaparaEscenario))));
+				copiespotLights[0].SetFlash(posLuz1, glm::vec3(0.0f, -1.0, cos(glm::radians(anguloLaparaEscenario))));
 
 			// Luz izquierda (azul)
 			copiespotLights[1].setAmbientIntensity(0.5f);
 			copiespotLights[1].setDiffuseIntensity(1.0f);
 			copiespotLights[1].setAtenuacion(0.0f, 0.3f, 0.7f),
-			copiespotLights[1].SetFlash(posLuz2, glm::vec3(sin(glm::radians(-anguloLaparaEscenario)), -1.0, cos(glm::radians(-anguloLaparaEscenario))));
+				copiespotLights[1].SetFlash(posLuz2, glm::vec3(sin(glm::radians(-anguloLaparaEscenario)), -1.0, cos(glm::radians(-anguloLaparaEscenario))));
 
 			// Luz derecha (verde)
 			copiespotLights[2].setAmbientIntensity(0.5f);
 			copiespotLights[2].setDiffuseIntensity(1.0f);
 			copiespotLights[2].setAtenuacion(0.0f, 0.3f, 0.7f),
-			copiespotLights[2].SetFlash(posLuz3, glm::vec3(sin(glm::radians(anguloLaparaEscenario)), -1.0, cos(glm::radians(anguloLaparaEscenario))));
+				copiespotLights[2].SetFlash(posLuz3, glm::vec3(sin(glm::radians(anguloLaparaEscenario)), -1.0, cos(glm::radians(anguloLaparaEscenario))));
 			shaderList[0].SetSpotLights(copiespotLights, spotLightCount);
 
-			 
+
 		}
-		
+
 
 		/*
 		* eleccion de personaje
@@ -1054,7 +1079,7 @@ int main()
 		* ------------------
 		*/
 
-		 
+
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-21.8945f, 0.120827f, 21.5915f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1188,16 +1213,40 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		TortasInvencible.RenderModel();
 
-		glm::vec3 posPuestoElotes(8.28819f, 0.008754f, -15.0227f);
+		glm::vec3 posPuestoElotes(8.28819f, 0.008754f, -15.0227f); //Puesto elotes
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posPuestoElotes);
 		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
 		model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		PuestoElotes.RenderModel(); 
-		
+		PuestoElotes.RenderModel();
 
-		
+		//Puesto Banderillas
+
+		glm::vec3 posPuestoBanderillas(30.889f, -0.060344f, 8.82818f);
+		model = glm::mat4(1.0);
+		model = glm::translate(model, posPuestoBanderillas);
+		//model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		PuestoBanderillas.RenderModel();
+
+		//Puesto Helados
+		glm::vec3 posPuestoHelados(-14.3251f, 0.033852f, 26.355f);
+		model = glm::mat4(1.0);
+		model = glm::translate(model, posPuestoHelados);
+		//model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+		//model = glm::rotate(model, glm::radians(22.004f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		PuestoHelados.RenderModel();
+
+
+
+
+
+
+
+
 
 
 		/*
@@ -1237,7 +1286,7 @@ int main()
 			model = modelaux;
 			model = glm::translate(model, glm::vec3(posCabinas[i].first, posCabinas[i].second, 0.0f));
 			model = glm::rotate(model, glm::radians(-girarRueda), glm::vec3(0.0f, 0.0f, 1.0f));
-			if(i % 2 == 0)
+			if (i % 2 == 0)
 				color = glm::vec3(0.14509f, 0.58823f, 0.74509f); // azul invencible
 			else
 				color = glm::vec3(0.9215f, 0.3647f, 0.4823f); // rosa atom eve
@@ -1275,9 +1324,9 @@ int main()
 			ShowSuit.RenderModel();
 			// renderiza personajes dentro del showcase
 			model = glm::translate(model, glm::vec3(0.0f, 0.12f, 0.0f));
-			if(i == 1) // escalar Conquest
+			if (i == 1) // escalar Conquest
 				model = glm::scale(model, glm::vec3(0.8f));
-			model = glm::scale(model, glm::vec3(1.0f) * (1.0f + 0.05f * sin(animarZonaTrajes*0.1f)));
+			model = glm::scale(model, glm::vec3(1.0f) * (1.0f + 0.05f * sin(animarZonaTrajes * 0.1f)));
 			model = glm::rotate(model, glm::radians(animarZonaTrajes), glm::vec3(0.0f, 1.0f, 0.0f));
 			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 			personajes[i].RenderModel();
@@ -1319,7 +1368,7 @@ int main()
 		* Se renderiza Escenario, Bocinas.
 		*/
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f,0.0f,-30.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Stage.RenderModel();
 
@@ -1398,7 +1447,7 @@ int main()
 		* ------------------
 		*/
 
-		
+
 
 
 		/*
@@ -1410,6 +1459,7 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		RevientaGlobosInvencible.RenderModel();
 		if (activarAtraccionAnimacion[4]) {
+
 			animarLanzarDardo += 0.1 * deltaTime;
 			for (int i = 0; i < posGlobos.size(); i++) {
 				tiempoPorGlobo[i] += 0.01f * deltaTime;
@@ -1653,6 +1703,7 @@ int main()
 		if (activarAtraccionAnimacion[5])
 			animarTopos += 0.05 * deltaTime;
 
+
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(-0.599f, 2.174f, 0.0f));
 		if (activarAtraccionAnimacion[5]) {
@@ -1685,7 +1736,7 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
 
-		
+
 
 		//Topos traseros de izquierda a derecha
 		model = modelaux;
@@ -1719,6 +1770,8 @@ int main()
 		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		topo.RenderModel();
+
+
 
 		// FIN ATRACCION GUACAMOLE ----------------------------------------------------------------------
 
@@ -1783,9 +1836,12 @@ int main()
 			model = glm::rotate(model, glm::radians(animarHachas * 1000.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 			if (animarHachas >= 8.0f) { // terminar animacion
+				audioAtracciones.playSound("ExplosionGlobo");
 				animarHachas = 0;
 				activarAtraccionAnimacion[0] = false;
+
 			}
+
 		}
 
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -1798,7 +1854,7 @@ int main()
 		//Batimovil.RenderModel();
 
 
-	
+
 
 
 		animaAtomGlobos += 0.1f * deltaTime;
@@ -1812,7 +1868,7 @@ int main()
 		AtomEve_M.TransformArmL(glm::vec3(0.108f, 0.444f, -0.039f),
 			glm::vec3(1.0f, 0.0f, 0.0f), 50 * cos(animaAtomGlobos));
 		AtomEve_M.RenderModelJ(uniformModel);
-	
+
 
 
 
@@ -2285,10 +2341,10 @@ int main()
 				// Aumentar la posición Y (elevar a BMO de la plataforma)
 				BMO_M.SetGlobalScale(glm::vec3(0.3f, 0.3f, 0.3f)); // Establecer escala global
 
-				BMO_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y +2.0f, avatarPos.z),
+				BMO_M.MovFullModel(glm::vec3(avatarPos.x, avatarPos.y + 2.0f, avatarPos.z),
 					glm::vec3(0, 1, 0), glm::degrees(atan2(forward.x, forward.z)));
 
-				
+
 
 				BMO_M.TransformHead(glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -2414,7 +2470,7 @@ int main()
 			glm::vec3 offsetPos = basePos + camRight * (-7.0f + espaciado * i) + camUp * 4.5f;
 
 			// Configurar textura de letras
-			toffset = glm::vec2(offsetFuenteProyU + letrasOffset[texto[i]].first, 
+			toffset = glm::vec2(offsetFuenteProyU + letrasOffset[texto[i]].first,
 				(1 - offsetFuenteProyV) + letrasOffset[texto[i]].second);
 
 			model = glm::mat4(1.0f);
@@ -2429,6 +2485,8 @@ int main()
 			ProjectDefaultFont.UseTexture();
 			meshBuilder.meshList[0]->RenderMesh();
 		}
+
+
 
 		/*
 		* Renderizar logo/letrero de personajes
@@ -2515,10 +2573,11 @@ int main()
 				break;
 			}
 		}
-		
-		
+
+
 		// Actualizar FMOD (necesario para reproducir correctamente)
 		audio.update();
+		audioAtracciones.update();
 
 		glDisable(GL_BLEND);
 		glUseProgram(0);
