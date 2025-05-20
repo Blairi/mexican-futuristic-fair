@@ -30,15 +30,36 @@ void AudioManager::loadSound(const std::string& name, const std::string& filepat
 }
 
 void AudioManager::playSound(const std::string& name) {
-    if (sounds.count(name)) {
-        if (channel) channel->stop();  // Detener el anterior
-        system->playSound(sounds[name], nullptr, false, &channel);
+    auto it = sounds.find(name);
+    if (it == sounds.end()) {
+        std::cerr << "El sonido '" << name << "' no ha sido cargado.\n";
+        return;
+    }
+
+    FMOD::Channel* newChannel = nullptr;
+    FMOD_RESULT result = system->playSound(it->second, nullptr, false, &newChannel);
+    if (result != FMOD_OK) {
+        std::cerr << "Error al reproducir el sonido '" << name << "'\n";
+        return;
+    }
+
+    channels[name] = newChannel;
+}
+
+void AudioManager::stopSound(const std::string& name) {
+    auto it = channels.find(name);
+    if (it != channels.end() && it->second) {
+        it->second->stop();
+        it->second = nullptr;
     }
 }
 
-void AudioManager::stopSound() {
-    if (channel) {
-        channel->stop();
+void AudioManager::stopAllSounds() {
+    for (auto& pair : channels) {
+        if (pair.second) {
+            pair.second->stop();
+            pair.second = nullptr;
+        }
     }
 }
 
@@ -49,14 +70,35 @@ void AudioManager::update() {
 }
 
 void AudioManager::release() {
+    stopAllSounds();  // Detener todos los sonidos antes de liberar
+
     for (auto& pair : sounds) {
-        pair.second->release();
+        if (pair.second) {
+            pair.second->release();
+        }
     }
     sounds.clear();
+    channels.clear();
 
     if (system) {
         system->close();
         system->release();
         system = nullptr;
     }
+}
+
+void AudioManager::setVolume(const std::string& name, float volume) {
+    if (channels.find(name) != channels.end() && channels[name]) {
+        channels[name]->setVolume(volume);
+    }
+}
+
+
+bool AudioManager::isSoundPlaying(const std::string& name) {
+    if (channels.find(name) != channels.end() && channels[name]) {
+        bool isPlaying = false;
+        channels[name]->isPlaying(&isPlaying);
+        return isPlaying;
+    }
+    return false;
 }

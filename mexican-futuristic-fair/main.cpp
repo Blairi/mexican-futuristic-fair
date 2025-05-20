@@ -107,6 +107,7 @@ PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
 
 const float DISTANCIA_PARA_ACTIVAR = 5.0F;
+const float DISTANCIA_NPC = 10.0f; // distancia para activar voz de NPC
 
 // Vertex Shader
 static const char* vShader = "shaders/shader_light.vert";
@@ -174,13 +175,23 @@ int main()
 	audio.loadSound("adventure", "sounds/Come Along With Me.  Hora de Aventura.mp3", true);
 
 	//AUDIOS DE ATRACCIONES
-	AudioManager audioAtracciones;
-	audioAtracciones.init();
-	audioAtracciones.loadSound("WhackAMole", "sounds/WhackAMole.mp3", true);
-	audioAtracciones.loadSound("Dados", "sounds/Dados.mp3", true);
-	audioAtracciones.loadSound("Bolos", "sounds/Bolos.mp3", true);
-	audioAtracciones.loadSound("ExplosionGlobo", "sounds/ExplosionGlobo.mp3", true);
-	audioAtracciones.loadSound("Hacha", "sounds/Hacha.mp3", true);
+	audio.loadSound("WhackAMole", "sounds/WhackAMole.mp3", true);
+	audio.loadSound("Dados", "sounds/Dados.mp3", true);
+	audio.loadSound("Bolos", "sounds/Bolos.mp3", true);
+	audio.loadSound("ExplosionGlobo", "sounds/ExplosionGlobo.mp3", true);
+	audio.loadSound("Hacha", "sounds/Hacha.mp3", true);
+
+	// sonidos de ambientacion
+	audio.loadSound("caminata", "sounds/Minecraft Footsteps.mp3", true);
+	audio.loadSound("concierto", "sounds/musica-electronica.mp3", true);
+
+	// sonidos de NPC
+	audio.loadSound("atom-eve-npc", "sounds/dialogo-atom-eve.mp3", true);
+	audio.loadSound("omni-man-npc", "sounds/omni-man-npc.mp3", true);
+	audio.loadSound("jake-npc", "sounds/npc-jake.mp3", true);
+	audio.loadSound("joker-npc", "sounds/joker-audio.mp3", true);
+	audio.loadSound("harley-npc", "sounds/harley-audio.mp3", true);
+	
 
 	/*
 	* mesh[i]->renderMesh()
@@ -238,7 +249,7 @@ int main()
 	posPostesLuz.push_back(glm::vec3(-16.142f, 5.03f, -1.0662f));
 	posPostesLuz.push_back(glm::vec3(-19.785f, 5.03f, -25.709f));
 
-	glm::vec3 avatarPos(0.0f, 0.0f, 0.0f);
+	glm::vec3 avatarPos(10.0f, 0.0f, 10.0f);
 
 	// banderas para interactuar con las atracciones, cada indice es la atraccion correspondiente
 	glm::vec3 posLanzaHacha(13.4928f, 1.445f, 18.9578f); // 0 - A1
@@ -693,7 +704,7 @@ int main()
 
 	float offsetFrames = 0.0f;
 
-
+	float animarNPC = 0.0f;
 
 	/*
 	* variables auxiliares para las animaciones
@@ -769,6 +780,10 @@ int main()
 	bool soundDados = false;
 	bool soundBolos = false;
 
+	bool caminando = false;
+
+	float distancia, volumen;
+
 	while (!mainWindow.getShouldClose())
 	{
 
@@ -790,7 +805,9 @@ int main()
 		*/
 
 		if (mainWindow.isPersonajeSeleccionado() && !soundtrackStarted) {
+			audio.stopAllSounds(); // quitar sonido de seleccion de personaje
 			audio.playSound("soundtrack");
+			audio.setVolume("soundtrack", 0.2f);
 			soundtrackStarted = true;
 		}
 
@@ -917,7 +934,19 @@ int main()
 				!mainWindow.getsKeys()[GLFW_KEY_D] && !mainWindow.getsKeys()[GLFW_KEY_RIGHT]
 				) {
 				avatarCaminando = false;
+				
 				animarCaminata = 0.0f;
+			}
+
+			// Logica de sonido para caminata
+			if (avatarCaminando && !caminando) {
+				audio.playSound("caminata");
+				audio.setVolume("caminata", 2.5f);
+				caminando = true;
+			}
+			else if (!avatarCaminando && caminando) {
+				audio.stopSound("caminata");
+				caminando = false;
 			}
 
 			// Forzamos Y=0 para “simular” suelo
@@ -1434,7 +1463,28 @@ int main()
 		glm::vec3 armPos(-0.228839f, 2.6f, 6.969260f);
 
 		// JAKE
-		persona.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		distancia = glm::distance(avatarPos, bodyPos);
+
+		// Volumen proporcional entre 0.2 y 1.0
+		volumen = glm::clamp(1.0f - (distancia / DISTANCIA_NPC), 0.2f, 1.0f);
+
+		if (distancia <= DISTANCIA_NPC) {
+			// Solo reproduce el sonido si no está sonando
+			if (!audio.isSoundPlaying("jake-npc")) {
+				audio.playSound("jake-npc");
+			}
+
+			// Ajustar el volumen dinámicamente
+			audio.setVolume("jake-npc", volumen);
+
+		}
+		else {
+			// Detener el sonido si se aleja
+			if (audio.isSoundPlaying("jake-npc")) {
+				audio.stopSound("jake-npc");
+			}
+		}
+
 		// Calcula el offset LOCAL del brazo respecto al cuerpo:
 		glm::vec3 armOffset = armPos - bodyPos;
 		// → (0.32503, 0.54314, 0.91869) aprox.
@@ -1454,6 +1504,7 @@ int main()
 		// Aplicamos las rotaciones locales extra:
 		A = glm::rotate(A, glm::radians(183.295f), glm::vec3(0, 1, 0)); // Y
 		A = glm::rotate(A, glm::radians(167.638f), glm::vec3(0, 0, 1)); // Z
+		A = glm::rotate(A, glm::radians(10*sin(animarNPC)), glm::vec3(1, 0, 0)); // X
 		// Escala en Z negativa (1,1,-1) según Blender:
 		A = glm::scale(A, glm::vec3(1.0f, 1.0f, -1.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(A));
@@ -1481,7 +1532,30 @@ int main()
 		modelaux = model;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		RevientaGlobosInvencible.RenderModel();
-		brilloso.UseMaterial(uniformSpecularIntensity, uniformShininess);
+
+		
+		distancia = glm::distance(avatarPos, posRevientaGlobos);
+
+		// Volumen proporcional entre 0.2 y 1.0
+		volumen = glm::clamp(1.0f - (distancia / DISTANCIA_NPC), 0.2f, 1.0f);
+
+		if (distancia <= DISTANCIA_NPC) {
+			// Solo reproduce el sonido si no está sonando
+			if (!audio.isSoundPlaying("atom-eve-npc")) {
+				audio.playSound("atom-eve-npc");
+			}
+
+			// Ajustar el volumen dinámicamente
+			audio.setVolume("atom-eve-npc", volumen);
+
+		}
+		else {
+			// Detener el sonido si se aleja
+			if (audio.isSoundPlaying("atom-eve-npc")) {
+				audio.stopSound("atom-eve-npc");
+			}
+		}
+
 		if (activarAtraccionAnimacion[4]) {
 
 			animarLanzarDardo += 0.1 * deltaTime;
@@ -1872,7 +1946,7 @@ int main()
 			model = glm::rotate(model, glm::radians(animarHachas * 1000.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 			if (animarHachas >= 8.0f) { // terminar animacion
-				audioAtracciones.playSound("ExplosionGlobo");
+				audio.playSound("ExplosionGlobo");
 				animarHachas = 0;
 				activarAtraccionAnimacion[0] = false;
 
@@ -1920,6 +1994,20 @@ int main()
 		Ember_M.TransformArmL(glm::vec3(0.074127f, 0.000064f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), -80.0f + 60.f * sin(glm::radians(-anguloBrazoEmber)) / 2);
 		Ember_M.RenderModelJ(uniformModel);
 
+		const float DISTANCIA_CONCIERTO = DISTANCIA_NPC * 1.2f;  // Abarcar mas area
+		float distancia = glm::distance(avatarPos, glm::vec3(0.0f, 0.0f, -25.0f));
+
+		// Volumen proporcional entre 0.2 y 1.0
+		float volumen = glm::clamp(1.0f - (distancia / DISTANCIA_CONCIERTO), 0.2f, 1.0f);
+
+		// Asegurar que el sonido esta reproduciéndose siempre
+		if (!audio.isSoundPlaying("concierto") && mainWindow.isPersonajeSeleccionado()) {
+			audio.playSound("concierto");
+		}
+
+		// Ajustar el volumen sin importar la distancia
+		audio.setVolume("concierto", volumen);
+
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f, 2.3f, -28.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -1931,18 +2019,65 @@ int main()
 		* Aqui renderizar todos los NPC de ambiente
 		* ------------------
 		*/
+
+
+
+		animarNPC += 0.1f * deltaTime;
+
 		//Harley Quinn -  Zona Bateo
+		distancia = glm::distance(avatarPos, glm::vec3(25.2693f, 0.967349f, 5.02014f));
+
+		// Volumen proporcional entre 0.2 y 1.0
+		volumen = glm::clamp(1.0f - (distancia / DISTANCIA_NPC), 0.2f, 1.0f);
+
+		if (distancia <= DISTANCIA_NPC) {
+			// Solo reproduce el sonido si no está sonando
+			if (!audio.isSoundPlaying("harley-npc")) {
+				audio.playSound("harley-npc");
+			}
+
+			// Ajustar el volumen dinámicamente
+			audio.setVolume("harley-npc", volumen);
+
+		}
+		else {
+			// Detener el sonido si se aleja
+			if (audio.isSoundPlaying("harley-npc")) {
+				audio.stopSound("harley-npc");
+			}
+		}
 		HarleyQuinn.MovFullModel(glm::vec3(25.2693f, 0.967349f, 5.02014f));
-		HarleyQuinn.TransformHead(glm::vec3(0.0f, 0.683806f, 0.021197f));//
+		HarleyQuinn.TransformHead(glm::vec3(0.0f, 0.683806f, 0.021197f), glm::vec3(0.0f, 1.0f, 0.0f), 15*sin(animarNPC));//
 		HarleyQuinn.TransformLegR(glm::vec3(0.053826f, 0.139596f, 0.0f));//
-		HarleyQuinn.TransformLegL(glm::vec3(-0.053826f, 0.139596f, 0.0f));//
+		HarleyQuinn.TransformLegL(glm::vec3(-0.053826f, 0.139596f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 10 * sin(animarNPC));//);//
 		HarleyQuinn.TransformArmR(glm::vec3(0.189628f, 0.573444f, 0.023411f));//
 		HarleyQuinn.TransformArmL(glm::vec3(-0.189628f, 0.573444f, 0.023411f));//
 		HarleyQuinn.RenderModelJ(uniformModel);
 
 		//Joker -  Bati elotes
+		distancia = glm::distance(avatarPos, glm::vec3(10.49f, 0.0f, -12.8796f));
+
+		// Volumen proporcional entre 0.2 y 1.0
+		volumen = glm::clamp(1.0f - (distancia / DISTANCIA_NPC), 0.2f, 1.0f);
+
+		if (distancia <= DISTANCIA_NPC) {
+			// Solo reproduce el sonido si no está sonando
+			if (!audio.isSoundPlaying("joker-npc")) {
+				audio.playSound("joker-npc");
+			}
+
+			// Ajustar el volumen dinámicamente
+			audio.setVolume("joker-npc", volumen);
+
+		}
+		else {
+			// Detener el sonido si se aleja
+			if (audio.isSoundPlaying("joker-npc")) {
+				audio.stopSound("joker-npc");
+			}
+		}
 		Joker.MovFullModel(glm::vec3(10.49f, 0.0f, -12.8796f));
-		Joker.TransformHead(glm::vec3(0.0f, 0.931009f, -0.113821f));//
+		Joker.TransformHead(glm::vec3(0.0f, 0.931009f, -0.113821f), glm::vec3(1.0, 1.0f, 0.0f), 10*sin(animarNPC));
 		Joker.TransformLegR(glm::vec3(-0.165213f, 0.009248f, 0.0f));//
 		Joker.TransformLegL(glm::vec3(0.230091f, 0.033922f, 0.0f));//
 		Joker.TransformArmR(glm::vec3(-0.251991f, 0.831474f, -0.053465f));//
@@ -1950,14 +2085,86 @@ int main()
 		Joker.RenderModelJ(uniformModel);
 
 		// omniman - tortas invencible
+		distancia = glm::distance(avatarPos, posPuestoTortas);
+
+		// Volumen proporcional entre 0.2 y 1.0
+		volumen = glm::clamp(1.0f - (distancia / DISTANCIA_NPC), 0.2f, 1.0f);
+
+		if (distancia <= DISTANCIA_NPC) {
+			// Solo reproduce el sonido si no está sonando
+			if (!audio.isSoundPlaying("omni-man-npc")) {
+				audio.playSound("omni-man-npc");
+			}
+
+			// Ajustar el volumen dinámicamente
+			audio.setVolume("omni-man-npc", volumen);
+
+		}
+		else {
+			// Detener el sonido si se aleja
+			if (audio.isSoundPlaying("omni-man-npc")) {
+				audio.stopSound("omni-man-npc");
+			}
+		}
 		OmniMan_M.MovFullModel(posPuestoTortas + glm::vec3(-0.6f, 0.9f, -0.6f),
 			glm::vec3(0.0f, 1.0f, 0.0f), 32.953f);
-		OmniMan_M.TransformHead(glm::vec3(0.0f, 0.683f, -0.015f));
+		OmniMan_M.TransformHead(glm::vec3(0.0f, 0.683f, -0.015f), 
+			glm::vec3(1.0f, 0.0f, 0.0f), 10.0f + sin(animarNPC));
 		OmniMan_M.TransformLegR(glm::vec3(-0.081f, 0.033f, 0.017f));
 		OmniMan_M.TransformLegL(glm::vec3(0.075f, 0.036f, -0.003f));
 		OmniMan_M.TransformArmR(glm::vec3(-0.163f, 0.549f, -0.037f));
 		OmniMan_M.TransformArmL(glm::vec3(0.177f, 0.551f, -0.034f));
 		OmniMan_M.RenderModelJ(uniformModel);
+
+		// PERSONAJE BAILANDO CON EMBER
+		model = glm::mat4(1.0f);
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		DannyPhantom_M.TranformFullModel(glm::vec3(-1.0f, 0.4f + 0.05 * sin(animarNPC * 0.5), -24.0f), model);
+		DannyPhantom_M.TransformHead(glm::vec3(0.0f, 0.21f, 0.0f), 
+			glm::vec3(1.0f, 0.0f, 1.0f), 50*sin(animarNPC));
+		DannyPhantom_M.TransformLegR(glm::vec3(-0.04f, -0.2f, 0.0f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 50 * sin(animarNPC));
+		DannyPhantom_M.TransformLegL(glm::vec3(0.035f, -0.2f, 0.0f),
+			glm::vec3(1.0f, 0.0f, 0.0f), -50 * sin(animarNPC));
+		DannyPhantom_M.TransformArmR(glm::vec3(-0.1445f, 0.123f, 0.0f));
+		DannyPhantom_M.TransformArmL(glm::vec3(0.13f, 0.12f, 0.0f));
+		DannyPhantom_M.RenderModelJ(uniformModel);
+
+		Invencible_M.TranformFullModel(glm::vec3(-2.5f, 0.65f + 0.05 * sin(animarNPC * 0.3), -24.0f), model);
+		Invencible_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 50 * sin(animarNPC));
+		Invencible_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
+		Invencible_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
+		Invencible_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 50 * sin(animarNPC));
+		Invencible_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f),
+			glm::vec3(1.0f, 0.0f, 0.0f), -50 * sin(animarNPC));
+		Invencible_M.RenderModelJ(uniformModel);
+
+		Batman_M.TranformFullModel(glm::vec3(1.0f, 1.7f + 0.05 * sin(animarNPC*0.7), -24.0f), model);
+		Batman_M.TransformHead(glm::vec3(0.0f, 0.765671f, -0.10585f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 50 * sin(animarNPC));
+		Batman_M.TransformLegR(glm::vec3(-0.206243f, 0.01851f, 0.0f));
+		Batman_M.TransformLegL(glm::vec3(0.174945f, 0.073709f, 0.0f));
+		Batman_M.TransformArmR(glm::vec3(-0.293808f, 0.658702f, -0.050691f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 180.0f);
+		Batman_M.TransformArmL(glm::vec3(0.293808f, 0.658702f, -0.050691f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 180.0f);
+		Batman_M.RenderModelJ(uniformModel);
+
+		model = glm::rotate(model, glm::radians(animarNPC*5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		BMO_M.SetGlobalScale(glm::vec3(0.3f, 0.3f, 0.3f)); // Establecer escala global
+		BMO_M.TranformFullModel(glm::vec3(2.5f, 2.0f + 0.2 * sin(animarNPC * 0.9), -24.0f), model);
+		BMO_M.TransformHead(glm::vec3(0.0f, 0.0f, 0.0f));
+		BMO_M.TransformLegR(glm::vec3(-0.424668f, 0.244946f, 0.0f));
+		BMO_M.TransformLegL(glm::vec3(0.880826f, 0.22822f, 0.0f));
+		BMO_M.TransformArmR(glm::vec3(-1.22908f, 2.11561f, 0.0f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 50 * sin(animarNPC));
+		BMO_M.TransformArmL(glm::vec3(1.52277f, 2.11561f, 0.0f),
+			glm::vec3(1.0f, 0.0f, 0.0f), -50 * sin(animarNPC));
+		BMO_M.RenderModelJ(uniformModel);
+
 
 		// variables auxiliares para la interfaz de selección de personaje
 		glm::vec3 camFront = glm::normalize(freeCam.getCameraDirection());
@@ -2594,7 +2801,7 @@ int main()
 			lastId = idPersonaje;
 
 			// Detener el sonido anterior
-			audio.stopSound();
+			audio.stopAllSounds();
 
 			switch (idPersonaje) {
 			case 0:
@@ -2615,7 +2822,6 @@ int main()
 
 		// Actualizar FMOD (necesario para reproducir correctamente)
 		audio.update();
-		audioAtracciones.update();
 
 		glDisable(GL_BLEND);
 		glUseProgram(0);
