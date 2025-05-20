@@ -1985,6 +1985,8 @@ int main()
 		* ------------------
 		*/
 
+
+
 		animarNPC += 0.1f * deltaTime;
 
 		//Harley Quinn -  Zona Bateo
@@ -2078,6 +2080,56 @@ int main()
 		OmniMan_M.TransformArmR(glm::vec3(-0.163f, 0.549f, -0.037f));
 		OmniMan_M.TransformArmL(glm::vec3(0.177f, 0.551f, -0.034f));
 		OmniMan_M.RenderModelJ(uniformModel);
+
+		// PERSONAJE BAILANDO CON EMBER
+		model = glm::mat4(1.0f);
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		DannyPhantom_M.TranformFullModel(glm::vec3(-1.0f, 0.4f + 0.05 * sin(animarNPC * 0.5), -24.0f), model);
+		DannyPhantom_M.TransformHead(glm::vec3(0.0f, 0.21f, 0.0f), 
+			glm::vec3(1.0f, 0.0f, 1.0f), 50*sin(animarNPC));
+		DannyPhantom_M.TransformLegR(glm::vec3(-0.04f, -0.2f, 0.0f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 50 * sin(animarNPC));
+		DannyPhantom_M.TransformLegL(glm::vec3(0.035f, -0.2f, 0.0f),
+			glm::vec3(1.0f, 0.0f, 0.0f), -50 * sin(animarNPC));
+		DannyPhantom_M.TransformArmR(glm::vec3(-0.1445f, 0.123f, 0.0f));
+		DannyPhantom_M.TransformArmL(glm::vec3(0.13f, 0.12f, 0.0f));
+		DannyPhantom_M.RenderModelJ(uniformModel);
+
+		Invencible_M.TranformFullModel(glm::vec3(-2.5f, 0.65f + 0.05 * sin(animarNPC * 0.3), -24.0f), model);
+		Invencible_M.TransformHead(glm::vec3(0.005f, 0.548f, -0.011f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 50 * sin(animarNPC));
+		Invencible_M.TransformLegR(glm::vec3(-0.011f, 0.061f, 0.002f));
+		Invencible_M.TransformLegL(glm::vec3(0.007f, 0.071f, 0.005f));
+		Invencible_M.TransformArmR(glm::vec3(-0.121f, 0.393f, -0.023f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 50 * sin(animarNPC));
+		Invencible_M.TransformArmL(glm::vec3(0.13f, 0.397f, -0.028f),
+			glm::vec3(1.0f, 0.0f, 0.0f), -50 * sin(animarNPC));
+		Invencible_M.RenderModelJ(uniformModel);
+
+		Batman_M.TranformFullModel(glm::vec3(1.0f, 1.7f + 0.05 * sin(animarNPC*0.7), -24.0f), model);
+		Batman_M.TransformHead(glm::vec3(0.0f, 0.765671f, -0.10585f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 50 * sin(animarNPC));
+		Batman_M.TransformLegR(glm::vec3(-0.206243f, 0.01851f, 0.0f));
+		Batman_M.TransformLegL(glm::vec3(0.174945f, 0.073709f, 0.0f));
+		Batman_M.TransformArmR(glm::vec3(-0.293808f, 0.658702f, -0.050691f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 180.0f);
+		Batman_M.TransformArmL(glm::vec3(0.293808f, 0.658702f, -0.050691f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 180.0f);
+		Batman_M.RenderModelJ(uniformModel);
+
+		model = glm::rotate(model, glm::radians(animarNPC*5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		BMO_M.SetGlobalScale(glm::vec3(0.3f, 0.3f, 0.3f)); // Establecer escala global
+		BMO_M.TranformFullModel(glm::vec3(2.5f, 2.0f + 0.2 * sin(animarNPC * 0.9), -24.0f), model);
+		BMO_M.TransformHead(glm::vec3(0.0f, 0.0f, 0.0f));
+		BMO_M.TransformLegR(glm::vec3(-0.424668f, 0.244946f, 0.0f));
+		BMO_M.TransformLegL(glm::vec3(0.880826f, 0.22822f, 0.0f));
+		BMO_M.TransformArmR(glm::vec3(-1.22908f, 2.11561f, 0.0f),
+			glm::vec3(1.0f, 0.0f, 0.0f), 50 * sin(animarNPC));
+		BMO_M.TransformArmL(glm::vec3(1.52277f, 2.11561f, 0.0f),
+			glm::vec3(1.0f, 0.0f, 0.0f), -50 * sin(animarNPC));
+		BMO_M.RenderModelJ(uniformModel);
+
 
 		// variables auxiliares para la interfaz de selección de personaje
 		glm::vec3 camFront = glm::normalize(freeCam.getCameraDirection());
