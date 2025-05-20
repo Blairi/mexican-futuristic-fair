@@ -88,6 +88,13 @@ Skybox skybox;
 Material Material_brillante;
 Material Material_opaco;
 
+Material madera;
+Material metalico; 
+Material persona; 
+Material brilloso;    
+Material opaco; 
+
+
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
@@ -591,6 +598,12 @@ int main()
 
 	Material_brillante = Material(4.0f, 256);
 	Material_opaco = Material(0.3f, 4);
+	Material madera = Material(0.2f, 16);     // baja intensidad especular, rugosa
+	Material metalico = Material(2.0f, 128);    // alta intensidad especular, pulido
+	Material persona = Material(0.4f, 32);     // piel ligeramente brillante
+	Material brilloso = Material(3.0f, 256);    // muy reflectante, pulido
+	Material opaco = Material(0.1f, 4);      // sin brillo, muy difuso
+
 
 	/* --------------------------------------------
 	*			Ciclo Día/Noche
@@ -1108,7 +1121,7 @@ int main()
 		* ------------------
 		*/
 
-
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-21.8945f, 0.120827f, 21.5915f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1117,6 +1130,7 @@ int main()
 
 
 		// Bancas Frontales 
+		madera.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-3.156f, 0.0f, 11.62f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1165,6 +1179,7 @@ int main()
 		Banca.RenderModel();
 
 		// BancasTecho
+		brilloso.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 11.5f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -1196,7 +1211,7 @@ int main()
 		*/
 		animaLampara += 0.06 * deltaTime;
 
-		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		brilloso.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(8.072f, 0.0f, 15.362f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -1234,6 +1249,7 @@ int main()
 		Lampara.RenderModel();
 
 		// puesto de tortas invencible
+		metalico.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		glm::vec3 posPuestoTortas(-7.366f, 0.0f, -16.264f);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posPuestoTortas);
@@ -1281,6 +1297,7 @@ int main()
 		/*
 		* Feria de la fortuna
 		*/
+		metalico.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-0.876f, 0.0f, 18.489f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1364,6 +1381,7 @@ int main()
 		/*
 		* Pantalla
 		*/
+		brilloso.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(27.441f, 0.0f, -13.418f));
 		model = glm::rotate(model, glm::radians(-44.398f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1396,16 +1414,19 @@ int main()
 		* Escenario Ember
 		* Se renderiza Escenario, Bocinas.
 		*/
+		persona.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Stage.RenderModel();
 
+		opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -30.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		BocinasStageEmber.RenderModel();
 
+		brilloso.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.34811f, 5.02231f, -30.285066f));
 		model = glm::rotate(model, glm::radians(anguloLaparaEscenario), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -1424,6 +1445,7 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		LuzEscenario.RenderModel();
 
+		madera.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		// —––– Árbol de Aventura —–––
 		model = glm::mat4(1.0f);
 		model = glm::translate(model,
@@ -1504,6 +1526,7 @@ int main()
 		/*
 * Revienta Globos - A5
 */
+		opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posRevientaGlobos);
 		modelaux = model;
@@ -1571,16 +1594,19 @@ int main()
 		/*
 		* Boliche - A2
 		*/
+		brilloso.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posBoliche);
 		modelrootBoliche = model;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		LineasBoliche.RenderModel();
 
+		madera.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::translate(model, glm::vec3(8.5f, 0.0f, -0.25f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		SueloBoliche.RenderModel();
 
+		opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = modelrootBoliche;
 		model = glm::translate(model, glm::vec3(8.5f, 0.0f, -0.25f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -1593,6 +1619,7 @@ int main()
 		recibidorBoliche.RenderModel();
 
 		// Maquinas de Bolas
+		metalico.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = modelrootBoliche;
 		model = glm::translate(model, glm::vec3(11.8745f, 0.0f, -2.0));
 		modelaux = model;
@@ -1600,6 +1627,7 @@ int main()
 		MaquinaBolasBolicheRoja.RenderModel();
 
 		// Bola Verde
+		brilloso.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::translate(model, glm::vec3(0.65f, 0.494f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		BolaVerde.RenderModel();
@@ -1733,6 +1761,7 @@ int main()
 		*/
 
 		//ATRACCION DADOS --------------------------------------------------------------------------------
+		opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		if (activarAtraccionAnimacion[2])
 			animarDados += 0.05 * deltaTime;
 		model = glm::mat4(1.0);
@@ -1747,6 +1776,7 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		mesa_dados.RenderModel();
 		//DADO IZQUIERDO
+		brilloso.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(0.285f, 0.643f, -0.307f));
 		if (activarAtraccionAnimacion[2]) {
@@ -1767,6 +1797,7 @@ int main()
 		// FIN ATRACCION DADOS 
 
 		//ATRACCION GUACAMOLE ----------------------------------------------------------------------
+		metalico.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posmaquinaWhack);
 		model = glm::scale(model, glm::vec3(0.3f));
@@ -1778,7 +1809,7 @@ int main()
 		if (activarAtraccionAnimacion[5])
 			animarTopos += 0.05 * deltaTime;
 
-
+		persona.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(-0.599f, 2.174f, 0.0f));
 		if (activarAtraccionAnimacion[5]) {
@@ -1853,7 +1884,7 @@ int main()
 		// MAQ ARCADE
 
 		// Arcade
-
+		brilloso.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-22.93f, 0.0f, -17.15559f));
 		model = glm::rotate(
@@ -1868,6 +1899,7 @@ int main()
 		Arcade.RenderModel();
 
 		//ZONA BATEO ----------------------------------------------------------------------
+		opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posJaulaBateo);
 		model = scale(model, glm::vec3(0.4f));
@@ -1875,6 +1907,7 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		zonabateo.RenderModel();
 
+		brilloso.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(0.375f, -2.877f, -16.207f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1895,6 +1928,7 @@ int main()
 		// FIN ZONA BATEO ----------------------------------------------------------------------
 
 		//LANZAMIENTO DE HACHA -----------------------------------------------------------------
+		opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posLanzaHacha);
 		model = glm::scale(model, glm::vec3(0.5f));
@@ -1902,6 +1936,7 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		LanzamientoDeHacha.RenderModel();
 
+		metalico.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -6.642f));
 		if (activarAtraccionAnimacion[0]) {
@@ -1929,7 +1964,7 @@ int main()
 		//Batimovil.RenderModel();
 
 
-
+		persona.UseMaterial(uniformSpecularIntensity, uniformShininess);
 
 
 		animaAtomGlobos += 0.1f * deltaTime;
@@ -2197,6 +2232,8 @@ int main()
 		/*
 		* Interaccion con las atracciones
 		*/
+
+		brilloso.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		for (int i = 0; i < 6; i++) {
 			if (glm::distance(avatarPos, posicionAtracciones[i]) <= DISTANCIA_PARA_ACTIVAR) {
 				if (mainWindow.getsKeys()[GLFW_KEY_E])
@@ -2274,7 +2311,7 @@ int main()
 #endif
 			}
 		}
-
+		brilloso.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		// reiniciar offset
 		glUniform2fv(uniformTextureOffset, 1, glm::value_ptr(glm::vec2(0.0f)));
 		/*
