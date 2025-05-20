@@ -962,6 +962,22 @@ int main()
 			freeCam.keyControl(mainWindow.getsKeys(), deltaTime);
 			freeCam.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
+		else if (activeCamera == &topDownCam) {
+			float moveSpeed = 10.0f * deltaTime; // Ajusta la velocidad según sea necesario
+
+			// Movimiento con teclas WASD
+			if (mainWindow.getsKeys()[GLFW_KEY_W] || mainWindow.getsKeys()[GLFW_KEY_UP])
+				topDownCam.moveVertical(-moveSpeed); // Mover hacia adelante (Z-)
+
+			if (mainWindow.getsKeys()[GLFW_KEY_S] || mainWindow.getsKeys()[GLFW_KEY_DOWN])
+				topDownCam.moveVertical(moveSpeed); // Mover hacia atrás (Z+)
+
+			if (mainWindow.getsKeys()[GLFW_KEY_A] || mainWindow.getsKeys()[GLFW_KEY_LEFT])
+				topDownCam.moveHorizontal(-moveSpeed); // Mover hacia la izquierda (X-)
+
+			if (mainWindow.getsKeys()[GLFW_KEY_D] || mainWindow.getsKeys()[GLFW_KEY_RIGHT])
+				topDownCam.moveHorizontal(moveSpeed); // Mover hacia la derecha (X+)
+		}
 
 
 		glm::mat4 viewMatrix = activeCamera->getViewMatrix();
