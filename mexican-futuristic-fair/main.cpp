@@ -100,6 +100,7 @@ PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
 
 const float DISTANCIA_PARA_ACTIVAR = 5.0F;
+const float DISTANCIA_NPC = 10.0f; // distancia para activar voz de NPC
 
 // Vertex Shader
 static const char* vShader = "shaders/shader_light.vert";
@@ -167,13 +168,17 @@ int main()
 	audio.loadSound("adventure", "sounds/Come Along With Me.  Hora de Aventura.mp3", true);
 
 	//AUDIOS DE ATRACCIONES
-	AudioManager audioAtracciones;
-	audioAtracciones.init();
-	audioAtracciones.loadSound("WhackAMole", "sounds/WhackAMole.mp3", true);
-	audioAtracciones.loadSound("Dados", "sounds/Dados.mp3", true);
-	audioAtracciones.loadSound("Bolos", "sounds/Bolos.mp3", true);
-	audioAtracciones.loadSound("ExplosionGlobo", "sounds/ExplosionGlobo.mp3", true);
-	audioAtracciones.loadSound("Hacha", "sounds/Hacha.mp3", true);
+	audio.loadSound("WhackAMole", "sounds/WhackAMole.mp3", true);
+	audio.loadSound("Dados", "sounds/Dados.mp3", true);
+	audio.loadSound("Bolos", "sounds/Bolos.mp3", true);
+	audio.loadSound("ExplosionGlobo", "sounds/ExplosionGlobo.mp3", true);
+	audio.loadSound("Hacha", "sounds/Hacha.mp3", true);
+
+	// sonidos de ambientacion
+	audio.loadSound("caminata", "sounds/Minecraft Footsteps.mp3", true);
+
+	// sonidos de NPC
+	audio.loadSound("atom-eve-npc", "sounds/dialogo-atom-eve.mp3", true);
 
 	/*
 	* mesh[i]->renderMesh()
@@ -756,6 +761,8 @@ int main()
 	bool soundDados = false;
 	bool soundBolos = false;
 
+	bool caminando = false;
+
 	while (!mainWindow.getShouldClose())
 	{
 
@@ -777,7 +784,9 @@ int main()
 		*/
 
 		if (mainWindow.isPersonajeSeleccionado() && !soundtrackStarted) {
+			audio.stopAllSounds(); // quitar sonido de seleccion de personaje
 			audio.playSound("soundtrack");
+			audio.setVolume("soundtrack", 0.3f);
 			soundtrackStarted = true;
 		}
 
@@ -904,7 +913,19 @@ int main()
 				!mainWindow.getsKeys()[GLFW_KEY_D] && !mainWindow.getsKeys()[GLFW_KEY_RIGHT]
 				) {
 				avatarCaminando = false;
+				
 				animarCaminata = 0.0f;
+			}
+
+			// Logica de sonido para caminata
+			if (avatarCaminando && !caminando) {
+				audio.playSound("caminata");
+				audio.setVolume("caminata", 2.5f);
+				caminando = true;
+			}
+			else if (!avatarCaminando && caminando) {
+				audio.stopSound("caminata");
+				caminando = false;
 			}
 
 			// Forzamos Y=0 para “simular” suelo
@@ -1458,6 +1479,30 @@ int main()
 		modelaux = model;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		RevientaGlobosInvencible.RenderModel();
+
+		
+		float distancia = glm::distance(avatarPos, posRevientaGlobos);
+
+		// Volumen proporcional entre 0.2 y 1.0
+		float volumen = glm::clamp(1.0f - (distancia / DISTANCIA_NPC), 0.2f, 1.0f);
+
+		if (distancia <= DISTANCIA_NPC) {
+			// Solo reproduce el sonido si no está sonando
+			if (!audio.isSoundPlaying("atom-eve-npc")) {
+				audio.playSound("atom-eve-npc");
+			}
+
+			// Ajustar el volumen dinámicamente
+			audio.setVolume("atom-eve-npc", volumen);
+
+		}
+		else {
+			// Detener el sonido si se aleja
+			if (audio.isSoundPlaying("atom-eve-npc")) {
+				audio.stopSound("atom-eve-npc");
+			}
+		}
+
 		if (activarAtraccionAnimacion[4]) {
 
 			animarLanzarDardo += 0.1 * deltaTime;
@@ -1836,7 +1881,7 @@ int main()
 			model = glm::rotate(model, glm::radians(animarHachas * 1000.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 			if (animarHachas >= 8.0f) { // terminar animacion
-				audioAtracciones.playSound("ExplosionGlobo");
+				audio.playSound("ExplosionGlobo");
 				animarHachas = 0;
 				activarAtraccionAnimacion[0] = false;
 
@@ -2556,7 +2601,7 @@ int main()
 			lastId = idPersonaje;
 
 			// Detener el sonido anterior
-			audio.stopSound();
+			audio.stopAllSounds();
 
 			switch (idPersonaje) {
 			case 0:
@@ -2577,7 +2622,6 @@ int main()
 
 		// Actualizar FMOD (necesario para reproducir correctamente)
 		audio.update();
-		audioAtracciones.update();
 
 		glDisable(GL_BLEND);
 		glUseProgram(0);
