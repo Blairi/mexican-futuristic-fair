@@ -115,6 +115,12 @@ static const char* vShader = "shaders/shader_light.vert";
 // Fragment Shader
 static const char* fShader = "shaders/shader_light.frag";
 
+glm::vec3 currentCamPos(0.0f, 7.0f, 30.0f);
+glm::vec3 targetCamPos(0.0f, 7.0f, 30.0f);
+glm::vec3 currentCamDir(0.0f, 0.0f, -1.0f);
+glm::vec3 targetCamDir(0.0f, 0.0f, -1.0f);
+const float smoothFactor = 0.05f;
+
 void CreateShaders()
 {
 	Shader* shader1 = new Shader();
@@ -1001,14 +1007,21 @@ int main()
 		float z = 30.0f * sin(rotacionCamara);
 
 
-
 		if (mainWindow.isPersonajeSeleccionado()) {
 			activeCamera->mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
 		else {
-			// en la fase de selección, forzamos la cámara libre:
-			freeCam.setPosition(glm::vec3(x, 7.0f, z));
-			freeCam.setDirection(glm::vec3(-x, 0, -z));
+			// Calculamos posición objetivo para la cámara
+			targetCamPos = glm::vec3(x, 7.0f, z);
+			targetCamDir = glm::normalize(glm::vec3(-x, 0, -z));
+
+			// Suavizamos la transición con interpolación lineal
+			currentCamPos = currentCamPos + (targetCamPos - currentCamPos) * smoothFactor;
+			currentCamDir = glm::normalize(currentCamDir + (targetCamDir - currentCamDir) * smoothFactor);
+
+			// Aplicamos a la cámara libre
+			freeCam.setPosition(currentCamPos);
+			freeCam.setDirection(currentCamDir);
 		}
 
 		// Clear the window
