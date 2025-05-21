@@ -191,6 +191,22 @@ int main()
 	audio.loadSound("jake-npc", "sounds/npc-jake.mp3", true);
 	audio.loadSound("joker-npc", "sounds/joker-audio.mp3", true);
 	audio.loadSound("harley-npc", "sounds/harley-audio.mp3", true);
+
+	// sonidos de atracciones
+	std::map<int, std::string> audioAtracciones = {
+		{0, "hachas"}, 
+		{1, "boliche"},
+		{2, "lanza-dados"},
+		{3, "jaula-bateo"},
+		{4, "globos"},
+		{5, "guacamole"},
+	};
+	audio.loadSound("hachas", "sounds/Hacha.mp3", true);// A1
+	audio.loadSound("boliche", "sounds/Bolos.mp3", true);// A2
+	audio.loadSound("lanza-dados", "sounds/Dados.mp3", true);// A3
+	audio.loadSound("jaula-bateo", "sounds/bateo.mp3", true);// A4
+	audio.loadSound("globos", "sounds/ExplosionGlobo.mp3", true);// A5
+	audio.loadSound("guacamole", "sounds/WhackAMole.mp3", true);// A6
 	
 
 	/*
@@ -261,6 +277,7 @@ int main()
 	glm::vec3 posArcade(-22.93f, 0.0f, -17.15559f);        // posición exacta de tu modelo
 	bool doomLaunched = false;
 	bool activarAtraccionAnimacion[6] = { false, false, false, false, false, false };
+	bool activarAtraccionSonido[6] = { false, false, false, false, false, false };
 	glm::vec3 posicionAtracciones[6] = { posLanzaHacha, posBoliche, posLanzaDados,
 		posJaulaBateo, posRevientaGlobos, posmaquinaWhack, };
 
@@ -773,12 +790,6 @@ int main()
 	// variables auxiliares para el sonido
 	static int lastId = -1;
 	bool soundtrackStarted = false;
-
-	bool soundHacha = false;
-	bool soundWhackAMole = false;
-	bool soundExplosionGlobo = false;
-	bool soundDados = false;
-	bool soundBolos = false;
 
 	bool caminando = false;
 
@@ -1588,6 +1599,10 @@ int main()
 					scaleFactor = 1.0f;  // completamente visible
 				}
 				else {
+					if (!activarAtraccionSonido[4]) {
+						audio.playSound("globos");
+						activarAtraccionSonido[4] = true;
+					}
 					scaleFactor = 0.0f;    // escalar hacia 0
 				}
 				model = glm::scale(model, glm::vec3(scaleFactor));
@@ -1716,6 +1731,12 @@ int main()
 		//* Pines de Boliche por Linea
 		//*/
 		if (activarAtraccionAnimacion[1]) {
+
+			if (!activarAtraccionSonido[1]) {
+				audio.playSound("boliche");
+				activarAtraccionSonido[1] = true;
+			}
+
 			// Mover la bola
 			if (!pinesDesaparecieron) {
 				animarBolaboliche += 0.1f * deltaTime;
@@ -1778,6 +1799,12 @@ int main()
 
 		//ATRACCION DADOS --------------------------------------------------------------------------------
 		opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+
+		if (!activarAtraccionSonido[2]) {
+			audio.playSound("lanza-dados");
+			activarAtraccionSonido[2] = true;
+		}
+
 		if (activarAtraccionAnimacion[2])
 			animarDados += 0.05 * deltaTime;
 		model = glm::mat4(1.0);
@@ -1825,10 +1852,15 @@ int main()
 		if (activarAtraccionAnimacion[5])
 			animarTopos += 0.05 * deltaTime;
 
+
 		persona.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		model = modelaux;
 		model = glm::translate(model, glm::vec3(-0.599f, 2.174f, 0.0f));
 		if (activarAtraccionAnimacion[5]) {
+			if (!activarAtraccionSonido[5]) {
+				audio.playSound("guacamole");
+				activarAtraccionSonido[5] = true;
+			}
 			model = glm::translate(model, glm::vec3(0.0f, sin(animarTopos * 1.5), 0.0f));
 		}
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -1931,6 +1963,13 @@ int main()
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		maquinaTenis.RenderModel();
 		if (activarAtraccionAnimacion[3]) {
+
+			if (!activarAtraccionSonido[3]) {
+				audio.playSound("jaula-bateo");
+				activarAtraccionSonido[3] = true;
+			}
+
+
 			animarBateo += 0.1 * deltaTime;
 			animarBola += 0.1 * deltaTime;
 			model = modelaux;
@@ -1962,7 +2001,10 @@ int main()
 			model = glm::rotate(model, glm::radians(animarHachas * 1000.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 			if (animarHachas >= 8.0f) { // terminar animacion
-				audio.playSound("ExplosionGlobo");
+				if (!activarAtraccionSonido[0]) {
+					audio.playSound("hachas");
+					activarAtraccionSonido[0] = true;
+				}
 				animarHachas = 0;
 				activarAtraccionAnimacion[0] = false;
 
@@ -2250,6 +2292,10 @@ int main()
 		*/
 
 		brilloso.UseMaterial(uniformSpecularIntensity, uniformShininess);
+
+		/*
+		* Activar o desactivar animaciones
+		*/
 		for (int i = 0; i < 6; i++) {
 			if (glm::distance(avatarPos, posicionAtracciones[i]) <= DISTANCIA_PARA_ACTIVAR) {
 				if (mainWindow.getsKeys()[GLFW_KEY_E])
@@ -2278,8 +2324,11 @@ int main()
 					meshBuilder.meshList[0]->RenderMesh();
 				}
 			}
-			else
+			else {
 				activarAtraccionAnimacion[i] = false;
+				activarAtraccionSonido[i] = false;
+				audio.stopSound(audioAtracciones[i]);
+			}
 		}
 
 		if (!doomLaunched && glm::distance(avatarPos, posArcade) <= DISTANCIA_PARA_ACTIVAR)
