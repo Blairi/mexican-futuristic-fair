@@ -21,8 +21,41 @@ void ThirdPersonCamera::recalcOffsetDir() {
 }
 
 void ThirdPersonCamera::update(float) {
-    // posición = personaje + dirección*distancia
+    // Calcular la nueva posición
     position = *target + offsetDir * distance;
+
+    // Verificar si la cámara está por debajo de la altura mínima permitida
+    float minHeight = 1.0f; // Ajusta este valor según necesites
+
+    if (position.y < (*target).y + minHeight) {
+        // Calculamos la distancia horizontal
+        float horizontalDist = sqrt(pow(offsetDir.x * distance, 2) + pow(offsetDir.z * distance, 2));
+
+        // Recalculamos el offsetDir
+        glm::vec3 newOffsetDir;
+        newOffsetDir.x = offsetDir.x;
+        newOffsetDir.z = offsetDir.z;
+
+        // Normalizamos solo las componentes x y z
+        float xyLength = sqrt(newOffsetDir.x * newOffsetDir.x + newOffsetDir.z * newOffsetDir.z);
+        if (xyLength > 0) {
+            newOffsetDir.x /= xyLength;
+            newOffsetDir.z /= xyLength;
+        }
+
+        // Establecemos la componente y para que la altura sea exactamente target.y + minHeight
+        position.y = (*target).y + minHeight;
+
+        // Recalculamos la posición x,z manteniendo la distancia horizontal
+        position.x = (*target).x + newOffsetDir.x * horizontalDist;
+        position.z = (*target).z + newOffsetDir.z * horizontalDist;
+
+        // Actualizar el offsetDir basado en la nueva posición
+        offsetDir = glm::normalize(position - *target);
+
+        // Actualizar el pitch (ángulo vertical)
+        pitch = glm::degrees(asin(offsetDir.y));
+    }
 }
 
 glm::mat4 ThirdPersonCamera::getViewMatrix() {
