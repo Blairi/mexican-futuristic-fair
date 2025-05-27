@@ -3,10 +3,14 @@
 Proyecto de computación Gráfica.
 
 # Preview
-![concierto][preview/concierto.png]
-![seleccionar personaje][preview/select-character.gif]
-![reventar globos][preview/globos.png]
-![feria][preview/feria.png]
+![concierto](preview/concierto.png)
+
+![seleccionar personaje](preview/select-character.gif)
+
+![reventar globos](preview/globos.png)
+
+![feria](preview/feria.png)
+
 
 Autores:
 - BOLAÑOS GUERRERO JULIAN
